@@ -10,6 +10,7 @@ import (
 var option int
 
 func main() {
+
 	for {
 		menu()
 		switch option {
@@ -53,15 +54,15 @@ func main() {
 
 func menu() {
 	for {
-		Log("Bienvenue dans le Service de Réservation en Ligne\n-----------------------------------------------------\n")
-		Log("1. Lister les salles disponibles\n2. Créer une réservation\n3. Annuler une réservation\n4. Visualiser les réservations\n5. Quitter\nChoisissez une option :")
+		Println("-----------------------------------------------------\nBienvenue dans le Service de Réservation en Ligne\n-----------------------------------------------------\n")
+		Println("1. Lister les salles disponibles\n2. Créer une réservation\n3. Annuler une réservation\n4. Visualiser les réservations\n5. Quitter\nChoisissez une option :")
 		_, err := fmt.Scanln(&option)
 		if err != nil {
-			Log("Erreur de saisie. Veuillez saisir un numéro valide.")
+			Println("Erreur de saisie. Veuillez saisir un numéro valide.")
 			continue
 		}
 		if option < 1 || option > 5 {
-			Log("Option invalide. Veuillez choisir une option entre 1 et 5.")
+			Println("Option invalide. Veuillez choisir une option entre 1 et 5.")
 			continue
 		}
 		break
@@ -70,16 +71,16 @@ func menu() {
 
 func retourMenu() {
 	var choix int
-	Log("1. Retourner au menu principal\n2. Quitter\nChoisissez une option :")
+	Println("1. Retourner au menu principal\n2. Quitter\nChoisissez une option :")
 	fmt.Scanln(&choix)
 	switch choix {
 	case 1:
 		// Rien à faire ici, le programme reviendra automatiquement à la boucle principale
 	case 2:
-		Log("Au revoir!")
+		Println("Au revoir!")
 		os.Exit(0)
 	default:
-		Log("Option invalide, veuillez réessayer.")
+		Println("Option invalide, veuillez réessayer.")
 		retourMenu()
 	}
 }
