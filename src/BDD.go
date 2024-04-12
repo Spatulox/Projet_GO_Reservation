@@ -317,23 +317,27 @@ func transformQueryToMap(query *sql.Rows) []map[string]interface{} {
 // ------------------------------------------------------------------------------------------------ //
 //
 
-func checkData(table string, column []string, condition *string) bool {
+func checkData(table string, column []string, values []string, condition *string) bool {
 
 	if reflect.TypeOf(table) != reflect.TypeOf("") || table == NullString {
-		log("Faut donner un nom de table :/ sous forme de chaine de caractère")
+		Log.Error("Faut donner un nom de table :/ sous forme de chaine de caractère")
 		return false
 	}
 
-	if reflect.TypeOf(column).Kind() != reflect.Slice || len(column) == 0 {
-		log("Faut donner un tableau de string(s)")
+	if column == nil || reflect.TypeOf(column).Kind() != reflect.Slice || len(column) == 0 {
+		Log.Error("Faut donner un tableau de string(s)")
 		return false
 	}
 
-	if condition != nil {
-		if reflect.TypeOf(condition) != reflect.TypeOf("") {
-			log("Il faut donner une condition sous forme de string")
-			return false
-		}
+	if values == nil || reflect.TypeOf(values).Kind() != reflect.Slice || len(column) == 0 {
+		Log.Error("Faut donner un tableau de string(s)")
+		return false
 	}
+
+	if condition != nil && reflect.TypeOf(*condition) != reflect.TypeOf("") {
+		Log.Error("Il faut donner une condition sous forme de string")
+		return false
+	}
+
 	return true
 }
