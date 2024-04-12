@@ -64,3 +64,35 @@ func arrayToString(arr []string, noQuotes ...bool) string {
 }
 
 // -----------------------------------------------------
+
+func concatColumnWithValues(columns []string, values []string) string {
+
+	if len(columns) == 0 || len(values) == 0 {
+		Log.Error("Plz columns and values string array must have at least one key each")
+		return ""
+	}
+
+	if len(columns) != len(values) {
+		Log.Error("Plz columns and values string array must have the same length")
+		return ""
+	}
+
+	var sb strings.Builder
+	for i, s := range values {
+		//sb.WriteString(s)
+
+		_, err := strconv.Atoi(s)
+		if err != nil {
+			// Cast to int failed
+			sb.WriteString(columns[i] + `='` + s + `'`)
+		} else {
+			// Cast to int ok
+			sb.WriteString(columns[i] + "=" + s)
+		}
+
+		if i < len(columns)-1 {
+			sb.WriteString(",")
+		}
+	}
+	return sb.String()
+}
