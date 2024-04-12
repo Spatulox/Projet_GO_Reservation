@@ -75,7 +75,7 @@ func (d *Db) SelectDB(table string, column []string, condition *string, debug ..
 	var result = transformQueryToMap(query)
 
 	if err := query.Err(); err != nil {
-		Log.Error("Erreur lors de la lecture des résultats :", err)
+		Log.Error("An error Occured : ", err)
 		return nil, err
 	}
 
@@ -136,7 +136,7 @@ func (d *Db) InsertDB(table string, column []string, value []string, condition *
 	}
 
 	if err := query.Err(); err != nil {
-		ILog("ERROR : ", err)
+		Log.Error("An error Occured : ", err)
 		return
 	}
 
@@ -199,7 +199,7 @@ func (d *Db) UpdateDB(table string, column []string, value []string, condition *
 	}
 
 	if err := query.Err(); err != nil {
-		ILog("ERROR : ", err)
+		Log.Error("An error Occured : ", err)
 		return
 	}
 
@@ -257,7 +257,7 @@ func (d *Db) DeleteDB(table string, condition *string, debug ...bool) {
 	}
 
 	if err := query.Err(); err != nil {
-		ILog("ERROR : ", err)
+		Log.Error("An error Occured : ", err)
 		return
 	}
 
