@@ -2,6 +2,7 @@ package Projet_GO_Reservation
 
 import (
 	"database/sql"
+	"fmt"
 	_ "github.com/go-sql-driver/mysql"
 	"reflect"
 )
@@ -106,6 +107,14 @@ func (d *Db) InsertDB(table string, column []string, values []string, condition 
 		}
 	}*/
 
+}
+
+//
+// ------------------------------------------------------------------------------------------------ //
+//
+
+func (d *Db) UpdateDB(table string) {
+	fmt.Printf("Get")
 }
 
 //
