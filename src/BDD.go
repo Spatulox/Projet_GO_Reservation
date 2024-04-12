@@ -84,6 +84,34 @@ func (d *Db) SelectDB(table string, column []string, condition *string, debug ..
 // ------------------------------------------------------------------------------------------------ //
 //
 
+func (d *Db) InsertDB(table string, column []string, values []string, condition *string, debug ...bool) {
+
+	if checkData(table, column, condition) == false {
+		return
+	}
+
+	/*if condition == nil {
+		query, err = db.Query("INSERT INTO " + table + ", " + columns)
+		queryString = "INSERT INTO " + table + ", " + columns
+		if err != nil {
+			log("ERROR : ", err)
+			return nil, nil
+		}
+	} else {
+		query, err = db.Query("INSERT INTO " + table + ", " + columns + " WHERE " + *condition)
+		queryString = "INSERT INTO " + table + ", " + columns + " WHERE " + *condition
+		if err != nil {
+			log("ERROR : ", err)
+			return nil, err
+		}
+	}*/
+
+}
+
+//
+// ------------------------------------------------------------------------------------------------ //
+//
+
 func transformQueryToMap(query *sql.Rows) []map[string]interface{} {
 	var result []map[string]interface{}
 
