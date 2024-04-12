@@ -2,7 +2,6 @@ package Projet_GO_Reservation
 
 import (
 	"database/sql"
-	"fmt"
 	_ "github.com/go-sql-driver/mysql"
 	"reflect"
 )
@@ -14,10 +13,10 @@ func connectDB() (db *sql.DB) {
 
 	db, err := sql.Open("mysql", "root:password@tcp(localhost:3306)/go_reserv")
 	if err != nil {
-		log("Impossible de se connecter à la BDD", err)
+		Log.Error("Impossible de se connecter à la BDD", err)
 		return nil
 	}
-	log("BDD Connecting ok")
+	Log.Infos("BDD Connecting ok")
 	return db
 }
 
@@ -27,15 +26,15 @@ func connectDB() (db *sql.DB) {
 
 func (d *Db) SelectDB(table string, column []string, condition *string, debug ...bool) ([]map[string]interface{}, error) {
 
-	if checkData(table, column, condition) == false {
-		log("Plz check your condition")
+	if checkData(table, column, nil, condition) == false {
+		Log.Error("Plz check your condition")
 		return nil, nil
 	}
 
 	var db = connectDB()
 
 	if db == nil {
-		log("What da heck bro, l'instance db est nulle ??")
+		Log.Error("What da heck bro, l'instance db est nulle ??")
 		return nil, nil
 	}
 
@@ -43,7 +42,7 @@ func (d *Db) SelectDB(table string, column []string, condition *string, debug ..
 	var columns = arrayToString(column)
 
 	if columns == NullString {
-		log("Impossible to transform the columns array into a string")
+		Log.Error("Impossible to transform the columns array into a string")
 		return nil, nil
 	}
 
@@ -55,26 +54,28 @@ func (d *Db) SelectDB(table string, column []string, condition *string, debug ..
 		query, err = db.Query("SELECT " + columns + " FROM " + table)
 		queryString = "SELECT " + columns + " FROM " + table
 		if err != nil {
-			log("ERROR : ", err)
+			ILog("ERROR : ", err)
+			Log.Debug(queryString)
 			return nil, nil
 		}
 	} else {
 		query, err = db.Query("SELECT " + columns + " FROM " + table + " WHERE " + *condition)
 		queryString = "SELECT " + columns + " FROM " + table + " WHERE " + *condition
 		if err != nil {
-			log("ERROR : ", err)
+			ILog("ERROR : ", err)
+			Log.Debug(queryString)
 			return nil, err
 		}
 	}
 
 	if len(debug) > 0 && debug[0] {
-		log(queryString)
+		Log.Debug(queryString)
 	}
 
 	var result = transformQueryToMap(query)
 
 	if err := query.Err(); err != nil {
-		log("Erreur lors de la lecture des résultats :", err)
+		Log.Error("An error Occured : ", err)
 		return nil, err
 	}
 
@@ -85,50 +86,186 @@ func (d *Db) SelectDB(table string, column []string, condition *string, debug ..
 // ------------------------------------------------------------------------------------------------ //
 //
 
-func (d *Db) InsertDB(table string, column []string, values []string, condition *string, debug ...bool) {
+func (d *Db) InsertDB(table string, column []string, value []string, condition *string, debug ...bool) {
 
-	if checkData(table, column, condition) == false {
+	if checkData(table, column, value, condition) == false {
 		return
 	}
 
-	/*if condition == nil {
-		query, err = db.Query("INSERT INTO " + table + ", " + columns)
-		queryString = "INSERT INTO " + table + ", " + columns
+	var db = connectDB()
+
+	if db == nil {
+		Log.Error("What da heck bro, l'instance db est nulle ??")
+		return
+	}
+
+	var columns = arrayToString(column, true)
+
+	var values = arrayToString(value)
+
+	if columns == NullString {
+		Log.Error("Impossible to transform the columns array into a string")
+		return
+	}
+
+	if values == NullString {
+		Log.Error("Impossible to transform the columns array into a string")
+		return
+	}
+
+	var query *sql.Rows
+	var queryString string
+	var err error
+
+	if condition == nil {
+		query, err = db.Query("INSERT INTO " + table + " (" + columns + ") VALUES (" + values + ")")
+		queryString = "INSERT INTO " + table + " (" + columns + ") VALUES (" + values + ")"
 		if err != nil {
-			log("ERROR : ", err)
-			return nil, nil
+			ILog("ERROR : ", err)
+			Log.Debug(queryString)
+			return
 		}
 	} else {
-		query, err = db.Query("INSERT INTO " + table + ", " + columns + " WHERE " + *condition)
-		queryString = "INSERT INTO " + table + ", " + columns + " WHERE " + *condition
+		query, err = db.Query("INSERT INTO " + table + " (" + columns + ") VALUES (" + values + ") WHERE " + *condition)
+		queryString = "INSERT INTO " + table + " (" + columns + ") VALUES (" + values + ") WHERE " + *condition
 		if err != nil {
-			log("ERROR : ", err)
-			return nil, err
+			ILog("ERROR : ", err)
+			Log.Debug(queryString)
+			return
 		}
-	}*/
+	}
 
-}
-
-//
-// ------------------------------------------------------------------------------------------------ //
-//
-
-func (d *Db) UpdateDB(table string) {
-	fmt.Printf("Get")
-}
-
-//
-// ------------------------------------------------------------------------------------------------ //
-//
-
-func (d *Db) DeleteDB(table string) {
-
-	if table == NullString {
-		log("Faut donner un nom de table :/")
+	if err := query.Err(); err != nil {
+		Log.Error("An error Occured : ", err)
 		return
 	}
 
-	fmt.Printf("Get")
+	if len(debug) > 0 && debug[0] {
+		Log.Debug(queryString)
+	}
+
+	return
+
+}
+
+//
+// ------------------------------------------------------------------------------------------------ //
+//
+
+func (d *Db) UpdateDB(table string, column []string, value []string, condition *string, debug ...bool) {
+
+	if checkData(table, column, value, condition) == false {
+		return
+	}
+
+	if condition == nil {
+		Log.Error("Plz enter a condition to update the table. If you don't want to enter condition put a \"-1\" instead")
+		return
+	}
+
+	var db = connectDB()
+
+	if db == nil {
+		Log.Error("What da heck bro, l'instance db est nulle ??")
+		return
+	}
+
+	var query *sql.Rows
+	var queryString string
+	var err error
+
+	var set = concatColumnWithValues(column, value)
+
+	if set == NullString {
+		return
+	}
+
+	if condition != nil {
+		query, err = db.Query("UPDATE " + table + " SET " + set + " WHERE " + *condition)
+		queryString = "UPDATE " + table + " SET " + set + " WHERE " + *condition
+		if err != nil {
+			ILog("ERROR : ", err)
+			Log.Debug(queryString)
+			return
+		}
+	} else if *condition == "-1" {
+		query, err = db.Query("UPDATE " + table + " SET " + set)
+		queryString = "UPDATE " + table + " SET " + set
+		if err != nil {
+			ILog("ERROR : ", err)
+			Log.Debug(queryString)
+			return
+		}
+	}
+
+	if err := query.Err(); err != nil {
+		Log.Error("An error Occured : ", err)
+		return
+	}
+
+	if len(debug) > 0 && debug[0] {
+		ILog("DEBUG : " + queryString)
+	}
+
+	return
+
+}
+
+//
+// ------------------------------------------------------------------------------------------------ //
+//
+
+func (d *Db) DeleteDB(table string, condition *string, debug ...bool) {
+	// DELETE FROM table WHERE condition
+
+	if reflect.TypeOf(table) != reflect.TypeOf("") || table == NullString {
+		Log.Error("Faut donner un nom de table :/ sous forme de chaine de caractère")
+	}
+
+	if condition == nil {
+		Log.Error("Plz enter a condition to delete a row from a the table. If you don't want to enter condition put a \"-1\" instead")
+		return
+	}
+
+	var db = connectDB()
+
+	if db == nil {
+		Log.Error("What da heck bro, l'instance db est nulle ??")
+		return
+	}
+
+	var query *sql.Rows
+	var queryString string
+	var err error
+
+	if condition != nil {
+		query, err = db.Query("DELETE FROM " + table + " WHERE " + *condition)
+		queryString = "DELETE FROM " + table + " WHERE " + *condition
+		if err != nil {
+			ILog("ERROR : ", err)
+			Log.Debug(queryString)
+			return
+		}
+	} else if *condition == "-1" {
+		query, err = db.Query("DELETE FROM " + table)
+		queryString = "DELETE FROM " + table
+		if err != nil {
+			ILog("ERROR : ", err)
+			Log.Debug(queryString)
+			return
+		}
+	}
+
+	if err := query.Err(); err != nil {
+		Log.Error("An error Occured : ", err)
+		return
+	}
+
+	if len(debug) > 0 && debug[0] {
+		Log.Debug(queryString)
+	}
+
+	return
 }
 
 //
@@ -144,7 +281,7 @@ func transformQueryToMap(query *sql.Rows) []map[string]interface{} {
 		columns, err := query.Columns()
 
 		if err != nil {
-			log("ERROR : Impossible de récupérer le nom des colonnes")
+			Log.Error("Impossible de récupérer le nom des colonnes")
 			return nil
 		}
 
@@ -158,6 +295,7 @@ func transformQueryToMap(query *sql.Rows) []map[string]interface{} {
 		}
 
 		if err := query.Scan(pointers...); err != nil {
+			Log.Error("Impossible to determine the pointer when creating the map")
 			return nil
 		}
 
@@ -181,23 +319,27 @@ func transformQueryToMap(query *sql.Rows) []map[string]interface{} {
 // ------------------------------------------------------------------------------------------------ //
 //
 
-func checkData(table string, column []string, condition *string) bool {
+func checkData(table string, column []string, values []string, condition *string) bool {
 
 	if reflect.TypeOf(table) != reflect.TypeOf("") || table == NullString {
-		log("Faut donner un nom de table :/ sous forme de chaine de caractère")
+		Log.Error("Faut donner un nom de table :/ sous forme de chaine de caractère")
 		return false
 	}
 
-	if reflect.TypeOf(column).Kind() != reflect.Slice || len(column) == 0 {
-		log("Faut donner un tableau de string(s)")
+	if column == nil || reflect.TypeOf(column).Kind() != reflect.Slice || len(column) == 0 {
+		Log.Error("Faut donner un tableau de string(s)")
 		return false
 	}
 
-	if condition != nil {
-		if reflect.TypeOf(condition) != reflect.TypeOf("") {
-			log("Il faut donner une condition sous forme de string")
-			return false
-		}
+	if values == nil || reflect.TypeOf(values).Kind() != reflect.Slice || len(column) == 0 {
+		Log.Error("Faut donner un tableau de string(s)")
+		return false
 	}
+
+	if condition != nil && reflect.TypeOf(*condition) != reflect.TypeOf("") {
+		Log.Error("Il faut donner une condition sous forme de string")
+		return false
+	}
+
 	return true
 }
