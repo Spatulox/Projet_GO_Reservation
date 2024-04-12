@@ -2,11 +2,17 @@ package Projet_GO_Reservation
 
 import (
 	"fmt"
+	"strconv"
 	"strings"
 	"time"
 )
 
-func log(message string, err ...error) {
+type LogHelper struct {
+}
+
+// -----------------------------------------------------
+
+func ILog(message string, err ...error) {
 	now := time.Now()
 	dateTimeStr := now.Format("[01/02/2006 - 15:04:05] ")
 	fmt.Print(dateTimeStr)
