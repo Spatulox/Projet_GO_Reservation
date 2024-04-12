@@ -23,16 +23,16 @@ func ILog(message string, err ...error) {
 	}
 }
 
-func log(message string) string {
+func log() string {
 	now := time.Now()
-	dateTimeStr := now.Format("[01/02/2006 - 15:04:05] " + message)
+	dateTimeStr := now.Format("[01/02/2006 - 15:04:05] ")
 	return dateTimeStr
 }
 
 func (l *LogHelper) Error(message string, err ...error) {
-	var result = log(message)
+	var result = log()
 
-	fmt.Print("ERROR : " + result)
+	fmt.Printf("\033[1;31m%s ERROR : \033[0m%s\n", result, message)
 
 	if err != nil {
 		fmt.Println(err)
@@ -40,9 +40,9 @@ func (l *LogHelper) Error(message string, err ...error) {
 }
 
 func (l *LogHelper) Infos(message string, err ...error) {
-	var result = log(message)
+	var result = log()
 
-	fmt.Print("INFOS : " + result)
+	fmt.Println(result + "INFOS : " + message)
 
 	if err != nil {
 		fmt.Println(err)
@@ -50,9 +50,9 @@ func (l *LogHelper) Infos(message string, err ...error) {
 }
 
 func (l *LogHelper) Debug(message string, err ...error) {
-	var result = log(message)
+	var result = log()
 
-	fmt.Print("DEBUG : " + result)
+	fmt.Printf("\033[1;32m%s DEBUG : \033[0m%s\n", result, message)
 
 	if err != nil {
 		fmt.Println(err)
