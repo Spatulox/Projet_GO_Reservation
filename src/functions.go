@@ -17,13 +17,36 @@ func log(message string, err ...error) {
 	}
 }
 
-// -----------------------------------------------------
-
-func Log(message string, err ...error) {
+func log(message string) string {
 	now := time.Now()
-	dateTimeStr := now.Format("[01/02/2006 - 15:04:05] ")
-	fmt.Print(dateTimeStr)
-	fmt.Println(message)
+	dateTimeStr := now.Format("[01/02/2006 - 15:04:05] " + message)
+	return dateTimeStr
+}
+
+func (l *LogHelper) Error(message string, err ...error) {
+	var result = log(message)
+
+	fmt.Print("ERROR : " + result)
+
+	if err != nil {
+		fmt.Println(err)
+	}
+}
+
+func (l *LogHelper) Infos(message string, err ...error) {
+	var result = log(message)
+
+	fmt.Print("INFOS : " + result)
+
+	if err != nil {
+		fmt.Println(err)
+	}
+}
+
+func (l *LogHelper) Debug(message string, err ...error) {
+	var result = log(message)
+
+	fmt.Print("DEBUG : " + result)
 
 	if err != nil {
 		fmt.Println(err)
