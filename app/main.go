@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"os"
 )
 
 var option int
@@ -22,7 +23,7 @@ func main() {
 			fmt.Println("Au revoir!")
 			return
 		}
-
+		retourMenu()
 	}
 }
 
@@ -40,5 +41,21 @@ func menu() {
 			continue
 		}
 		break
+	}
+}
+
+func retourMenu() {
+	var choix int
+	fmt.Println("1. Retourner au menu principal\n2. Quitter\nChoisissez une option :")
+	fmt.Scanln(&choix)
+	switch choix {
+	case 1:
+		// Rien à faire ici, le programme reviendra automatiquement à la boucle principale
+	case 2:
+		fmt.Println("Au revoir!")
+		os.Exit(0)
+	default:
+		fmt.Println("Option invalide, veuillez réessayer.")
+		retourMenu()
 	}
 }
