@@ -151,22 +151,120 @@ func (d *Db) InsertDB(table string, column []string, value []string, condition *
 // ------------------------------------------------------------------------------------------------ //
 //
 
-func (d *Db) UpdateDB(table string) {
-	fmt.Printf("Get")
+func (d *Db) UpdateDB(table string, column []string, value []string, condition *string, debug ...bool) {
+
+	if checkData(table, column, value, condition) == false {
+		return
+	}
+
+	if condition == nil {
+		Log.Error("Plz enter a condition to update the table. If you don't want to enter condition put a \"-1\" instead")
+		return
+	}
+
+	var db = connectDB()
+
+	if db == nil {
+		Log.Error("What da heck bro, l'instance db est nulle ??")
+		return
+	}
+
+	var query *sql.Rows
+	var queryString string
+	var err error
+
+	var set = concatColumnWithValues(column, value)
+
+	if set == NullString {
+		return
+	}
+
+	if condition != nil {
+		query, err = db.Query("UPDATE " + table + " SET " + set + " WHERE " + *condition)
+		queryString = "UPDATE " + table + " SET " + set + " WHERE " + *condition
+		if err != nil {
+			ILog("ERROR : ", err)
+			Log.Debug(queryString)
+			return
+		}
+	} else if *condition == "-1" {
+		query, err = db.Query("UPDATE " + table + " SET " + set)
+		queryString = "UPDATE " + table + " SET " + set
+		if err != nil {
+			ILog("ERROR : ", err)
+			Log.Debug(queryString)
+			return
+		}
+	}
+
+	if err := query.Err(); err != nil {
+		ILog("ERROR : ", err)
+		return
+	}
+
+	if len(debug) > 0 && debug[0] {
+		ILog("DEBUG : " + queryString)
+	}
+
+	return
+
 }
 
 //
 // ------------------------------------------------------------------------------------------------ //
 //
 
-func (d *Db) DeleteDB(table string) {
+func (d *Db) DeleteDB(table string, condition *string, debug ...bool) {
+	// DELETE FROM table WHERE condition
 
-	if table == NullString {
-		log("Faut donner un nom de table :/")
+	if reflect.TypeOf(table) != reflect.TypeOf("") || table == NullString {
+		Log.Error("Faut donner un nom de table :/ sous forme de chaine de caractère")
+	}
+
+	if condition == nil {
+		Log.Error("Plz enter a condition to delete a row from a the table. If you don't want to enter condition put a \"-1\" instead")
 		return
 	}
 
-	fmt.Printf("Get")
+	var db = connectDB()
+
+	if db == nil {
+		Log.Error("What da heck bro, l'instance db est nulle ??")
+		return
+	}
+
+	var query *sql.Rows
+	var queryString string
+	var err error
+
+	if condition != nil {
+		query, err = db.Query("DELETE FROM " + table + " WHERE " + *condition)
+		queryString = "DELETE FROM " + table + " WHERE " + *condition
+		if err != nil {
+			ILog("ERROR : ", err)
+			Log.Debug(queryString)
+			return
+		}
+	} else if *condition == "-1" {
+		query, err = db.Query("DELETE FROM " + table)
+		queryString = "DELETE FROM " + table
+		if err != nil {
+			ILog("ERROR : ", err)
+			Log.Debug(queryString)
+			return
+		}
+	}
+
+	if err := query.Err(); err != nil {
+		ILog("ERROR : ", err)
+		return
+	}
+
+	if len(debug) > 0 && debug[0] {
+		Log.Debug(queryString)
+	}
+
+	return
 }
 
 //
