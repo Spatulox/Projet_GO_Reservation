@@ -121,6 +121,20 @@ func (d *Db) UpdateDB(table string) {
 // ------------------------------------------------------------------------------------------------ //
 //
 
+func (d *Db) DeleteDB(table string) {
+
+	if table == NullString {
+		log("Faut donner un nom de table :/")
+		return
+	}
+
+	fmt.Printf("Get")
+}
+
+//
+// ------------------------------------------------------------------------------------------------ //
+//
+
 func transformQueryToMap(query *sql.Rows) []map[string]interface{} {
 	var result []map[string]interface{}
 
