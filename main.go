@@ -23,9 +23,13 @@ func main() {
 
 			result, err := bdd.SelectDB(RESERVATIONS, []string{"id_reservation"}, nil, true)
 			if err != nil {
-				// Gérer l'erreur
-				fmt.Println("Erreur :", err)
+				Log.Error("Impossible de sélectionner dans la BDD : ", err)
 				return
+			}
+
+			if result == nil {
+				Log.Error("Impossible de sélectionner les données")
+				break
 			}
 
 			firstMap := result[0]
