@@ -2,7 +2,6 @@ package Projet_GO_Reservation
 
 import (
 	"database/sql"
-	"fmt"
 	_ "github.com/go-sql-driver/mysql"
 	"reflect"
 )
@@ -14,10 +13,10 @@ func connectDB() (db *sql.DB) {
 
 	db, err := sql.Open("mysql", "root:password@tcp(localhost:3306)/go_reserv")
 	if err != nil {
-		log("Impossible de se connecter à la BDD", err)
+		Log.Error("Impossible de se connecter à la BDD", err)
 		return nil
 	}
-	log("BDD Connecting ok")
+	Log.Infos("BDD Connecting ok")
 	return db
 }
 
@@ -27,15 +26,15 @@ func connectDB() (db *sql.DB) {
 
 func (d *Db) SelectDB(table string, column []string, condition *string, debug ...bool) ([]map[string]interface{}, error) {
 
-	if checkData(table, column, condition) == false {
-		log("Plz check your condition")
+	if checkData(table, column, nil, condition) == false {
+		Log.Error("Plz check your condition")
 		return nil, nil
 	}
 
 	var db = connectDB()
 
 	if db == nil {
-		log("What da heck bro, l'instance db est nulle ??")
+		Log.Error("What da heck bro, l'instance db est nulle ??")
 		return nil, nil
 	}
 
@@ -43,7 +42,7 @@ func (d *Db) SelectDB(table string, column []string, condition *string, debug ..
 	var columns = arrayToString(column)
 
 	if columns == NullString {
-		log("Impossible to transform the columns array into a string")
+		Log.Error("Impossible to transform the columns array into a string")
 		return nil, nil
 	}
 
@@ -55,26 +54,28 @@ func (d *Db) SelectDB(table string, column []string, condition *string, debug ..
 		query, err = db.Query("SELECT " + columns + " FROM " + table)
 		queryString = "SELECT " + columns + " FROM " + table
 		if err != nil {
-			log("ERROR : ", err)
+			ILog("ERROR : ", err)
+			Log.Debug(queryString)
 			return nil, nil
 		}
 	} else {
 		query, err = db.Query("SELECT " + columns + " FROM " + table + " WHERE " + *condition)
 		queryString = "SELECT " + columns + " FROM " + table + " WHERE " + *condition
 		if err != nil {
-			log("ERROR : ", err)
+			ILog("ERROR : ", err)
+			Log.Debug(queryString)
 			return nil, err
 		}
 	}
 
 	if len(debug) > 0 && debug[0] {
-		log(queryString)
+		Log.Debug(queryString)
 	}
 
 	var result = transformQueryToMap(query)
 
 	if err := query.Err(); err != nil {
-		log("Erreur lors de la lecture des résultats :", err)
+		Log.Error("Erreur lors de la lecture des résultats :", err)
 		return nil, err
 	}
 
@@ -280,7 +281,7 @@ func transformQueryToMap(query *sql.Rows) []map[string]interface{} {
 		columns, err := query.Columns()
 
 		if err != nil {
-			log("ERROR : Impossible de récupérer le nom des colonnes")
+			Log.Error("Impossible de récupérer le nom des colonnes")
 			return nil
 		}
 
@@ -294,6 +295,7 @@ func transformQueryToMap(query *sql.Rows) []map[string]interface{} {
 		}
 
 		if err := query.Scan(pointers...); err != nil {
+			Log.Error("Impossible to determine the pointer when creating the map")
 			return nil
 		}
 
