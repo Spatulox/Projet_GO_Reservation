@@ -11,19 +11,44 @@ var option int
 
 func main() {
 
+	var bdd Db
+
 	for {
 		menu()
 		switch option {
 		case 1:
+			bdd.InsertDB(ETAT, []string{"id_etat", "nom_etat"}, []string{"5", "Se nourrir 2fois"}, nil, true)
 			// listerSallesDisponibles()
 		case 2:
+
+			result, err := bdd.SelectDB(RESERVATIONS, []string{"id_reservation"}, nil, true)
+			if err != nil {
+				// Gérer l'erreur
+				fmt.Println("Erreur :", err)
+				return
+			}
+
+			firstMap := result[0]
+			horaire := firstMap["horaire"]
+			id_etat := firstMap["id_etat"]
+			id_reservation := firstMap["id_reservation"]
+
+			fmt.Println("Horaire:", horaire)
+			fmt.Println("ID Etat:", id_etat)
+			fmt.Println("ID Réservation:", id_reservation)
+
 			// creerReservation()
 		case 3:
+			var tmp = "id_etat = 4"
+			bdd.UpdateDB(ETAT, []string{"nom_etat"}, []string{"Coucou"}, &tmp, true)
 			// annulerReservation()
 		case 4:
+			var tmp = "id_etat = 5"
+			bdd.DeleteDB(ETAT, &tmp, true)
 			// visualiserReservations()
 		case 5:
-			Log("Au revoir!")
+
+			ILog("Au revoir!")
 			return
 		}
 		retourMenu()
@@ -31,24 +56,8 @@ func main() {
 
 	// Exemple de comment utiliser la fonction
 
-	/*var bdd Db
-
-	result, err := bdd.SelectDB("RESERVATIONS", []string{"id_reservation"}, nil, true)
-	if err != nil {
-		// Gérer l'erreur
-		fmt.Println("Erreur :", err)
-		return
-	}
-
-	firstMap := result[0]
-	horaire := firstMap["horaire"]
-	id_etat := firstMap["id_etat"]
-	id_reservation := firstMap["id_reservation"]
-
-	fmt.Println("Horaire:", horaire)
-	fmt.Println("ID Etat:", id_etat)
-	fmt.Println("ID Réservation:", id_reservation)
-	*/
+	/*
+	 */
 
 }
 
