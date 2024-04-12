@@ -38,14 +38,24 @@ func Println(message string) {
 
 // -----------------------------------------------------
 
-func arrayToString(arr []string) string {
+func arrayToString(arr []string, noQuotes ...bool) string {
 	if len(arr) == 0 {
 		return ""
 	}
 
 	var sb strings.Builder
 	for i, s := range arr {
-		sb.WriteString(s)
+		//sb.WriteString(s)
+
+		_, err := strconv.Atoi(s)
+		if err != nil && noQuotes == nil {
+			// Cast to int failed
+			sb.WriteString(`'` + s + `'`)
+		} else {
+			// Cast to int ok
+			sb.WriteString(s)
+		}
+
 		if i < len(arr)-1 {
 			sb.WriteString(",")
 		}
