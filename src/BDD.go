@@ -85,27 +85,65 @@ func (d *Db) SelectDB(table string, column []string, condition *string, debug ..
 // ------------------------------------------------------------------------------------------------ //
 //
 
-func (d *Db) InsertDB(table string, column []string, values []string, condition *string, debug ...bool) {
+func (d *Db) InsertDB(table string, column []string, value []string, condition *string, debug ...bool) {
 
-	if checkData(table, column, condition) == false {
+	if checkData(table, column, value, condition) == false {
 		return
 	}
 
-	/*if condition == nil {
-		query, err = db.Query("INSERT INTO " + table + ", " + columns)
-		queryString = "INSERT INTO " + table + ", " + columns
+	var db = connectDB()
+
+	if db == nil {
+		Log.Error("What da heck bro, l'instance db est nulle ??")
+		return
+	}
+
+	var columns = arrayToString(column, true)
+
+	var values = arrayToString(value)
+
+	if columns == NullString {
+		Log.Error("Impossible to transform the columns array into a string")
+		return
+	}
+
+	if values == NullString {
+		Log.Error("Impossible to transform the columns array into a string")
+		return
+	}
+
+	var query *sql.Rows
+	var queryString string
+	var err error
+
+	if condition == nil {
+		query, err = db.Query("INSERT INTO " + table + " (" + columns + ") VALUES (" + values + ")")
+		queryString = "INSERT INTO " + table + " (" + columns + ") VALUES (" + values + ")"
 		if err != nil {
-			log("ERROR : ", err)
-			return nil, nil
+			ILog("ERROR : ", err)
+			Log.Debug(queryString)
+			return
 		}
 	} else {
-		query, err = db.Query("INSERT INTO " + table + ", " + columns + " WHERE " + *condition)
-		queryString = "INSERT INTO " + table + ", " + columns + " WHERE " + *condition
+		query, err = db.Query("INSERT INTO " + table + " (" + columns + ") VALUES (" + values + ") WHERE " + *condition)
+		queryString = "INSERT INTO " + table + " (" + columns + ") VALUES (" + values + ") WHERE " + *condition
 		if err != nil {
-			log("ERROR : ", err)
-			return nil, err
+			ILog("ERROR : ", err)
+			Log.Debug(queryString)
+			return
 		}
-	}*/
+	}
+
+	if err := query.Err(); err != nil {
+		ILog("ERROR : ", err)
+		return
+	}
+
+	if len(debug) > 0 && debug[0] {
+		Log.Debug(queryString)
+	}
+
+	return
 
 }
 
