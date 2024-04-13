@@ -210,7 +210,8 @@ func cancelReservation(choix ...int) {
 	reservation := listReservations(nil)
 
 	var option int
-	var maxIdReservation int64
+	var maxIdReservation, minIdReservation int64
+	minIdReservation = reservation[0]["id_reservation"].(int64)
 	maxIdReservation = reservation[len(reservation)-1]["id_reservation"].(int64)
 
 	if choix != nil && len(choix) > 0 {
@@ -229,7 +230,7 @@ func cancelReservation(choix ...int) {
 				return
 			}
 			if option < 1 || int64(option) > maxIdReservation {
-				fmt.Printf("Option invalide. Veuillez choisir une option entre 1 et %d\n", maxIdReservation)
+				fmt.Printf("Option invalide. Veuillez choisir une option entre %d et %d\n", minIdReservation, maxIdReservation)
 				continue
 			}
 
@@ -374,13 +375,13 @@ func updateReservation(state *int, idReservation *int) {
 func menu() {
 	for {
 		Println("-----------------------------------------------------\nMenu Réservation\n-----------------------------------------------------")
-		Println("1. Lister les reservations\n2. Créer une réservation\n3. Annuler une réservation\n4. Quitter\nChoisissez une option :")
+		Println("1. Lister les reservations\n2. Créer une réservation\n3. Annuler une réservation\n4. Mettre à jour une reservation\n5. Menu Principal\nChoisissez une option :")
 		_, err := fmt.Scanln(&option)
 		if err != nil {
 			Println("Erreur de saisie. Veuillez saisir un numéro valide.")
 			continue
 		}
-		if option < 1 || option > 4 {
+		if option < 1 || option > 5 {
 			Println("Option invalide. Veuillez choisir une option entre 1 et 5.")
 			continue
 		}
