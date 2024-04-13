@@ -18,7 +18,7 @@ func ReservationsMenu() {
 			listReservations(nil)
 		case 2:
 
-			createReservation()
+			createReservation(nil, nil)
 		case 3:
 
 			cancelReservation()
@@ -43,6 +43,7 @@ func ReservationsMenu() {
 func listReservations(condition *string) []map[string]interface{} {
 
 	var bdd Db
+	// Condition can be nil
 	result, err := bdd.SelectDB(RESERVATIONS, []string{"*"}, condition)
 
 	if err != nil || result == nil {
@@ -60,6 +61,23 @@ func listReservations(condition *string) []map[string]interface{} {
 		tmp := fmt.Sprintf("id_etat=%v", idEtat)
 		etatResult, err := bdd.SelectDB(ETAT, []string{"nom_etat"}, &tmp)
 
+		tmp = fmt.Sprintf("id_reservation=%v", idReservation)
+		idSalleResult, err := bdd.SelectDB(RESERVER, []string{"id_salle"}, &tmp)
+
+		tmp = fmt.Sprintf("id_salle=%v", idSalleResult[0]["id_salle"])
+		sallesResult, err := bdd.SelectDB(SALLES, []string{"nom", "place"}, &tmp)
+
+		var salleName string
+		var sallePlace int64
+		if len(sallesResult) > 0 {
+			salleName = sallesResult[0]["nom"].(string)
+			sallePlace = sallesResult[0]["place"].(int64)
+		} else {
+			Log.Error("Aucune salle trouvée")
+			salleName = "N/A"
+			sallePlace = -1
+		}
+
 		// Print
 		Println("------------------------------")
 		fmt.Println("ID Réservation:", idReservation)
@@ -72,6 +90,9 @@ func listReservations(condition *string) []map[string]interface{} {
 			fmt.Println("Etat : ", etatResult[0]["nom_etat"])
 		}
 
+		fmt.Println("Nom Salle :", salleName)
+		fmt.Println("Place Salle :", sallePlace)
+
 	}
 	Println("------------------------------")
 
@@ -83,7 +104,7 @@ func listReservations(condition *string) []map[string]interface{} {
 // ------------------------------------------------------------------------------------------------ //
 //
 
-func createReservation() {
+func createReservation(salle *int64, departure *string) bool {
 	var bdd Db
 	// Select all the room
 
@@ -91,114 +112,113 @@ func createReservation() {
 
 	if err != nil || result == nil {
 		Log.Error("Impossible de lister les salles :/")
-		return
+		return false
 	}
 
 	idMin := result[0]["id_salle"].(int64)
 	idMax := result[len(result)-1]["id_salle"].(int64)
 
-	var salle int64
-	for {
-		fmt.Printf("Veuillez saisir une salle entre %d et %d : ", idMin, idMax)
+	if salle == nil {
+		var newSalle int64
+		for {
+			fmt.Printf("Veuillez saisir une salle entre %d et %d : ", idMin, idMax)
 
-		fmt.Scanln(&salle)
-		if idMin > salle || salle > idMax {
-			continue
-		} else {
-			fmt.Printf("Vouc avez choisit la salle %d\n", salle)
+			fmt.Scanln(&salle)
+			if idMin > newSalle || newSalle > idMax {
+				continue
+			} else {
+				fmt.Printf("Vouc avez choisit la salle %d\n", newSalle)
+				break
+			}
+		}
+
+		*salle = newSalle
+	}
+
+	if departure == nil {
+
+		var departureDate time.Time
+		var departureTime time.Time
+		var err1, err2 error
+
+		for {
+			// Get the date
+			var departureDateStr string
+			fmt.Print("Entrez la date de départ (format yyyy-mm-dd): ")
+			fmt.Scanln(&departureDateStr)
+
+			departureDate, err1 = time.Parse("2006-01-02", departureDateStr)
+			if err1 != nil {
+				fmt.Println("Erreur de saisie de la date :", err1)
+				continue
+			}
+
+			// Date du jour
+			today := time.Now().Format("2006-01-02")
+			todayDate, err2 := time.Parse("2006-01-02", today)
+			if err2 != nil {
+				fmt.Println("Erreur lors de la récupération de la date du jour :", err2)
+				continue
+			}
+
+			// Comparer les dates
+			if departureDate.Before(todayDate) || departureDate.Equal(todayDate) {
+				Println("La date de départ doit être supérieure à la date du jour.")
+				continue
+			}
+
 			break
 		}
+
+		for {
+			// Get the hour
+			var departureTimeStr string
+			fmt.Print("Entrez l'heure de départ (format 15:04): ")
+			fmt.Scanln(&departureTimeStr)
+
+			departureTime, err2 = time.Parse("15:04", departureTimeStr)
+			if err2 != nil {
+				fmt.Println("Erreur de saisie de l'heure :", err2)
+				continue
+			}
+			break
+		}
+
+		departureDateTime := departureDate.Format("2006-01-02") + " " + departureTime.Format("15:04:00")
+
+		*departure = departureDateTime
+	} else {
+		_, err := time.Parse("2006-01-02 15:04:05", *departure)
+		if err != nil {
+			Log.Error("Erreur mauvais format de date", err)
+			return false
+		}
 	}
 
-	var departureDate time.Time
-	var departureTime time.Time
-	var err1, err2 error
+	fmt.Println("Date et heure de départ : ", departure)
 
-	for {
-		// Get the date
-		var departureDateStr string
-		fmt.Print("Entrez la date de départ (format yyyy-mm-dd): ")
-		fmt.Scanln(&departureDateStr)
-
-		departureDate, err1 = time.Parse("2006-01-02", departureDateStr)
-		if err1 != nil {
-			fmt.Println("Erreur de saisie de la date :", err1)
-			continue
-		}
-
-		// Date du jour
-		today := time.Now().Format("2006-01-02")
-		todayDate, err2 := time.Parse("2006-01-02", today)
-		if err2 != nil {
-			fmt.Println("Erreur lors de la récupération de la date du jour :", err2)
-			continue
-		}
-
-		// Comparer les dates
-		if departureDate.Before(todayDate) || departureDate.Equal(todayDate) {
-			Println("La date de départ doit être supérieure à la date du jour.")
-			continue
-		}
-
-		break
+	if isRoomAvailable(departure, salle) == false {
+		return false
 	}
 
-	for {
-		// Get the hour
-		var departureTimeStr string
-		fmt.Print("Entrez l'heure de départ (format 15:04): ")
-		fmt.Scanln(&departureTimeStr)
-
-		departureTime, err2 = time.Parse("15:04", departureTimeStr)
-		if err2 != nil {
-			fmt.Println("Erreur de saisie de l'heure :", err2)
-			continue
-		}
-		break
-	}
-
-	departureDateTime := departureDate.Format("2006-01-02") + " " + departureTime.Format("15:04:00")
-
-	fmt.Println("Date et heure de départ : ", departureDateTime)
 	Println("Toutes les vérifications ont été effectuée, ajout d'une nouvelle réservation")
 
-	// Selectionne dans la BDD pour savoir si y'a quelque chose enrgistré a cette date/heure et dans la salle
-	var tmp = "horaire = '" + departureDateTime + "'"
-	result, err = bdd.SelectDB(RESERVATIONS, []string{"id_reservation"}, &tmp)
-
-	if err != nil {
-		Log.Error("Impossible de vérifier si il existe déjà une reservation a cette date")
-		return
-	}
-
-	// If y'a déjà une réservation ce jour
-	if len(result) > 0 {
-		tmp = fmt.Sprintf("id_reservation = %d", result[0]["id_reservation"].(int64))
-
-		result, err = bdd.SelectDB(SALLES, []string{"id_salle"}, &tmp)
-
-		// Il y'a déjà une reservation ce jour et dans cette salle
-		if err != nil || result != nil {
-			fmt.Printf("Il existe déjà une reservation a cette date %s et dans cette salle %d\n", departureDateTime, salle)
-			Println("------------------------------")
-			return
-		}
-	}
-
 	// Insertion des données
-	bdd.InsertDB(RESERVATIONS, []string{"horaire", "id_etat"}, []string{departureDateTime, "4"})
+	bdd.InsertDB(RESERVATIONS, []string{"horaire", "id_etat"}, []string{*departure, "4"})
 
 	// Select the line with the MAX(id)
-	tmp = "id_reservation = (SELECT MAX(id_reservation) FROM " + RESERVATIONS + ")"
+	var tmp = "id_reservation = (SELECT MAX(id_reservation) FROM " + RESERVATIONS + ")"
 	result = listReservations(&tmp)
 
 	if result == nil {
 		Log.Error("Impossible de sélectionner la dernière réservation rentrée")
-		return
+		return false
 	}
 
 	horaire := fmt.Sprintf("%d", result[0]["id_reservation"].(int64))
 	bdd.InsertDB(RESERVER, []string{"id_salle", "id_reservation"}, []string{fmt.Sprintf("%d", salle), horaire})
+
+	return true
 }
 
 //
@@ -365,6 +385,38 @@ func updateReservation(state *int, idReservation *int) {
 
 	fmt.Printf("Etat changé pour %s pour la réservation %d\n\n", stateStr, idReserv)
 	return
+}
+
+//
+// ------------------------------------------------------------------------------------------------ //
+//
+
+func isRoomAvailable(departureDateTime *string, salle *int64) bool {
+
+	// Selectionne dans la BDD pour savoir si y'a quelque chose enrgistré a cette date/heure et dans la salle
+	var tmp = "horaire = '" + *departureDateTime + "'"
+	result, err := bdd.SelectDB(RESERVATIONS, []string{"id_reservation"}, &tmp)
+
+	if err != nil {
+		Log.Error("Impossible de vérifier si il existe déjà une reservation a cette date")
+		return false
+	}
+
+	// If y'a déjà une réservation ce jour
+	if len(result) > 0 {
+		tmp = fmt.Sprintf("id_reservation = %d", result[0]["id_reservation"].(int64))
+
+		result, err = bdd.SelectDB(RESERVER, []string{"id_salle"}, &tmp)
+
+		// Il y'a déjà une reservation ce jour et dans cette salle
+		if err != nil || result != nil {
+			fmt.Printf("Il existe déjà une reservation à cette date %s et dans cette salle %d\n", *departureDateTime, *salle)
+			Println("------------------------------")
+			return false
+		}
+	}
+
+	return true
 }
 
 //
