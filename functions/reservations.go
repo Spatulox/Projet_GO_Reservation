@@ -83,7 +83,7 @@ func cancelReservation() {
 
 func menu() {
 	for {
-		Println("-----------------------------------------------------\nMenu Réservation\n-----------------------------------------------------\n")
+		Println("-----------------------------------------------------\nMenu Réservation\n-----------------------------------------------------")
 		Println("1. Lister les reservations\n2. Créer une réservation\n3. Annuler une réservation\n4. Quitter\nChoisissez une option :")
 		_, err := fmt.Scanln(&option)
 		if err != nil {
@@ -106,7 +106,7 @@ func retourMenu() int64 {
 	case 1:
 		// Rien à faire ici, le programme reviendra automatiquement à la boucle principale
 	case 2:
-		Println("Retour au menu principal!")
+		Println("Retour au menu principal!\n\n")
 		return 2
 	default:
 		Println("Option invalide, veuillez réessayer.")
