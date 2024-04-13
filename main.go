@@ -79,7 +79,7 @@ func example() {
 	var bdd Db
 
 	// Insert ----------------------------------------------------------
-	bdd.InsertDB(ETAT, []string{"id_etat", "nom_etat"}, []string{"5", "Se nourrir 2fois"}, nil, true)
+	bdd.InsertDB(ETAT, []string{"id_etat", "nom_etat"}, []string{"5", "Se nourrir 2fois"}, true)
 
 	// Select ----------------------------------------------------------
 	var tmpa = "id_reservation = 1"
