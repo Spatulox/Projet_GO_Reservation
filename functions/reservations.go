@@ -17,17 +17,21 @@ func ReservationsMenu() {
 
 			listReservations(nil)
 		case 2:
+
 			listReservationsByRoom(nil)
 		case 3:
 
-			createReservation(nil, nil)
+			listReservationsByDate(nil)
 		case 4:
 
-			cancelReservation()
+			createReservation(nil, nil)
 		case 5:
 
-			updateReservation(nil, nil)
+			cancelReservation()
 		case 6:
+
+			updateReservation(nil, nil)
+		case 7:
 
 			Println("Retour menu principal")
 			return
@@ -42,7 +46,7 @@ func ReservationsMenu() {
 // ------------------------------------------------------------------------------------------------ //
 //
 
-func listReservations(condition *string) []map[string]interface{} {
+func listReservations(condition *string, noPrint ...bool) []map[string]interface{} {
 
 	var bdd Db
 	// Condition can be nil
@@ -53,7 +57,9 @@ func listReservations(condition *string) []map[string]interface{} {
 		return nil
 	}
 
-	printReservations(result)
+	if len(noPrint) == 0 || !noPrint[0] {
+		printReservations(result)
+	}
 
 	return result
 
@@ -152,12 +158,13 @@ func createReservation(salle *int64, departure *string) bool {
 	idMin := result[0]["id_salle"].(int64)
 	idMax := result[len(result)-1]["id_salle"].(int64)
 
+	var newSalle int64
 	if salle == nil {
-		var newSalle int64
 		for {
 			fmt.Printf("Veuillez saisir une salle entre %d et %d : ", idMin, idMax)
 
-			fmt.Scanln(&salle)
+			fmt.Scanln(&newSalle)
+
 			if idMin > newSalle || newSalle > idMax {
 				continue
 			} else {
@@ -166,61 +173,16 @@ func createReservation(salle *int64, departure *string) bool {
 			}
 		}
 
-		*salle = newSalle
+		salle = &newSalle
 	}
-
+	var departureDateTime string
 	if departure == nil {
 
-		var departureDate time.Time
-		var departureTime time.Time
-		var err1, err2 error
+		departureDate, departureTime := getDateAndHour()
 
-		for {
-			// Get the date
-			var departureDateStr string
-			fmt.Print("Entrez la date de départ (format yyyy-mm-dd): ")
-			fmt.Scanln(&departureDateStr)
+		departureDateTime = departureDate.Format("2006-01-02") + " " + departureTime.Format("15:04:00")
 
-			departureDate, err1 = time.Parse("2006-01-02", departureDateStr)
-			if err1 != nil {
-				fmt.Println("Erreur de saisie de la date :", err1)
-				continue
-			}
-
-			// Date du jour
-			today := time.Now().Format("2006-01-02")
-			todayDate, err2 := time.Parse("2006-01-02", today)
-			if err2 != nil {
-				fmt.Println("Erreur lors de la récupération de la date du jour :", err2)
-				continue
-			}
-
-			// Comparer les dates
-			if departureDate.Before(todayDate) || departureDate.Equal(todayDate) {
-				Println("La date de départ doit être supérieure à la date du jour.")
-				continue
-			}
-
-			break
-		}
-
-		for {
-			// Get the hour
-			var departureTimeStr string
-			fmt.Print("Entrez l'heure de départ (format 15:04): ")
-			fmt.Scanln(&departureTimeStr)
-
-			departureTime, err2 = time.Parse("15:04", departureTimeStr)
-			if err2 != nil {
-				fmt.Println("Erreur de saisie de l'heure :", err2)
-				continue
-			}
-			break
-		}
-
-		departureDateTime := departureDate.Format("2006-01-02") + " " + departureTime.Format("15:04:00")
-
-		*departure = departureDateTime
+		departure = &departureDateTime
 	} else {
 		_, err := time.Parse("2006-01-02 15:04:05", *departure)
 		if err != nil {
@@ -229,7 +191,7 @@ func createReservation(salle *int64, departure *string) bool {
 		}
 	}
 
-	fmt.Println("Date et heure de départ : ", departure)
+	fmt.Println("Date et heure de départ : ", *departure)
 
 	if isRoomAvailable(departure, salle) == false {
 		return false
@@ -242,7 +204,7 @@ func createReservation(salle *int64, departure *string) bool {
 
 	// Select the line with the MAX(id)
 	var tmp = "id_reservation = (SELECT MAX(id_reservation) FROM " + RESERVATIONS + ")"
-	result = listReservations(&tmp)
+	result = listReservations(&tmp, true)
 
 	if result == nil {
 		Log.Error("Impossible de sélectionner la dernière réservation rentrée")
@@ -250,7 +212,10 @@ func createReservation(salle *int64, departure *string) bool {
 	}
 
 	horaire := fmt.Sprintf("%d", result[0]["id_reservation"].(int64))
-	bdd.InsertDB(RESERVER, []string{"id_salle", "id_reservation"}, []string{fmt.Sprintf("%d", salle), horaire})
+	tmp2 := fmt.Sprintf("%d", *salle)
+	bdd.InsertDB(RESERVER, []string{"id_salle", "id_reservation"}, []string{tmp2, horaire})
+
+	listReservations(&tmp)
 
 	return true
 }
@@ -472,9 +437,14 @@ func printReservations(result []map[string]interface{}) {
 		tmp = fmt.Sprintf("id_reservation=%v", idReservation)
 		idSalleResult, err := bdd.SelectDB(RESERVER, []string{"id_salle"}, &tmp)
 
-		tmp = fmt.Sprintf("id_salle=%v", idSalleResult[0]["id_salle"])
-		sallesResult, err := bdd.SelectDB(SALLES, []string{"nom", "place"}, &tmp)
+		var sallesResult = make([]map[string]interface{}, 0)
+		//var err error
+		if err == nil && len(idSalleResult) > 0 {
+			tmp = fmt.Sprintf("id_salle=%v", idSalleResult[0]["id_salle"])
+			sallesResult, err = bdd.SelectDB(SALLES, []string{"nom", "place"}, &tmp)
+		}
 
+		Println("------------------------------")
 		var salleName string
 		var sallePlace int64
 		if len(sallesResult) > 0 {
@@ -487,7 +457,6 @@ func printReservations(result []map[string]interface{}) {
 		}
 
 		// Print
-		Println("------------------------------")
 		fmt.Println("ID Réservation:", idReservation)
 		fmt.Println("Horaire:", horaire)
 
@@ -509,17 +478,73 @@ func printReservations(result []map[string]interface{}) {
 // ------------------------------------------------------------------------------------------------ //
 //
 
+func getDateAndHour() (time.Time, time.Time) {
+
+	var departureDate time.Time
+	var departureTime time.Time
+	var err1, err2 error
+
+	for {
+		// Get the date
+		var departureDateStr string
+		fmt.Print("Entrez la date de départ (format yyyy-mm-dd): ")
+		fmt.Scanln(&departureDateStr)
+
+		departureDate, err1 = time.Parse("2006-01-02", departureDateStr)
+		if err1 != nil {
+			fmt.Println("Erreur de saisie de la date :", err1)
+			continue
+		}
+
+		// Date du jour
+		today := time.Now().Format("2006-01-02")
+		todayDate, err2 := time.Parse("2006-01-02", today)
+		if err2 != nil {
+			fmt.Println("Erreur lors de la récupération de la date du jour :", err2)
+			continue
+		}
+
+		// Comparer les dates
+		if departureDate.Before(todayDate) || departureDate.Equal(todayDate) {
+			Println("La date de départ doit être supérieure à la date du jour.")
+			continue
+		}
+
+		break
+	}
+
+	for {
+		// Get the hour
+		var departureTimeStr string
+		fmt.Print("Entrez l'heure de départ (format 15:04): ")
+		fmt.Scanln(&departureTimeStr)
+
+		departureTime, err2 = time.Parse("15:04", departureTimeStr)
+		if err2 != nil {
+			fmt.Println("Erreur de saisie de l'heure :", err2)
+			continue
+		}
+		break
+	}
+
+	return departureDate, departureTime
+}
+
+//
+// ------------------------------------------------------------------------------------------------ //
+//
+
 func menuReserv() {
 	for {
 		Println("-----------------------------------------------------\nMenu Réservation\n-----------------------------------------------------")
-		Println("1. Lister les reservations\n2. Lister les reservations par salles\n3. Créer une réservation\n4. Annuler une réservation\n5. Mettre à jour une reservation\n6. Menu Principal\nChoisissez une option :")
+		Println("1. Lister les reservations\n2. Lister les reservations par salles\n3. Lister les reservations par date\n4. Créer une réservation\n5. Annuler une réservation\n6. Mettre à jour une reservation\n7. Menu Principal\nChoisissez une option :")
 		_, err := fmt.Scanln(&optionReserv)
 		if err != nil {
 			Println("Erreur de saisie. Veuillez saisir un numéro valide.")
 			continue
 		}
-		if optionReserv < 1 || optionReserv > 6 {
-			Println("Option invalide. Veuillez choisir une option entre 1 et 6.")
+		if optionReserv < 1 || optionReserv > 7 {
+			Println("Option invalide. Veuillez choisir une option entre 1 et 7.")
 			continue
 		}
 		break
@@ -528,6 +553,7 @@ func menuReserv() {
 
 func retourMenuReserv() int64 {
 	var choix int
+	Println("-------------Retour-------------")
 	Println("1. Retourner au menu reservation\n2. Menu principal\nChoisissez une option :")
 	fmt.Scanln(&choix)
 
