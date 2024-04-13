@@ -121,7 +121,7 @@ func (d *Db) InsertDB(table string, column []string, value []string, condition *
 		query, err = db.Query("INSERT INTO " + table + " (" + columns + ") VALUES (" + values + ")")
 		queryString = "INSERT INTO " + table + " (" + columns + ") VALUES (" + values + ")"
 		if err != nil {
-			ILog("ERROR : ", err)
+			Log.Error("Erreur : ", err)
 			Log.Debug(queryString)
 			return
 		}
@@ -129,7 +129,7 @@ func (d *Db) InsertDB(table string, column []string, value []string, condition *
 		query, err = db.Query("INSERT INTO " + table + " (" + columns + ") VALUES (" + values + ") WHERE " + *condition)
 		queryString = "INSERT INTO " + table + " (" + columns + ") VALUES (" + values + ") WHERE " + *condition
 		if err != nil {
-			ILog("ERROR : ", err)
+			Log.Error("Erreur : ", err)
 			Log.Debug(queryString)
 			return
 		}
@@ -184,7 +184,7 @@ func (d *Db) UpdateDB(table string, column []string, value []string, condition *
 		query, err = db.Query("UPDATE " + table + " SET " + set + " WHERE " + *condition)
 		queryString = "UPDATE " + table + " SET " + set + " WHERE " + *condition
 		if err != nil {
-			ILog("ERROR : ", err)
+			Log.Error("Erreur : ", err)
 			Log.Debug(queryString)
 			return
 		}
@@ -192,7 +192,7 @@ func (d *Db) UpdateDB(table string, column []string, value []string, condition *
 		query, err = db.Query("UPDATE " + table + " SET " + set)
 		queryString = "UPDATE " + table + " SET " + set
 		if err != nil {
-			ILog("ERROR : ", err)
+			Log.Error("Erreur : ", err)
 			Log.Debug(queryString)
 			return
 		}
@@ -242,7 +242,7 @@ func (d *Db) DeleteDB(table string, condition *string, debug ...bool) {
 		query, err = db.Query("DELETE FROM " + table + " WHERE " + *condition)
 		queryString = "DELETE FROM " + table + " WHERE " + *condition
 		if err != nil {
-			ILog("ERROR : ", err)
+			Log.Error("Erreur : ", err)
 			Log.Debug(queryString)
 			return
 		}
@@ -250,7 +250,7 @@ func (d *Db) DeleteDB(table string, condition *string, debug ...bool) {
 		query, err = db.Query("DELETE FROM " + table)
 		queryString = "DELETE FROM " + table
 		if err != nil {
-			ILog("ERROR : ", err)
+			Log.Error("Erreur : ", err)
 			Log.Debug(queryString)
 			return
 		}
