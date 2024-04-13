@@ -3,6 +3,7 @@ package lechauve
 import (
 	. "Projet_GO_Reservation/src"
 	"fmt"
+	"strconv"
 	"time"
 )
 
@@ -23,7 +24,7 @@ func ReservationsMenu() {
 			cancelReservation()
 		case 4:
 
-			updateReservation()
+			updateReservation(nil, nil)
 		case 5:
 
 			Println("Retour menu principal")
@@ -254,6 +255,116 @@ func cancelReservation(choix ...int) {
 	bdd.DeleteDB(RESERVER, &tmp)
 	bdd.DeleteDB(RESERVATIONS, &tmp)
 
+}
+
+//
+// ------------------------------------------------------------------------------------------------ //
+//
+
+func updateReservation(state *int, idReservation *int) {
+	var bdd Db
+
+	result, err := bdd.SelectDB(ETAT, []string{"*"}, nil)
+
+	if err != nil || result == nil {
+		Log.Error("Impossible de récupérer les états possible dans la Base de donnée")
+		return
+	}
+
+	var newState int64
+
+	// Ask the user for the state
+	if state == nil {
+		Println("--------------------------------------------------")
+		Println("Choisisser un nouveau etats pour votre reservation")
+		Println("--------------------------------------------------")
+		for _, m := range result {
+			fmt.Println(m["id_etat"], m["nom_etat"])
+		}
+		Println("--------------------------------------------------")
+
+		idMin := result[0]["id_etat"].(int64)
+		idMax := result[len(result)-1]["id_etat"].(int64)
+
+		for {
+			fmt.Printf("Vous devez choisir un etat entre %d, et %d : ", idMin, idMax)
+			fmt.Scanln(&newState)
+			if newState < idMin || newState > idMax {
+				continue
+			}
+			exist := false
+
+			// check if the state exist in the DB
+			for _, m := range result {
+				if m["id_etat"].(int64) == newState {
+					exist = true
+					break
+				}
+			}
+			if exist == true {
+				break
+			}
+		}
+	} else {
+
+		//newState, err = strconv.ParseInt(*state, 10, 64)
+		newState = int64(*state)
+		if err != nil {
+			Log.Error("Erreur de conversionde l'état de string vers int64 :", err)
+			return
+		}
+	}
+
+	// Ask the user for the id_reservation
+	var idReserv int
+	if idReservation == nil {
+		result = listReservations(nil)
+
+		var maxIdReservation, minIdReservation int64
+		minIdReservation = result[0]["id_reservation"].(int64)
+		maxIdReservation = result[len(result)-1]["id_reservation"].(int64)
+
+		for {
+			fmt.Printf("Pour quelle réservation voulez-vous changer l'état ? : ")
+
+			_, err := fmt.Scanln(&idReserv)
+
+			if err != nil {
+				Println("Erreur de saisie. Veuillez saisir un numéro valide.")
+				continue
+			}
+			if idReserv == -1 {
+				return
+			}
+			if idReserv < 1 || int64(idReserv) > maxIdReservation {
+				fmt.Printf("Option invalide. Veuillez choisir une option entre %d et %d\n", minIdReservation, maxIdReservation)
+				continue
+			}
+
+			f := false
+			for _, m := range result {
+				if (m["id_reservation"]) == int64(idReserv) {
+					f = true
+					break
+				}
+			}
+			if f == false {
+				Println("Cette réservation n'existe pas\n")
+				continue
+			}
+			break
+
+		}
+	} else {
+		idReserv = *idReservation
+	}
+
+	tmp := fmt.Sprintf("id_reservation = %d", idReserv)
+	stateStr := strconv.FormatInt(newState, 10)
+	bdd.UpdateDB(RESERVATIONS, []string{"id_etat"}, []string{stateStr}, &tmp)
+
+	fmt.Printf("Etat changé pour %s pour la réservation %d\n\n", stateStr, idReserv)
+	return
 }
 
 //
