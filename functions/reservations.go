@@ -13,7 +13,7 @@ func ReservationsMenu() {
 		switch option {
 		case 1:
 
-			listReservations()
+			listReservations(nil)
 		case 2:
 
 			createReservation()
@@ -21,6 +21,9 @@ func ReservationsMenu() {
 
 			cancelReservation()
 		case 4:
+
+			updateReservation()
+		case 5:
 
 			Println("Retour menu principal")
 			return
@@ -35,14 +38,14 @@ func ReservationsMenu() {
 // ------------------------------------------------------------------------------------------------ //
 //
 
-func listReservations() []map[string]interface{} {
+func listReservations(condition *string) []map[string]interface{} {
 
 	var bdd Db
+	result, err := bdd.SelectDB(RESERVATIONS, []string{"*"}, condition)
 
-	result, err := bdd.SelectDB(RESERVATIONS, []string{"*"}, nil)
-
-	if err != nil {
+	if err != nil || result == nil {
 		Log.Error("Erreur lors de la lecture de la Base de donnée", err)
+		return nil
 	}
 	Println("------------------------------")
 	Println("-------- RESERVATIONS --------")
@@ -87,7 +90,7 @@ func createReservation() {
 //
 
 func cancelReservation(choix ...int) {
-	reservation := listReservations()
+	reservation := listReservations(nil)
 
 	var option int
 	var maxIdReservation int64
@@ -162,6 +165,7 @@ func retourMenu() int64 {
 	var choix int
 	Println("1. Retourner au menu reservation\n2. Menu principal\nChoisissez une option :")
 	fmt.Scanln(&choix)
+
 	switch choix {
 	case 1:
 		// Rien à faire ici, le programme reviendra automatiquement à la boucle principale
