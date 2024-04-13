@@ -36,9 +36,9 @@ func GetAllSalle() {
 func GetSalleById() {
 
 	fmt.Println("Taper id de la salle que vous voulez")
-	var num int = 0
-	fmt.Scanln(&num)
-	condition := fmt.Sprintf("id_salle = %d", num)
+	id := 0
+	fmt.Scanln(&id)
+	condition := fmt.Sprintf("id_salle = %d", id)
 
 	result, err := bdd.SelectDB(SALLES, []string{"nom", "place"}, &condition, true)
 	if err != nil {
@@ -61,6 +61,7 @@ func GetSalleById() {
 	fmt.Println("Place:", place)
 
 }
+
 func CreateRoom() {
 	name := ""
 	capacity := 0
