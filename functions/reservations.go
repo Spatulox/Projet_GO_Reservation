@@ -39,12 +39,13 @@ func listReservations() []map[string]interface{} {
 
 	var bdd Db
 
-	result, err := bdd.SelectDB(RESERVATIONS, []string{"*"}, nil, true)
+	result, err := bdd.SelectDB(RESERVATIONS, []string{"*"}, nil)
 
 	if err != nil {
 		Log.Error("Erreur lors de la lecture de la Base de donnée", err)
 	}
-
+	Println("------------------------------")
+	Println("-------- RESERVATIONS --------")
 	for _, sResult := range result {
 
 		horaire := sResult["horaire"]
@@ -85,7 +86,54 @@ func createReservation() {
 // ------------------------------------------------------------------------------------------------ //
 //
 
-func cancelReservation() {
+func cancelReservation(choix ...int) {
+	reservation := listReservations()
+
+	var option int
+	var maxIdReservation int64
+	maxIdReservation = reservation[len(reservation)-1]["id_reservation"].(int64)
+
+	if choix != nil && len(choix) > 0 {
+		option = choix[0]
+	} else {
+		for {
+			Println("Quelle réservation voulez-vous annuler ?\n(-1 pour revenir au menu)\nChoix:")
+
+			_, err := fmt.Scanln(&option)
+
+			if err != nil {
+				Println("Erreur de saisie. Veuillez saisir un numéro valide.")
+				continue
+			}
+			if option == -1 {
+				return
+			}
+			if option < 1 || int64(option) > maxIdReservation {
+				fmt.Printf("Option invalide. Veuillez choisir une option entre 1 et %d\n", maxIdReservation)
+				continue
+			}
+
+			f := false
+			for _, m := range reservation {
+				if (m["id_reservation"]) == int64(option) {
+					f = true
+					break
+				}
+			}
+			if f == false {
+				Println("Cette réservation n'existe pas\n")
+				continue
+			}
+			break
+		}
+	}
+
+	// Delete from DATABASE
+	var bdd Db
+
+	tmp := fmt.Sprintf("id_reservation=%v", option)
+	bdd.DeleteDB(RESERVER, &tmp)
+	bdd.DeleteDB(RESERVATIONS, &tmp)
 
 }
 
