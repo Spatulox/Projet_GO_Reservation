@@ -86,9 +86,9 @@ func (d *Db) SelectDB(table string, column []string, condition *string, debug ..
 // ------------------------------------------------------------------------------------------------ //
 //
 
-func (d *Db) InsertDB(table string, column []string, value []string, condition *string, debug ...bool) {
+func (d *Db) InsertDB(table string, column []string, value []string, debug ...bool) {
 
-	if checkData(table, column, value, condition) == false {
+	if checkData(table, column, value, nil) == false {
 		return
 	}
 
@@ -117,22 +117,12 @@ func (d *Db) InsertDB(table string, column []string, value []string, condition *
 	var queryString string
 	var err error
 
-	if condition == nil {
-		query, err = db.Query("INSERT INTO " + table + " (" + columns + ") VALUES (" + values + ")")
-		queryString = "INSERT INTO " + table + " (" + columns + ") VALUES (" + values + ")"
-		if err != nil {
-			Log.Error("Erreur : ", err)
-			Log.Debug(queryString)
-			return
-		}
-	} else {
-		query, err = db.Query("INSERT INTO " + table + " (" + columns + ") VALUES (" + values + ") WHERE " + *condition)
-		queryString = "INSERT INTO " + table + " (" + columns + ") VALUES (" + values + ") WHERE " + *condition
-		if err != nil {
-			Log.Error("Erreur : ", err)
-			Log.Debug(queryString)
-			return
-		}
+	query, err = db.Query("INSERT INTO " + table + " (" + columns + ") VALUES (" + values + ")")
+	queryString = "INSERT INTO " + table + " (" + columns + ") VALUES (" + values + ")"
+	if err != nil {
+		Log.Error("Erreur : ", err)
+		Log.Debug(queryString)
+		return
 	}
 
 	if err := query.Err(); err != nil {
