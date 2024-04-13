@@ -264,7 +264,7 @@ func (d *Db) DeleteDB(table string, condition *string, debug ...bool) {
 	if len(debug) > 0 && debug[0] {
 		Log.Debug(queryString)
 	}
-
+	Log.Infos("Deleting sucessful from " + table)
 	return
 }
 
