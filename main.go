@@ -19,7 +19,7 @@ func main() {
 			ReservationsMenu()
 		case 2:
 
-			// SallesMenu()
+			MenuSalle()
 		case 3:
 
 			// annulerReservation()
