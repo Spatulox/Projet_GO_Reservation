@@ -77,3 +77,33 @@ func CreateRoom() {
 
 	Log.Infos("Salle créée avec succès")
 }
+
+func DeleteRoomByID() {
+	fmt.Println("Taper id de la salle que vous voulez")
+	id := 0
+	fmt.Scanln(&id)
+
+	if err := CheckId(id); err != nil {
+		Log.Error("Erreur lors de la vérification de l'existence de la salle : ", err)
+		return
+	}
+
+	condition := fmt.Sprintf("id_salle = %d", id)
+	bdd.DeleteDB("SALLES", &condition, true)
+	Log.Infos("Salle supprimée avec succès")
+	return
+}
+
+func CheckId(id int) error {
+	condition := fmt.Sprintf("id_salle = %d", id)
+	result, err := bdd.SelectDB("SALLES", []string{"id_salle"}, &condition)
+	if err != nil {
+		return fmt.Errorf("Erreur lors de la vérification de l'existence de la salle : %v", err)
+	}
+
+	if len(result) == 0 {
+		return fmt.Errorf("La salle avec l'ID %d n'existe pas", id)
+	}
+
+	return nil
+}
