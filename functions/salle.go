@@ -158,7 +158,7 @@ func retourMenuSalle() int {
 		return 2
 	default:
 		Println("Option invalide, veuillez réessayer.")
-		retourMenu()
+		retourMenuSalle()
 	}
 	return 1
 }
