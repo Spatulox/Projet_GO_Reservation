@@ -35,7 +35,8 @@ INSERT INTO SALLES (id_salle, nom, place) VALUES
 INSERT INTO ETATS (id_etat, nom_etat) VALUES
 (1, 'En cours'),
 (2, 'Terminé'),
-(3, 'Annulé');
+(3, 'Annulé'),
+(4,'A venir');
 
 INSERT INTO RESERVATIONS (id_reservation, horaire, id_etat) VALUES
 (1, '2024-04-11 10:00:00', 1),

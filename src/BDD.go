@@ -16,7 +16,7 @@ func connectDB() (db *sql.DB) {
 		Log.Error("Impossible de se connecter à la BDD", err)
 		return nil
 	}
-	Log.Infos("BDD Connecting ok")
+	//Log.Infos("BDD Connecting ok")
 	return db
 }
 
@@ -27,7 +27,7 @@ func connectDB() (db *sql.DB) {
 func (d *Db) SelectDB(table string, column []string, condition *string, debug ...bool) ([]map[string]interface{}, error) {
 
 	if checkData(table, column, nil, condition) == false {
-		Log.Error("Plz check your condition")
+		Log.Error("Plz check your parameters")
 		return nil, nil
 	}
 
@@ -86,9 +86,9 @@ func (d *Db) SelectDB(table string, column []string, condition *string, debug ..
 // ------------------------------------------------------------------------------------------------ //
 //
 
-func (d *Db) InsertDB(table string, column []string, value []string, condition *string, debug ...bool) {
+func (d *Db) InsertDB(table string, column []string, value []string, debug ...bool) {
 
-	if checkData(table, column, value, condition) == false {
+	if checkData(table, column, value, nil) == false {
 		return
 	}
 
@@ -117,22 +117,12 @@ func (d *Db) InsertDB(table string, column []string, value []string, condition *
 	var queryString string
 	var err error
 
-	if condition == nil {
-		query, err = db.Query("INSERT INTO " + table + " (" + columns + ") VALUES (" + values + ")")
-		queryString = "INSERT INTO " + table + " (" + columns + ") VALUES (" + values + ")"
-		if err != nil {
-			ILog("ERROR : ", err)
-			Log.Debug(queryString)
-			return
-		}
-	} else {
-		query, err = db.Query("INSERT INTO " + table + " (" + columns + ") VALUES (" + values + ") WHERE " + *condition)
-		queryString = "INSERT INTO " + table + " (" + columns + ") VALUES (" + values + ") WHERE " + *condition
-		if err != nil {
-			ILog("ERROR : ", err)
-			Log.Debug(queryString)
-			return
-		}
+	query, err = db.Query("INSERT INTO " + table + " (" + columns + ") VALUES (" + values + ")")
+	queryString = "INSERT INTO " + table + " (" + columns + ") VALUES (" + values + ")"
+	if err != nil {
+		Log.Error("Erreur : ", err)
+		Log.Debug(queryString)
+		return
 	}
 
 	if err := query.Err(); err != nil {
@@ -184,7 +174,7 @@ func (d *Db) UpdateDB(table string, column []string, value []string, condition *
 		query, err = db.Query("UPDATE " + table + " SET " + set + " WHERE " + *condition)
 		queryString = "UPDATE " + table + " SET " + set + " WHERE " + *condition
 		if err != nil {
-			ILog("ERROR : ", err)
+			Log.Error("Erreur : ", err)
 			Log.Debug(queryString)
 			return
 		}
@@ -192,7 +182,7 @@ func (d *Db) UpdateDB(table string, column []string, value []string, condition *
 		query, err = db.Query("UPDATE " + table + " SET " + set)
 		queryString = "UPDATE " + table + " SET " + set
 		if err != nil {
-			ILog("ERROR : ", err)
+			Log.Error("Erreur : ", err)
 			Log.Debug(queryString)
 			return
 		}
@@ -242,7 +232,7 @@ func (d *Db) DeleteDB(table string, condition *string, debug ...bool) {
 		query, err = db.Query("DELETE FROM " + table + " WHERE " + *condition)
 		queryString = "DELETE FROM " + table + " WHERE " + *condition
 		if err != nil {
-			ILog("ERROR : ", err)
+			Log.Error("Erreur : ", err)
 			Log.Debug(queryString)
 			return
 		}
@@ -250,7 +240,7 @@ func (d *Db) DeleteDB(table string, condition *string, debug ...bool) {
 		query, err = db.Query("DELETE FROM " + table)
 		queryString = "DELETE FROM " + table
 		if err != nil {
-			ILog("ERROR : ", err)
+			Log.Error("Erreur : ", err)
 			Log.Debug(queryString)
 			return
 		}
@@ -264,7 +254,7 @@ func (d *Db) DeleteDB(table string, condition *string, debug ...bool) {
 	if len(debug) > 0 && debug[0] {
 		Log.Debug(queryString)
 	}
-
+	Log.Infos("Deleting sucessful from " + table)
 	return
 }
 
