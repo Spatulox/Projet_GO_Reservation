@@ -7,12 +7,12 @@ import (
 	"time"
 )
 
-var option int
+var optionReserv int
 
 func ReservationsMenu() {
 	for {
-		menu()
-		switch option {
+		menuReserv()
+		switch optionReserv {
 		case 1:
 
 			listReservations(nil)
@@ -30,7 +30,7 @@ func ReservationsMenu() {
 			Println("Retour menu principal")
 			return
 		}
-		if retourMenu() == 2 {
+		if retourMenuReserv() == 2 {
 			return
 		}
 	}
@@ -372,16 +372,16 @@ func updateReservation(state *int, idReservation *int) {
 // ------------------------------------------------------------------------------------------------ //
 //
 
-func menu() {
+func menuReserv() {
 	for {
 		Println("-----------------------------------------------------\nMenu Réservation\n-----------------------------------------------------")
 		Println("1. Lister les reservations\n2. Créer une réservation\n3. Annuler une réservation\n4. Mettre à jour une reservation\n5. Menu Principal\nChoisissez une option :")
-		_, err := fmt.Scanln(&option)
+		_, err := fmt.Scanln(&optionReserv)
 		if err != nil {
 			Println("Erreur de saisie. Veuillez saisir un numéro valide.")
 			continue
 		}
-		if option < 1 || option > 5 {
+		if optionReserv < 1 || optionReserv > 5 {
 			Println("Option invalide. Veuillez choisir une option entre 1 et 5.")
 			continue
 		}
@@ -389,7 +389,7 @@ func menu() {
 	}
 }
 
-func retourMenu() int64 {
+func retourMenuReserv() int64 {
 	var choix int
 	Println("1. Retourner au menu reservation\n2. Menu principal\nChoisissez une option :")
 	fmt.Scanln(&choix)
@@ -402,7 +402,7 @@ func retourMenu() int64 {
 		return 2
 	default:
 		Println("Option invalide, veuillez réessayer.")
-		retourMenu()
+		retourMenuReserv()
 	}
 
 	return 1
