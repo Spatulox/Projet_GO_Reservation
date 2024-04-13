@@ -143,8 +143,6 @@ func createReservation() {
 		break
 	}
 
-	Println("Toutes les vérifications ont été effectuée, ajout d'une nouvelle réservation")
-
 	for {
 		// Get the hour
 		var departureTimeStr string
@@ -162,6 +160,7 @@ func createReservation() {
 	departureDateTime := departureDate.Format("2006-01-02") + " " + departureTime.Format("15:04:00")
 
 	fmt.Println("Date et heure de départ : ", departureDateTime)
+	Println("Toutes les vérifications ont été effectuée, ajout d'une nouvelle réservation")
 
 	// Selectionne dans la BDD pour savoir si y'a quelque chose enrgistré a cette date/heure et dans la salle
 	var tmp = "horaire = '" + departureDateTime + "'"
