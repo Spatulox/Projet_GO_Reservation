@@ -1,7 +1,6 @@
 package main
 
 import (
-	// Import functions
 	. "Projet_GO_Reservation/functions"
 	. "Projet_GO_Reservation/src"
 	"fmt"
@@ -12,46 +11,20 @@ var option int
 
 func main() {
 
-	var bdd Db
-
 	for {
 		menu()
 		switch option {
 		case 1:
 
-			bdd.InsertDB(ETAT, []string{"id_etat", "nom_etat"}, []string{"5", "Se nourrir 2fois"}, nil, true)
-			// listerSallesDisponibles()
+			ReservationMenu()
 		case 2:
-			
-			var tmpa = "id_reservation = 1"
-			result, err := bdd.SelectDB(RESERVATIONS, []string{"id_reservation", "horaire", "id_etat"}, &tmpa, true)
-			if err != nil {
-				Log.Error("Impossible de sélectionner dans la BDD : ", err)
-				return
-			}
-
-			if result == nil {
-				Log.Error("Impossible de sélectionner les données")
-				break
-			}
-
-			firstMap := result[0]
-			horaire := firstMap["horaire"]
-			id_etat := firstMap["id_etat"]
-			id_reservation := firstMap["id_reservation"]
-
-			fmt.Println("Horaire:", horaire)
-			fmt.Println("ID Etat:", id_etat)
-			fmt.Println("ID Réservation:", id_reservation)
 
 			// creerReservation()
 		case 3:
-			var tmp = "id_etat = 4"
-			bdd.UpdateDB(ETAT, []string{"nom_etat"}, []string{"Coucou"}, &tmp, true)
+
 			// annulerReservation()
 		case 4:
-			var tmp = "id_etat = 5"
-			bdd.DeleteDB(ETAT, &tmp, true)
+
 			// visualiserReservations()
 		case 5:
 
@@ -99,4 +72,42 @@ func retourMenu() {
 		Println("Option invalide, veuillez réessayer.")
 		retourMenu()
 	}
+}
+
+func example() {
+
+	var bdd Db
+
+	// Insert ----------------------------------------------------------
+	bdd.InsertDB(ETAT, []string{"id_etat", "nom_etat"}, []string{"5", "Se nourrir 2fois"}, nil, true)
+
+	// Select ----------------------------------------------------------
+	var tmpa = "id_reservation = 1"
+	result, err := bdd.SelectDB(RESERVATIONS, []string{"id_reservation", "horaire", "id_etat"}, &tmpa, true)
+	if err != nil {
+		Log.Error("Impossible de sélectionner dans la BDD : ", err)
+		return
+	}
+
+	if result == nil {
+		Log.Error("Impossible de sélectionner les données")
+		return
+	}
+
+	firstMap := result[0]
+	horaire := firstMap["horaire"]
+	idEtat := firstMap["id_etat"]
+	idReservation := firstMap["id_reservation"]
+
+	fmt.Println("Horaire:", horaire)
+	fmt.Println("ID Etat:", idEtat)
+	fmt.Println("ID Réservation:", idReservation)
+
+	// Update ----------------------------------------------------------
+	var tmp = "id_etat = 4"
+	bdd.UpdateDB(ETAT, []string{"nom_etat"}, []string{"Coucou"}, &tmp, true)
+
+	// Delete ----------------------------------------------------------
+	var tmpb = "id_etat = 5"
+	bdd.DeleteDB(ETAT, &tmpb, true)
 }
