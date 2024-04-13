@@ -20,7 +20,7 @@ func ReservationsMenu() {
 		case 3:
 
 			cancelReservation()
-		case 5:
+		case 4:
 
 			Println("Retour menu principal")
 			return
@@ -55,6 +55,7 @@ func listReservations() []map[string]interface{} {
 		fmt.Println("Horaire:", horaire)
 		fmt.Println("ID Etat:", idEtat)
 	}
+	Println("------------------------------")
 
 	return result
 
@@ -83,13 +84,13 @@ func cancelReservation() {
 func menu() {
 	for {
 		Println("-----------------------------------------------------\nMenu Réservation\n-----------------------------------------------------\n")
-		Println("1. Lister les reservations\n2. Créer une réservation\n3. Modifier une réservation\n4. Annuler une réservation\n5. Quitter\nChoisissez une option :")
+		Println("1. Lister les reservations\n2. Créer une réservation\n3. Annuler une réservation\n4. Quitter\nChoisissez une option :")
 		_, err := fmt.Scanln(&option)
 		if err != nil {
 			Println("Erreur de saisie. Veuillez saisir un numéro valide.")
 			continue
 		}
-		if option < 1 || option > 5 {
+		if option < 1 || option > 4 {
 			Println("Option invalide. Veuillez choisir une option entre 1 et 5.")
 			continue
 		}
