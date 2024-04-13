@@ -17,15 +17,17 @@ func ReservationsMenu() {
 
 			listReservations(nil)
 		case 2:
-
-			createReservation(nil, nil)
+			listReservationsByRoom(nil)
 		case 3:
 
-			cancelReservation()
+			createReservation(nil, nil)
 		case 4:
 
-			updateReservation(nil, nil)
+			cancelReservation()
 		case 5:
+
+			updateReservation(nil, nil)
+		case 6:
 
 			Println("Retour menu principal")
 			return
@@ -50,52 +52,84 @@ func listReservations(condition *string) []map[string]interface{} {
 		Log.Error("Erreur lors de la lecture de la Base de donnée", err)
 		return nil
 	}
-	Println("------------------------------")
-	Println("-------- RESERVATIONS --------")
-	for _, sResult := range result {
 
-		horaire := sResult["horaire"]
-		idEtat := sResult["id_etat"]
-		idReservation := sResult["id_reservation"]
+	printReservations(result)
 
-		tmp := fmt.Sprintf("id_etat=%v", idEtat)
-		etatResult, err := bdd.SelectDB(ETAT, []string{"nom_etat"}, &tmp)
+	return result
 
-		tmp = fmt.Sprintf("id_reservation=%v", idReservation)
-		idSalleResult, err := bdd.SelectDB(RESERVER, []string{"id_salle"}, &tmp)
+}
 
-		tmp = fmt.Sprintf("id_salle=%v", idSalleResult[0]["id_salle"])
-		sallesResult, err := bdd.SelectDB(SALLES, []string{"nom", "place"}, &tmp)
+//
+// ------------------------------------------------------------------------------------------------ //
+//
 
-		var salleName string
-		var sallePlace int64
-		if len(sallesResult) > 0 {
-			salleName = sallesResult[0]["nom"].(string)
-			sallePlace = sallesResult[0]["place"].(int64)
-		} else {
-			Log.Error("Aucune salle trouvée")
-			salleName = "N/A"
-			sallePlace = -1
+func listReservationsByRoom(salle *int) []map[string]interface{} {
+
+	var bdd Db
+	// Condition can be nil
+
+	var tmp string
+	var result []map[string]interface{}
+	var err error
+
+	if salle != nil {
+		tmp = fmt.Sprintf("id_salle=%d", *salle)
+	} else {
+		// Ask for the user for the room
+		result = GetAllSalle()
+
+		maxIdSalle := result[len(result)-1]["id_salle"].(int64)
+		minIdSalle := result[0]["id_salle"].(int64)
+		var choix int64
+
+		for {
+			fmt.Printf("Choisisser une salle via son ID (entre %d et %d) : ", minIdSalle, maxIdSalle)
+			fmt.Scanln(&choix)
+			fmt.Println(choix)
+
+			leBool := false
+
+			for _, r := range result {
+				if r["id_salle"] == choix {
+					leBool = true
+					break
+				}
+			}
+
+			if choix > minIdSalle && choix < maxIdSalle {
+				break
+			}
+
+			if leBool == false {
+				continue
+			}
+			break
 		}
 
-		// Print
-		Println("------------------------------")
-		fmt.Println("ID Réservation:", idReservation)
-		fmt.Println("Horaire:", horaire)
+		tmp = fmt.Sprintf("id_salle=%d", choix)
+	}
 
-		if err != nil {
-			Log.Error("Impossible de récupérer l'état de la réservation")
-			fmt.Println("ID Etat:", idEtat)
+	result, err = bdd.SelectDB(RESERVER, []string{"*"}, &tmp)
+
+	if err != nil || result == nil {
+		Log.Error("Erreur lors de la lecture de la Base de donnée", err)
+		return nil
+	}
+
+	concatCondition := ""
+
+	for _, r := range result {
+		if r["id_reservation"] == result[0]["id_reservation"] {
+			concatCondition = fmt.Sprintf("id_reservation=%d", r["id_reservation"])
 		} else {
-			fmt.Println("Etat : ", etatResult[0]["nom_etat"])
+			concatCondition = fmt.Sprintf("%s OR id_reservation=%d", concatCondition, r["id_reservation"])
 		}
-
-		fmt.Println("Nom Salle :", salleName)
-		fmt.Println("Place Salle :", sallePlace)
 
 	}
-	Println("------------------------------")
 
+	result, err = bdd.SelectDB(RESERVATIONS, []string{"*"}, &concatCondition)
+
+	printReservations(result)
 	return result
 
 }
@@ -330,7 +364,7 @@ func updateReservation(state *int, idReservation *int) {
 		//newState, err = strconv.ParseInt(*state, 10, 64)
 		newState = int64(*state)
 		if err != nil {
-			Log.Error("Erreur de conversionde l'état de string vers int64 :", err)
+			Log.Error("Erreur de conversion de l'état de string vers int64 :", err)
 			return
 		}
 	}
@@ -423,17 +457,69 @@ func isRoomAvailable(departureDateTime *string, salle *int64) bool {
 // ------------------------------------------------------------------------------------------------ //
 //
 
+func printReservations(result []map[string]interface{}) {
+	Println("------------------------------")
+	Println("-------- RESERVATIONS --------")
+	for _, sResult := range result {
+
+		horaire := sResult["horaire"]
+		idEtat := sResult["id_etat"]
+		idReservation := sResult["id_reservation"]
+
+		tmp := fmt.Sprintf("id_etat=%v", idEtat)
+		etatResult, err := bdd.SelectDB(ETAT, []string{"nom_etat"}, &tmp)
+
+		tmp = fmt.Sprintf("id_reservation=%v", idReservation)
+		idSalleResult, err := bdd.SelectDB(RESERVER, []string{"id_salle"}, &tmp)
+
+		tmp = fmt.Sprintf("id_salle=%v", idSalleResult[0]["id_salle"])
+		sallesResult, err := bdd.SelectDB(SALLES, []string{"nom", "place"}, &tmp)
+
+		var salleName string
+		var sallePlace int64
+		if len(sallesResult) > 0 {
+			salleName = sallesResult[0]["nom"].(string)
+			sallePlace = sallesResult[0]["place"].(int64)
+		} else {
+			Log.Error("Aucune salle trouvée")
+			salleName = "N/A"
+			sallePlace = -1
+		}
+
+		// Print
+		Println("------------------------------")
+		fmt.Println("ID Réservation:", idReservation)
+		fmt.Println("Horaire:", horaire)
+
+		if err != nil {
+			Log.Error("Impossible de récupérer l'état de la réservation")
+			fmt.Println("ID Etat:", idEtat)
+		} else {
+			fmt.Println("Etat : ", etatResult[0]["nom_etat"])
+		}
+
+		fmt.Println("Nom Salle :", salleName)
+		fmt.Println("Place Salle :", sallePlace)
+
+	}
+	Println("------------------------------")
+}
+
+//
+// ------------------------------------------------------------------------------------------------ //
+//
+
 func menuReserv() {
 	for {
 		Println("-----------------------------------------------------\nMenu Réservation\n-----------------------------------------------------")
-		Println("1. Lister les reservations\n2. Créer une réservation\n3. Annuler une réservation\n4. Mettre à jour une reservation\n5. Menu Principal\nChoisissez une option :")
+		Println("1. Lister les reservations\n2. Lister les reservations par salles\n3. Créer une réservation\n4. Annuler une réservation\n5. Mettre à jour une reservation\n6. Menu Principal\nChoisissez une option :")
 		_, err := fmt.Scanln(&optionReserv)
 		if err != nil {
 			Println("Erreur de saisie. Veuillez saisir un numéro valide.")
 			continue
 		}
-		if optionReserv < 1 || optionReserv > 5 {
-			Println("Option invalide. Veuillez choisir une option entre 1 et 5.")
+		if optionReserv < 1 || optionReserv > 6 {
+			Println("Option invalide. Veuillez choisir une option entre 1 et 6.")
 			continue
 		}
 		break
