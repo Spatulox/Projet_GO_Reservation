@@ -6,13 +6,13 @@ import (
 	"strconv"
 )
 
-var option int
+var optionSalle int
 var bdd Db
 
 func MenuSalle() {
 	for {
-		menu()
-		switch option {
+		menuSalle()
+		switch optionSalle {
 		case 1:
 			GetAllSalle()
 		case 2:
@@ -25,7 +25,7 @@ func MenuSalle() {
 			Println("Retour menu principal")
 			return
 		}
-		if retourMenu() == 2 {
+		if retourMenuSalle() == 2 {
 			return
 		}
 	}
@@ -94,7 +94,7 @@ func CreateRoom() {
 	columns := []string{"nom", "place"}
 	values := []string{name, strconv.Itoa(capacity)}
 
-	bdd.InsertDB("SALLES", columns, values, nil, true)
+	bdd.InsertDB("SALLES", columns, values, true)
 
 	Log.Infos("Salle créée avec succès")
 }
@@ -129,16 +129,16 @@ func CheckId(id int) error {
 	return nil
 }
 
-func menu() {
+func menuSalle() {
 	for {
 		Println("-----------------------------------------------------\nBienvenue dans le Menu Salle\n-----------------------------------------------------\n")
 		Println("1.Lister les salles \n2.Selectioner une salles avec un id \n3.cree une salle \n4.supprimer une salle \n5.Retour menu principal\nChoisissez une option :")
-		_, err := fmt.Scanln(&option)
+		_, err := fmt.Scanln(&optionSalle)
 		if err != nil {
 			Println("Erreur de saisie. Veuillez saisir un numéro valide.")
 			continue
 		}
-		if option < 1 || option > 5 {
+		if optionSalle < 1 || optionSalle > 5 {
 			Println("Option invalide. Veuillez choisir une option entre 1 et 5.")
 			continue
 		}
@@ -146,7 +146,7 @@ func menu() {
 	}
 }
 
-func retourMenu() int {
+func retourMenuSalle() int {
 	var choix int
 	Println("1. Retourner au menu Salle\n2. Retourner au menu Principal\nChoisissez une option :")
 	fmt.Scanln(&choix)
