@@ -27,7 +27,7 @@ func connectDB() (db *sql.DB) {
 func (d *Db) SelectDB(table string, column []string, condition *string, debug ...bool) ([]map[string]interface{}, error) {
 
 	if checkData(table, column, nil, condition) == false {
-		Log.Error("Plz check your condition")
+		Log.Error("Plz check your parameters")
 		return nil, nil
 	}
 
