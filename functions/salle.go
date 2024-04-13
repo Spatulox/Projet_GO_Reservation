@@ -5,6 +5,7 @@ import (
 
 	. "Projet_GO_Reservation/src"
 	"fmt"
+	"strconv"
 )
 
 var bdd Db
@@ -59,4 +60,19 @@ func GetSalleById() {
 	fmt.Println("Nom:", nom)
 	fmt.Println("Place:", place)
 
+}
+func CreateRoom() {
+	name := ""
+	capacity := 0
+	fmt.Println("Taper le nom de la nouvelle salle")
+	fmt.Scanln(&name)
+	fmt.Println("Taper la capaciter de la nouvelle salle")
+	fmt.Scanln(&capacity)
+
+	columns := []string{"nom", "place"}
+	values := []string{name, strconv.Itoa(capacity)}
+
+	bdd.InsertDB("SALLES", columns, values, nil, true)
+
+	Log.Infos("Salle créée avec succès")
 }
