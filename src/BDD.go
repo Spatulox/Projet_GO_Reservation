@@ -39,7 +39,7 @@ func (d *Db) SelectDB(table string, column []string, condition *string, debug ..
 	}
 
 	// checking the right format
-	var columns = arrayToString(column)
+	var columns = arrayToString(column, true)
 
 	if columns == NullString {
 		Log.Error("Impossible to transform the columns array into a string")
@@ -326,12 +326,12 @@ func checkData(table string, column []string, values []string, condition *string
 		return false
 	}
 
-	if column == nil || reflect.TypeOf(column).Kind() != reflect.Slice || len(column) == 0 {
+	if reflect.TypeOf(column).Kind() != reflect.Slice || len(column) == 0 {
 		Log.Error("Faut donner un tableau de string(s)")
 		return false
 	}
 
-	if values == nil || reflect.TypeOf(values).Kind() != reflect.Slice || len(column) == 0 {
+	if reflect.TypeOf(values).Kind() != reflect.Slice || len(column) == 0 {
 		Log.Error("Faut donner un tableau de string(s)")
 		return false
 	}

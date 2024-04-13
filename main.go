@@ -17,11 +17,12 @@ func main() {
 		menu()
 		switch option {
 		case 1:
+
 			bdd.InsertDB(ETAT, []string{"id_etat", "nom_etat"}, []string{"5", "Se nourrir 2fois"}, nil, true)
 			// listerSallesDisponibles()
 		case 2:
-
-			result, err := bdd.SelectDB(RESERVATIONS, []string{"id_reservation"}, nil, true)
+			var tmpa = "id_reservation = 1"
+			result, err := bdd.SelectDB(RESERVATIONS, []string{"id_reservation", "horaire", "id_etat"}, &tmpa, true)
 			if err != nil {
 				Log.Error("Impossible de sélectionner dans la BDD : ", err)
 				return
