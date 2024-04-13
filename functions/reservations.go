@@ -112,7 +112,7 @@ func menu() {
 
 func retourMenu() int64 {
 	var choix int
-	Println("1. Retourner au menu reservation\n2. Quitter\nChoisissez une option :")
+	Println("1. Retourner au menu reservation\n2. Menu principal\nChoisissez une option :")
 	fmt.Scanln(&choix)
 	switch choix {
 	case 1:
