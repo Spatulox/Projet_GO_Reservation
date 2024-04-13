@@ -31,3 +31,32 @@ func GetAllSalle() {
 		fmt.Println("Place:", place)
 	}
 }
+
+func GetSalleById() {
+
+	fmt.Println("Taper id de la salle que vous voulez")
+	var num int = 0
+	fmt.Scanln(&num)
+	condition := fmt.Sprintf("id_salle = %d", num)
+
+	result, err := bdd.SelectDB(SALLES, []string{"nom", "place"}, &condition, true)
+	if err != nil {
+		Log.Error("Impossible de sélectionner dans la BDD : ", err)
+		return
+	}
+
+	if result == nil || len(result) == 0 {
+		Log.Error("Impossible de sélectionner les données")
+		return
+	}
+
+	firstMap := result[0]
+	id_salle := firstMap["id_salle"]
+	nom := firstMap["nom"]
+	place := firstMap["place"]
+
+	fmt.Println("ID salle:", id_salle)
+	fmt.Println("Nom:", nom)
+	fmt.Println("Place:", place)
+
+}
