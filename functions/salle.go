@@ -31,19 +31,22 @@ func MenuSalle() {
 	}
 }
 
-func GetAllSalle() {
+func GetAllSalle() []map[string]interface{} {
 	result, err := bdd.SelectDB(SALLES, []string{"id_salle", "nom", "place"}, nil, true)
 	if err != nil {
 		Log.Error("Impossible de sélectionner dans la BDD : ", err)
-		return
+		return nil
 	}
 
 	if result == nil || len(result) == 0 {
 		Log.Error("Impossible de sélectionner les données")
-		return
+		return nil
 	}
 
+	Println("------------------------------")
+	Println("----------- SALLES -----------")
 	for _, salle := range result {
+		Println("------------------------------")
 		id_salle := salle["id_salle"]
 		nom := salle["nom"]
 		place := salle["place"]
@@ -52,6 +55,9 @@ func GetAllSalle() {
 		fmt.Println("Nom:", nom)
 		fmt.Println("Place:", place)
 	}
+	Println("------------------------------")
+
+	return result
 }
 
 func GetSalleById() {
