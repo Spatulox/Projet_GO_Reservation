@@ -16,7 +16,7 @@ func connectDB() (db *sql.DB) {
 		Log.Error("Impossible de se connecter à la BDD", err)
 		return nil
 	}
-	Log.Infos("BDD Connecting ok")
+	//Log.Infos("BDD Connecting ok")
 	return db
 }
 
