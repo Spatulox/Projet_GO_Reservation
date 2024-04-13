@@ -1,18 +1,18 @@
 CREATE TABLE SALLES(
-   id_salle INT,
+   id_salle INT AUTO_INCREMENT,
    nom VARCHAR(50) NOT NULL,
    place INT NOT NULL,
    PRIMARY KEY(id_salle)
 );
 
 CREATE TABLE ETATS(
-   id_etat INT,
+   id_etat INT AUTO_INCREMENT,
    nom_etat VARCHAR(50) NOT NULL,
    PRIMARY KEY(id_etat)
 );
 
 CREATE TABLE RESERVATIONS(
-   id_reservation INT,
+   id_reservation INT AUTO_INCREMENT,
    horaire DATETIME NOT NULL,
    id_etat INT NOT NULL,
    PRIMARY KEY(id_reservation),
