@@ -1,14 +1,35 @@
 package lechauve
 
 import (
-	// Import functions
-
 	. "Projet_GO_Reservation/src"
 	"fmt"
 	"strconv"
 )
 
+var option int
 var bdd Db
+
+func MenuSalle() {
+	for {
+		menu()
+		switch option {
+		case 1:
+			GetAllSalle()
+		case 2:
+			GetSalleById()
+		case 3:
+			CreateRoom()
+		case 4:
+			DeleteRoomByID()
+		case 5:
+			Println("Retour menu principal")
+			return
+		}
+		if retourMenu() == 2 {
+			return
+		}
+	}
+}
 
 func GetAllSalle() {
 	result, err := bdd.SelectDB(SALLES, []string{"id_salle", "nom", "place"}, nil, true)
@@ -106,4 +127,38 @@ func CheckId(id int) error {
 	}
 
 	return nil
+}
+
+func menu() {
+	for {
+		Println("-----------------------------------------------------\nBienvenue dans le Menu Salle\n-----------------------------------------------------\n")
+		Println("1.Lister les salles \n2.Selectioner une salles avec un id \n3.cree une salle \n4.supprimer une salle \n5.Retour menu principal\nChoisissez une option :")
+		_, err := fmt.Scanln(&option)
+		if err != nil {
+			Println("Erreur de saisie. Veuillez saisir un numéro valide.")
+			continue
+		}
+		if option < 1 || option > 5 {
+			Println("Option invalide. Veuillez choisir une option entre 1 et 5.")
+			continue
+		}
+		break
+	}
+}
+
+func retourMenu() int {
+	var choix int
+	Println("1. Retourner au menu Salle\n2. Retourner au menu Principal\nChoisissez une option :")
+	fmt.Scanln(&choix)
+	switch choix {
+	case 1:
+	// Rien à faire ici, le programme reviendra automatiquement à la boucle principale
+	case 2:
+		Println("Retour au menu principal!\n\n")
+		return 2
+	default:
+		Println("Option invalide, veuillez réessayer.")
+		retourMenu()
+	}
+	return 1
 }
