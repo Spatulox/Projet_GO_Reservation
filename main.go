@@ -16,10 +16,10 @@ func main() {
 		switch option {
 		case 1:
 
-			ReservationMenu()
+			ReservationsMenu()
 		case 2:
 
-			// creerReservation()
+			// SallesMenu()
 		case 3:
 
 			// annulerReservation()
@@ -28,10 +28,10 @@ func main() {
 			// visualiserReservations()
 		case 5:
 
-			ILog("Au revoir!")
+			Println("Au revoir!")
 			return
 		}
-		retourMenu()
+		//retourMenu()
 	}
 
 	// Exemple de comment utiliser la fonction
@@ -43,8 +43,8 @@ func main() {
 
 func menu() {
 	for {
-		Println("-----------------------------------------------------\nBienvenue dans le Service de Réservation en Ligne\n-----------------------------------------------------\n")
-		Println("1. Lister les salles disponibles\n2. Créer une réservation\n3. Annuler une réservation\n4. Visualiser les réservations\n5. Quitter\nChoisissez une option :")
+		Println("-----------------------------------------------------\nBienvenue dans le Service de Réservation en Ligne\n-----------------------------------------------------")
+		Println("1. Menu pour les réservations\n2. Menu pour les Salles\n3. Créer une réservation\n4. Visualiser les réservations\n5. Quitter\nChoisissez une option :")
 		_, err := fmt.Scanln(&option)
 		if err != nil {
 			Println("Erreur de saisie. Veuillez saisir un numéro valide.")
