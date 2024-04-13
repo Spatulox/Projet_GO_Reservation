@@ -46,14 +46,26 @@ func listReservations() []map[string]interface{} {
 	}
 
 	for _, sResult := range result {
+
 		horaire := sResult["horaire"]
 		idEtat := sResult["id_etat"]
 		idReservation := sResult["id_reservation"]
 
+		tmp := fmt.Sprintf("id_etat=%v", idEtat)
+		etatResult, err := bdd.SelectDB(ETAT, []string{"nom_etat"}, &tmp)
+
+		// Print
 		Println("------------------------------")
 		fmt.Println("ID Réservation:", idReservation)
 		fmt.Println("Horaire:", horaire)
-		fmt.Println("ID Etat:", idEtat)
+
+		if err != nil {
+			Log.Error("Impossible de récupérer l'état de la réservation")
+			fmt.Println("ID Etat:", idEtat)
+		} else {
+			fmt.Println("Etat : ", etatResult[0]["nom_etat"])
+		}
+
 	}
 	Println("------------------------------")
 
