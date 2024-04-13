@@ -2,6 +2,7 @@ package main
 
 import (
 	// Import functions
+	. "Projet_GO_Reservation/functions"
 	. "Projet_GO_Reservation/src"
 	"fmt"
 	"os"
@@ -21,6 +22,7 @@ func main() {
 			bdd.InsertDB(ETAT, []string{"id_etat", "nom_etat"}, []string{"5", "Se nourrir 2fois"}, nil, true)
 			// listerSallesDisponibles()
 		case 2:
+			
 			var tmpa = "id_reservation = 1"
 			result, err := bdd.SelectDB(RESERVATIONS, []string{"id_reservation", "horaire", "id_etat"}, &tmpa, true)
 			if err != nil {
