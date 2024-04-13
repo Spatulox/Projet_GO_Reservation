@@ -144,6 +144,36 @@ func listReservationsByRoom(salle *int) []map[string]interface{} {
 // ------------------------------------------------------------------------------------------------ //
 //
 
+func listReservationsByDate(date *string) []map[string]interface{} {
+
+	if date != nil {
+		_, err := time.Parse("2006-01-02 15:00:00", *date)
+		if err != nil {
+			Log.Error("Erreur mauvais format de date", err)
+			return nil
+		}
+	} else {
+		departureDate, departureTime := getDateAndHour()
+		departureDateTime := departureDate.Format("2006-01-02") + " " + departureTime.Format("15:04:00")
+
+		*date = departureDateTime
+	}
+
+	result, err := bdd.SelectDB(RESERVATIONS, []string{"*"}, date)
+
+	if err != nil {
+		Log.Error("Impossible de récupérer les réservations par date")
+		return nil
+	}
+
+	printReservations(result)
+	return result
+}
+
+//
+// ------------------------------------------------------------------------------------------------ //
+//
+
 func createReservation(salle *int64, departure *string) bool {
 	var bdd Db
 	// Select all the room
