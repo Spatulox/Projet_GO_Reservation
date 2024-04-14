@@ -422,32 +422,44 @@ func updateReservation(state *int, idReservation *int) {
 // ------------------------------------------------------------------------------------------------ //
 //
 
-func isRoomAvailable(departureDateTime *string, salle *int64) bool {
+func isRoomAvailable(departureDateTime *string, endDateTime *string, salle *int, condition *string) (bool, int) {
 
-	// Selectionne dans la BDD pour savoir si y'a quelque chose enrgistré a cette date/heure et dans la salle
-	var tmp = "horaire = '" + *departureDateTime + "'"
-	result, err := bdd.SelectDB(RESERVATIONS, []string{"id_reservation"}, nil, &tmp)
+	// Selectionne dans la BDD pour savoir si y'a quelque chose enregistré a cette date/heure et dans la salle
+	var fin = ""
+	if condition != nil {
+		fin = " AND " + *condition
+	}
+
+	var tmp = "(('" + *departureDateTime + "' BETWEEN horaire_start AND horaire_end) OR ('" + *endDateTime + "' BETWEEN horaire_start AND horaire_end) OR (horaire_start BETWEEN '" + *departureDateTime + "' AND '" + *endDateTime + "') OR (horaire_end BETWEEN '" + *departureDateTime + "' AND '" + *endDateTime + "'))" + fin
+	result, err := bdd.SelectDB(RESERVATIONS, []string{"*"}, nil, &tmp, true)
 
 	if err != nil {
 		Log.Error("Impossible de vérifier si il existe déjà une reservation a cette date")
-		return false
+		return false, 0
 	}
 
 	// If y'a déjà une réservation ce jour
-	if len(result) > 0 {
-		tmp = fmt.Sprintf("id_reservation = %d", result[0]["id_reservation"].(int64))
+	if len(result) > 1 {
+		// It's not normal to have two result
+		return false, len(result)
+	} else if len(result) > 0 {
 
-		result, err = bdd.SelectDB(RESERVER, []string{"id_salle"}, nil, &tmp)
+		for _, r := range result {
+			tmp = fmt.Sprintf("id_reservation = %d", r["id_reservation"].(int64))
+			result, err = bdd.SelectDB(RESERVER, []string{"id_salle"}, nil, &tmp, true)
 
-		// Il y'a déjà une reservation ce jour et dans cette salle
-		if err != nil || result != nil {
-			fmt.Printf("Il existe déjà une reservation à cette date %s et dans cette salle %d\n", *departureDateTime, *salle)
-			Println("------------------------------")
-			return false
+			// Il y'a déjà une reservation ce jour et dans cette salle
+			if err != nil || result != nil {
+				Println("\nIl existe (déjà) une reservation à cette date et heure dans cette salle : ")
+				var idreservation = fmt.Sprintf("id_reservation=%d", r["id_reservation"])
+				listReservations(&idreservation)
+				return false, len(result)
+			}
 		}
+
 	}
 
-	return true
+	return true, len(result)
 }
 
 //
