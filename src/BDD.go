@@ -10,15 +10,14 @@ import (
 type Db struct {
 }
 
-func connectDB() (db *sql.DB) {
+func connectDB() (db *sql.DB, errG error) {
 
 	db, err := sql.Open("mysql", "root:password@tcp(localhost:3306)/go_reserv")
 	if err != nil {
 		Log.Error("Impossible de se connecter à la BDD", err)
-		return nil
+		return nil, errG
 	}
-	//Log.Infos("BDD Connecting ok")
-	return db
+	return db, nil
 }
 
 //
@@ -39,7 +38,11 @@ func (d *Db) SelectDB(table string, column []string, join *string, condition *st
 		return nil, err
 	}
 
-	var db = connectDB()
+	var db, errC = connectDB()
+
+	if errC != nil {
+		return nil, err
+	}
 
 	if db == nil {
 		Log.Error("What da heck bro, l'instance db est nulle ??")
@@ -107,7 +110,11 @@ func (d *Db) InsertDB(table string, column []string, value []string, debug ...bo
 		return
 	}
 
-	var db = connectDB()
+	var db, errC = connectDB()
+
+	if errC != nil {
+		return
+	}
 
 	if db == nil {
 		Log.Error("What da heck bro, l'instance db est nulle ??")
@@ -168,7 +175,11 @@ func (d *Db) UpdateDB(table string, column []string, value []string, condition *
 		return
 	}
 
-	var db = connectDB()
+	var db, errC = connectDB()
+
+	if errC != nil {
+		return
+	}
 
 	if db == nil {
 		Log.Error("What da heck bro, l'instance db est nulle ??")
@@ -232,7 +243,11 @@ func (d *Db) DeleteDB(table string, condition *string, debug ...bool) {
 		return
 	}
 
-	var db = connectDB()
+	var db, errC = connectDB()
+
+	if errC != nil {
+		return
+	}
 
 	if db == nil {
 		Log.Error("What da heck bro, l'instance db est nulle ??")
