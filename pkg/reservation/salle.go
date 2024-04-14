@@ -4,8 +4,12 @@ import (
 	. "Projet_GO_Reservation/pkg/bdd"
 	. "Projet_GO_Reservation/pkg/const"
 	. "Projet_GO_Reservation/pkg/log"
+	"bufio"
 	"fmt"
+	"os"
 	"strconv"
+	"strings"
+	"time"
 )
 
 var optionSalle int
@@ -16,14 +20,16 @@ func MenuSalle() {
 		menuSalle()
 		switch optionSalle {
 		case 1:
-			GetAllSalle()
+			GetAllSalleDispo()
 		case 2:
-			GetSalleById()
+			GetAllSalleDispo()
 		case 3:
-			CreateRoom()
+			GetSalleById()
 		case 4:
-			DeleteRoomByID()
+			CreateRoom()
 		case 5:
+			DeleteRoomByID()
+		case 6:
 			Println("Retour menu principal")
 			return
 		}
@@ -32,6 +38,10 @@ func MenuSalle() {
 		}
 	}
 }
+
+//
+// ------------------------------------------------------------------------------------------------ //
+//
 
 func GetAllSalle() []map[string]interface{} {
 	result, err := bdd.SelectDB(SALLES, []string{"id_salle", "nom", "place"}, nil, nil, true)
@@ -62,6 +72,10 @@ func GetAllSalle() []map[string]interface{} {
 	return result
 }
 
+//
+// ------------------------------------------------------------------------------------------------ //
+//
+
 func GetSalleById() {
 
 	fmt.Println("Taper id de la salle que vous voulez")
@@ -91,6 +105,10 @@ func GetSalleById() {
 
 }
 
+//
+// ------------------------------------------------------------------------------------------------ //
+//
+
 func CreateRoom() {
 	name := ""
 	capacity := 0
@@ -106,6 +124,10 @@ func CreateRoom() {
 
 	Log.Infos("Salle créée avec succès")
 }
+
+//
+// ------------------------------------------------------------------------------------------------ //
+//
 
 func DeleteRoomByID() {
 	fmt.Println("Taper id de la salle que vous voulez")
@@ -137,16 +159,99 @@ func CheckId(id int) error {
 	return nil
 }
 
+//
+// ------------------------------------------------------------------------------------------------ //
+//
+
+func GetAllSalleDispo() []map[string]interface{} {
+	reader := bufio.NewReader(os.Stdin)
+	dateFormat := "2006-01-02 15:04:05"
+
+	var debut, fin string
+
+	for {
+		fmt.Println("Entrez l'heure de début souhaitée (format 'YYYY-MM-DD HH:mm:ss') :")
+		debutInput, err := reader.ReadString('\n')
+		if err != nil {
+			Log.Error("Erreur de saisie pour l'heure de début : ", err)
+			return nil
+		}
+		debut = strings.TrimSpace(debutInput)
+
+		_, err = time.Parse(dateFormat, debut)
+		if err != nil {
+			fmt.Println("Format de date incorrect. Veuillez saisir une date au format 'YYYY-MM-DD HH:mm:ss'.")
+			continue
+		}
+		break
+	}
+
+	for {
+		fmt.Println("Entrez l'heure de fin souhaitée (format 'YYYY-MM-DD HH:mm:ss') :")
+		finInput, err := reader.ReadString('\n')
+		if err != nil {
+			Log.Error("Erreur de saisie pour l'heure de fin : ", err)
+			return nil
+		}
+		fin = strings.TrimSpace(finInput)
+
+		_, err = time.Parse(dateFormat, fin)
+		if err != nil {
+			fmt.Println("Format de date incorrect. Veuillez saisir une date au format 'YYYY-MM-DD HH:mm:ss'.")
+			continue
+		}
+		break
+	}
+
+	condition := "SALLES.id_salle NOT IN" +
+		"(SELECT DISTINCT RESERVER.id_salle FROM RESERVER " +
+		"INNER JOIN RESERVATIONS ON RESERVER.id_reservation = RESERVATIONS.id_reservation " +
+		"WHERE (horaire_start BETWEEN '" + debut + "' AND '" + fin + "'" +
+		" OR horaire_end BETWEEN '" + debut + "' AND '" + fin + "'))"
+
+	result, err := bdd.SelectDB(SALLES, []string{"id_salle", "nom", "place"}, nil, &condition, true)
+	if err != nil {
+		Log.Error("Impossible de sélectionner dans la BDD : ", err)
+		return nil
+	}
+
+	if result == nil || len(result) == 0 {
+		Log.Error("Impossible de sélectionner les données")
+		return nil
+	}
+
+	Println("------------------------------")
+	Println("----- SALLES DISPONIBLES -----")
+	for _, salle := range result {
+		Println("------------------------------")
+		id_salle := salle["id_salle"]
+		nom := salle["nom"]
+		place := salle["place"]
+
+		fmt.Println("ID salle:", id_salle)
+		fmt.Println("Nom:", nom)
+		fmt.Println("Place:", place)
+	}
+	Println("-----------------------2" +
+		"-------")
+
+	return result
+}
+
+//
+// ------------------------------------------------------------------------------------------------ //
+//
+
 func menuSalle() {
 	for {
 		Println("-----------------------------------------------------\nBienvenue dans le Menu Salle\n-----------------------------------------------------\n")
-		Println("1.Lister les salles \n2.Selectioner une salles avec un id \n3.cree une salle \n4.supprimer une salle \n5.Retour menu principal\nChoisissez une option :")
+		Println("1.Lister les salles \n2.Lister de salles disponibles \n3.Selectioner une salles avec un id \n4.cree une salle \n5.supprimer une salle \n6.Retour menu principal\nChoisissez une option :")
 		_, err := fmt.Scanln(&optionSalle)
 		if err != nil {
 			Println("Erreur de saisie. Veuillez saisir un numéro valide.")
 			continue
 		}
-		if optionSalle < 1 || optionSalle > 5 {
+		if optionSalle < 1 || optionSalle > 6 {
 			Println("Option invalide. Veuillez choisir une option entre 1 et 5.")
 			continue
 		}
