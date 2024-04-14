@@ -1,7 +1,7 @@
 package _const
 
 import (
-	. "Projet_GO_Reservation/log"
+	. "Projet_GO_Reservation/pkg/log"
 )
 
 const (

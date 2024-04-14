@@ -1,9 +1,9 @@
 package lechauve
 
 import (
-	. "Projet_GO_Reservation/bdd"
-	. "Projet_GO_Reservation/const"
-	. "Projet_GO_Reservation/log"
+	. "Projet_GO_Reservation/pkg/bdd"
+	. "Projet_GO_Reservation/pkg/const"
+	. "Projet_GO_Reservation/pkg/log"
 	"fmt"
 	"strconv"
 	"time"

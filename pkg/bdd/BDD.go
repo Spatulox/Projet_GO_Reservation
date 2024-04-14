@@ -1,8 +1,8 @@
 package bdd
 
 import (
-	. "Projet_GO_Reservation/const"
-	. "Projet_GO_Reservation/log"
+	. "Projet_GO_Reservation/pkg/const"
+	. "Projet_GO_Reservation/pkg/log"
 	"database/sql"
 	"errors"
 	_ "github.com/go-sql-driver/mysql"
