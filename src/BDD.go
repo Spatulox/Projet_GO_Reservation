@@ -2,6 +2,7 @@ package Projet_GO_Reservation
 
 import (
 	"database/sql"
+	"errors"
 	_ "github.com/go-sql-driver/mysql"
 	"reflect"
 )
@@ -24,18 +25,25 @@ func connectDB() (db *sql.DB) {
 // ------------------------------------------------------------------------------------------------ //
 //
 
-func (d *Db) SelectDB(table string, column []string, liason *string, condition *string, debug ...bool) ([]map[string]interface{}, error) {
+func (d *Db) SelectDB(table string, column []string, join *string, condition *string, debug ...bool) ([]map[string]interface{}, error) {
+
+	var err error = errors.New("Some error occurred")
 
 	if checkData(table, column, nil, condition) == false {
 		Log.Error("Plz check your parameters")
-		return nil, nil
+		return nil, err
+	}
+
+	if join != nil && reflect.TypeOf(*join).Kind() != reflect.String {
+		Log.Error("la valeur de innerjoin doit être une chaîne de caractères")
+		return nil, err
 	}
 
 	var db = connectDB()
 
 	if db == nil {
 		Log.Error("What da heck bro, l'instance db est nulle ??")
-		return nil, nil
+		return nil, err
 	}
 
 	// checking the right format
@@ -43,34 +51,33 @@ func (d *Db) SelectDB(table string, column []string, liason *string, condition *
 
 	if columns == NullString {
 		Log.Error("Impossible to transform the columns array into a string")
-		return nil, nil
+		return nil, err
 	}
 
 	var query *sql.Rows
 	var queryString string
-	var err error
 
-	if condition == nil && liason == nil {
+	if condition == nil && join == nil {
 		query, err = db.Query("SELECT " + columns + " FROM " + table)
 		queryString = "SELECT " + columns + " FROM " + table
 		if err != nil {
-			ILog("ERROR : ", err)
+			Log.Error("Erreur : ", err)
 			Log.Debug(queryString)
-			return nil, nil
+			return nil, err
 		}
-	} else if condition != nil && liason == nil {
+	} else if condition != nil && join == nil {
 		query, err = db.Query("SELECT " + columns + " FROM " + table + " WHERE " + *condition)
 		queryString = "SELECT " + columns + " FROM " + table + " WHERE " + *condition
 		if err != nil {
-			ILog("ERROR : ", err)
+			Log.Error("Erreur : ", err)
 			Log.Debug(queryString)
 			return nil, err
 		}
 	} else {
-		query, err = db.Query("SELECT " + columns + " FROM " + table + *liason + " WHERE " + *condition)
-		queryString = "SELECT " + columns + " FROM " + table + *liason + " WHERE " + *condition
+		query, err = db.Query("SELECT " + columns + " FROM " + table + " " + *join + " WHERE " + *condition)
+		queryString = "SELECT " + columns + " FROM " + table + " " + *join + " WHERE " + *condition
 		if err != nil {
-			ILog("ERROR : ", err)
+			Log.Error("Erreur : ", err)
 			Log.Debug(queryString)
 			return nil, err
 		}
