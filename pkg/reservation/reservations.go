@@ -36,8 +36,11 @@ func ReservationsMenu() {
 			updateReservation(nil, nil)
 		case 7:
 
-			Json(listReservations(nil))
+			DataToJson(listReservations(nil))
 		case 8:
+
+			JsonToData(nil)
+		case 9:
 
 			Println("Retour menu principal")
 			return
@@ -673,13 +676,13 @@ func getDateAndHour() (time.Time, time.Time) {
 func menuReserv() {
 	for {
 		Println("\n-----------------------------------------------------\nMenu Réservation\n-----------------------------------------------------")
-		Println("1. Lister les reservations\n2. Lister les reservations par salles\n3. Lister les reservations par date\n4. Créer une réservation\n5. Annuler une réservation\n6. Mettre à jour une reservation\n7. Exporter toutes les réservations en json\n8. Menu Principal\nChoisissez une option :")
+		Println("1. Lister les reservations\n2. Lister les reservations par salles\n3. Lister les reservations par date\n4. Créer une réservation\n5. Annuler une réservation\n6. Mettre à jour une reservation\n7. Exporter toutes les réservations en json\n8. Importer des réservations depuis un fichier json\n9. Menu Principal\nChoisissez une option :")
 		_, err := fmt.Scanln(&optionReserv)
 		if err != nil {
 			Println("Erreur de saisie. Veuillez saisir un numéro valide.")
 			continue
 		}
-		if optionReserv < 1 || optionReserv > 8 {
+		if optionReserv < 1 || optionReserv > 9 {
 			Println("Option invalide. Veuillez choisir une option entre 1 et 7.")
 			continue
 		}
