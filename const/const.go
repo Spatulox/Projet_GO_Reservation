@@ -1,4 +1,8 @@
-package Projet_GO_Reservation
+package _const
+
+import (
+	. "Projet_GO_Reservation/log"
+)
 
 const (
 	NullString = ""
