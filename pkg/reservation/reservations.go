@@ -433,7 +433,70 @@ func updateReservation(state *int, idReservation *int) {
 		idReserv = *idReservation
 	}
 
-	tmp := fmt.Sprintf("id_reservation = %d", idReserv)
+	// Need to check if reservation with another state than "Annulé" exists at the same time (room & date/hour) to block the user
+	// Get the reservation with id to retrieve date/hour
+	var tmp = fmt.Sprintf("id_reservation=%d", idReserv)
+	ListResult := listReservations(&tmp, true)
+	// Get the time of the reservation
+	if len(ListResult) > 0 {
+		horaireStart := fmt.Sprintf("%s", ListResult[0]["horaire_start"])
+		horaireEnd := fmt.Sprintf("%s", ListResult[0]["horaire_end"])
+
+		var tmp = fmt.Sprintf("id_reservation=%d", idReserv)
+		idSalle, err := bdd.SelectDB(RESERVER, []string{"id_salle"}, nil, &tmp)
+
+		if err != nil {
+			Log.Error("Impossible de récupérer la salle de la réservation sélectionnée", err)
+			return
+		}
+		salle := idSalle[0]["id_salle"].(int64)
+		fmt.Println(horaireStart, horaireEnd, salle)
+
+		var leBool bool
+		var length int
+		var idEtat int
+
+		var tmp2 = fmt.Sprintf("id_reservation=%d", idReserv)
+		IdResult := listReservations(&tmp2, true)
+
+		if len(IdResult) > 0 {
+			idEtat = int(IdResult[0]["id_etat"].(int64))
+		} else {
+			Log.Error("Impossible de récupérer le statut de la réservation actuelle")
+			return
+		}
+
+		tmp = "id_etat != 3"
+		intSalle := int(salle)
+		if idEtat == 3 {
+			// Vérifier s'il y a une autre réservation sur la même plage horaire, sauf celle annulée
+			_, length = isRoomAvailable(&horaireStart, &horaireEnd, &intSalle, &tmp)
+			if length > 0 {
+				Println("Il y a déjà une réservation sur la même plage horaire (Voir au dessus)")
+				return
+			}
+		} else {
+			// Vérifier s'il y a plus d'une réservation sur la même plage horaire, sauf celle annulée
+			_, length = isRoomAvailable(&horaireStart, &horaireEnd, &intSalle, &tmp)
+			if length > 1 {
+				Log.Error("Ouatte da héque brau, c'est pas normal ça O.O")
+				return
+			}
+		}
+
+		// We check at the same date/hour, so there is always one reservation
+		if leBool == false && length > 1 {
+			Println("Une autre réservation à remplacé la votre. Veuillez en créer une autre dans une autre salle, ou un autre horaire de début/fin")
+			return
+		} else if leBool == true {
+			Log.Error("On ne peut pas mettre a jour une reservation qui n'existe pas :/")
+			return
+		} else {
+			Println("Mise a jour de l'état de la salle")
+		}
+	}
+
+	tmp = fmt.Sprintf("id_reservation = %d", idReserv)
 	stateStr := strconv.FormatInt(newState, 10)
 	bdd.UpdateDB(RESERVATIONS, []string{"id_etat"}, []string{stateStr}, &tmp)
 
