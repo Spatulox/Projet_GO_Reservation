@@ -3,8 +3,8 @@ package main
 import (
 	. "Projet_GO_Reservation/pkg/bdd"
 	. "Projet_GO_Reservation/pkg/const"
-	. "Projet_GO_Reservation/pkg/functions"
 	. "Projet_GO_Reservation/pkg/log"
+	. "Projet_GO_Reservation/pkg/reservation"
 	"fmt"
 	"os"
 )
