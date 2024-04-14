@@ -5,6 +5,7 @@ import (
 	. "Projet_GO_Reservation/pkg/const"
 	. "Projet_GO_Reservation/pkg/log"
 	. "Projet_GO_Reservation/pkg/reservation"
+	. "Projet_GO_Reservation/pkg/web"
 	"fmt"
 	"os"
 )
@@ -12,6 +13,9 @@ import (
 var option int
 
 func main() {
+
+	// Start a goroutine for an asynchronous listen to have the CLI
+	go EnableHandlers()
 
 	for {
 		menu()
