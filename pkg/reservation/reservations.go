@@ -585,6 +585,7 @@ func printReservations(result []map[string]interface{}, noPrint ...bool) []model
 
 		tmp := fmt.Sprintf("id_etat=%v", idEtat)
 		etatResult, err := bdd.SelectDB(ETAT, []string{"nom_etat"}, nil, &tmp)
+		nomEtat := etatResult[0]["nom_etat"].(string)
 
 		tmp = fmt.Sprintf("id_reservation=%v", idReservation)
 		idSalleResult, err := bdd.SelectDB(RESERVER, []string{"id_salle"}, nil, &tmp)
@@ -611,11 +612,15 @@ func printReservations(result []map[string]interface{}, noPrint ...bool) []model
 			sallePlace = -1
 		}
 
+		idSalleTmp := idSalleResult[0]["id_salle"].(int64)
+
 		reservation := models.Reservation{
 			HoraireStart:  horaireDebut.(string),
 			HoraireEnd:    horaireFin.(string),
+			NomEtat:       nomEtat,
 			IdEtat:        idEtat.(int64),
 			IdReservation: idReservation.(int64),
+			IdSalle:       idSalleTmp,
 			NomSalle:      salleName,
 			PlaceSalle:    sallePlace,
 		}
