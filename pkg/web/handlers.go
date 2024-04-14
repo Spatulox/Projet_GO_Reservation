@@ -12,7 +12,7 @@ func EnableHandlers() {
 
 	http.HandleFunc(RouteIndex, IndexHandler)
 	http.HandleFunc(RouteIndexReservation, ReservationHandler)
-	http.HandleFunc(RouteListReservationRoom, ListByIdReservationHandler)
+	http.HandleFunc(RouteListReservationRoom, ListBySalleIdReservationHandler)
 	http.HandleFunc(RouteListReservationDate, ListByDateReservationHandler)
 
 	Log.Infos("Handlers Enabled")
@@ -54,7 +54,7 @@ func ReservationHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func ListByIdReservationHandler(w http.ResponseWriter, r *http.Request) {
+func ListBySalleIdReservationHandler(w http.ResponseWriter, r *http.Request) {
 
 	idStr := r.URL.Query().Get("idRoom")
 
@@ -79,6 +79,7 @@ func ListByIdReservationHandler(w http.ResponseWriter, r *http.Request) {
 		if result == nil {
 			Log.Error("No result")
 			templates.ExecuteTemplate(w, "reservations.html", nil)
+			return
 		}
 		templates.ExecuteTemplate(w, "reservations.html", result)
 
@@ -94,6 +95,7 @@ func ListByDateReservationHandler(w http.ResponseWriter, r *http.Request) {
 		if result == nil {
 			Log.Error("Data are null for unknown reason :/")
 			templates.ExecuteTemplate(w, "reservations.html", nil)
+			return
 		}
 		templates.ExecuteTemplate(w, "reservations.html", result)
 
