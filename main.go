@@ -43,7 +43,7 @@ func main() {
 
 func menu() {
 	for {
-		Println("-----------------------------------------------------\nBienvenue dans le Service de Réservation en Ligne\n-----------------------------------------------------")
+		Println("\n-----------------------------------------------------\nBienvenue dans le Service de Réservation en Ligne\n-----------------------------------------------------")
 		Println("1. Menu pour les réservations\n2. Menu pour les Salles\n3. Créer une réservation\n4. Visualiser les réservations\n5. Quitter\nChoisissez une option :")
 		_, err := fmt.Scanln(&option)
 		if err != nil {
@@ -60,6 +60,7 @@ func menu() {
 
 func retourMenu() {
 	var choix int
+	Println("\n----------Retour-----------")
 	Println("1. Retourner au menu principal\n2. Quitter\nChoisissez une option :")
 	fmt.Scanln(&choix)
 	switch choix {

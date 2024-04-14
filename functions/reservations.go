@@ -566,7 +566,7 @@ func getDateAndHour() (time.Time, time.Time) {
 
 func menuReserv() {
 	for {
-		Println("-----------------------------------------------------\nMenu Réservation\n-----------------------------------------------------")
+		Println("\n-----------------------------------------------------\nMenu Réservation\n-----------------------------------------------------")
 		Println("1. Lister les reservations\n2. Lister les reservations par salles\n3. Lister les reservations par date\n4. Créer une réservation\n5. Annuler une réservation\n6. Mettre à jour une reservation\n7. Menu Principal\nChoisissez une option :")
 		_, err := fmt.Scanln(&optionReserv)
 		if err != nil {
@@ -583,7 +583,7 @@ func menuReserv() {
 
 func retourMenuReserv() int64 {
 	var choix int
-	Println("-------------Retour-------------")
+	Println("\n-------------Retour-------------")
 	Println("1. Retourner au menu reservation\n2. Menu principal\nChoisissez une option :")
 	fmt.Scanln(&choix)
 
