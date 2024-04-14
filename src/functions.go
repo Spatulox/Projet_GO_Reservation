@@ -67,7 +67,7 @@ func Println(message string) {
 
 // -----------------------------------------------------
 
-func arrayToString(arr []string, noQuotes ...bool) string {
+func ArrayToString(arr []string, noQuotes ...bool) string {
 	if len(arr) == 0 {
 		return ""
 	}
@@ -94,7 +94,7 @@ func arrayToString(arr []string, noQuotes ...bool) string {
 
 // -----------------------------------------------------
 
-func concatColumnWithValues(columns []string, values []string) string {
+func ConcatColumnWithValues(columns []string, values []string) string {
 
 	if len(columns) == 0 || len(values) == 0 {
 		Log.Error("Plz columns and values string array must have at least one key each")

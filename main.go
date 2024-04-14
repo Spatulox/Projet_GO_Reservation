@@ -1,6 +1,7 @@
 package main
 
 import (
+	. "Projet_GO_Reservation/bdd"
 	. "Projet_GO_Reservation/functions"
 	. "Projet_GO_Reservation/src"
 	"fmt"

@@ -1,6 +1,7 @@
-package Projet_GO_Reservation
+package bdd
 
 import (
+	. "Projet_GO_Reservation/src"
 	"database/sql"
 	"errors"
 	_ "github.com/go-sql-driver/mysql"
@@ -50,7 +51,7 @@ func (d *Db) SelectDB(table string, column []string, join *string, condition *st
 	}
 
 	// checking the right format
-	var columns = arrayToString(column, true)
+	var columns = ArrayToString(column, true)
 
 	if columns == NullString {
 		Log.Error("Impossible to transform the columns array into a string")
@@ -121,9 +122,9 @@ func (d *Db) InsertDB(table string, column []string, value []string, debug ...bo
 		return
 	}
 
-	var columns = arrayToString(column, true)
+	var columns = ArrayToString(column, true)
 
-	var values = arrayToString(value)
+	var values = ArrayToString(value)
 
 	if columns == NullString {
 		Log.Error("Impossible to transform the columns array into a string")
@@ -190,7 +191,7 @@ func (d *Db) UpdateDB(table string, column []string, value []string, condition *
 	var queryString string
 	var err error
 
-	var set = concatColumnWithValues(column, value)
+	var set = ConcatColumnWithValues(column, value)
 
 	if set == NullString {
 		return
