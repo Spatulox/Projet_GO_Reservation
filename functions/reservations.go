@@ -457,7 +457,8 @@ func printReservations(result []map[string]interface{}) {
 	Println("-------- RESERVATIONS --------")
 	for _, sResult := range result {
 
-		horaire := sResult["horaire"]
+		horaireDebut := sResult["horaire_start"]
+		horaireFin := sResult["horaire_end"]
 		idEtat := sResult["id_etat"]
 		idReservation := sResult["id_reservation"]
 
@@ -488,7 +489,8 @@ func printReservations(result []map[string]interface{}) {
 
 		// Print
 		fmt.Println("ID Réservation:", idReservation)
-		fmt.Println("Horaire:", horaire)
+		fmt.Println("Horaire Début:", horaireDebut)
+		fmt.Println("Horaire Fin:", horaireFin)
 
 		if err != nil {
 			Log.Error("Impossible de récupérer l'état de la réservation")
