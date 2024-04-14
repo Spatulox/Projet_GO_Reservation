@@ -32,7 +32,7 @@ func MenuSalle() {
 }
 
 func GetAllSalle() []map[string]interface{} {
-	result, err := bdd.SelectDB(SALLES, []string{"id_salle", "nom", "place"}, nil, true)
+	result, err := bdd.SelectDB(SALLES, []string{"id_salle", "nom", "place"}, nil, nil, true)
 	if err != nil {
 		Log.Error("Impossible de sélectionner dans la BDD : ", err)
 		return nil
@@ -67,7 +67,7 @@ func GetSalleById() {
 	fmt.Scanln(&id)
 	condition := fmt.Sprintf("id_salle = %d", id)
 
-	result, err := bdd.SelectDB(SALLES, []string{"nom", "place"}, &condition, true)
+	result, err := bdd.SelectDB(SALLES, []string{"nom", "place"}, nil, &condition, true)
 	if err != nil {
 		Log.Error("Impossible de sélectionner dans la BDD : ", err)
 		return
@@ -123,7 +123,7 @@ func DeleteRoomByID() {
 
 func CheckId(id int) error {
 	condition := fmt.Sprintf("id_salle = %d", id)
-	result, err := bdd.SelectDB("SALLES", []string{"id_salle"}, &condition)
+	result, err := bdd.SelectDB("SALLES", []string{"id_salle"}, nil, &condition)
 	if err != nil {
 		return fmt.Errorf("Erreur lors de la vérification de l'existence de la salle : %v", err)
 	}
