@@ -5,6 +5,7 @@ import (
 	. "Projet_GO_Reservation/pkg/const"
 	. "Projet_GO_Reservation/pkg/json"
 	. "Projet_GO_Reservation/pkg/log"
+	"Projet_GO_Reservation/pkg/models"
 	"fmt"
 	"strconv"
 	"time"
@@ -18,25 +19,25 @@ func ReservationsMenu() {
 		switch optionReserv {
 		case 1:
 
-			listReservations(nil)
+			ListReservations(nil)
 		case 2:
 
-			listReservationsByRoom(nil)
+			ListReservationsByRoom(nil)
 		case 3:
 
-			listReservationsByDate(nil)
+			ListReservationsByDate(nil)
 		case 4:
 
-			createReservation(nil, nil, nil)
+			CreateReservation(nil, nil, nil)
 		case 5:
 
-			cancelReservation()
+			CancelReservation()
 		case 6:
 
-			updateReservation(nil, nil)
+			UpdateReservation(nil, nil)
 		case 7:
 
-			DataToJson(listReservations(nil))
+			DataToJson(ListReservations(nil))
 		case 8:
 
 			JsonToData(nil)
@@ -55,7 +56,7 @@ func ReservationsMenu() {
 // ------------------------------------------------------------------------------------------------ //
 //
 
-func listReservations(condition *string, noPrintRoom ...bool) []map[string]interface{} {
+func ListReservations(condition *string, noPrintRoom ...bool) []models.Reservation {
 
 	var bdd Db
 	// Condition can be nil
@@ -66,11 +67,14 @@ func listReservations(condition *string, noPrintRoom ...bool) []map[string]inter
 		return nil
 	}
 
+	// If noPrint == nil globalement
 	if len(noPrintRoom) == 0 || !noPrintRoom[0] {
-		printReservations(result)
+		resultRes := printReservations(result)
+		return resultRes
 	}
 
-	return result
+	resultRes := printReservations(result, true)
+	return resultRes
 
 }
 
@@ -78,7 +82,7 @@ func listReservations(condition *string, noPrintRoom ...bool) []map[string]inter
 // ------------------------------------------------------------------------------------------------ //
 //
 
-func listReservationsByRoom(salle *int) []map[string]interface{} {
+func ListReservationsByRoom(salle *int) []models.Reservation {
 
 	var bdd Db
 	// Condition can be nil
@@ -144,8 +148,8 @@ func listReservationsByRoom(salle *int) []map[string]interface{} {
 
 	result, err = bdd.SelectDB(RESERVATIONS, []string{"*"}, nil, &concatCondition)
 
-	printReservations(result)
-	return result
+	resultRes := printReservations(result)
+	return resultRes
 
 }
 
@@ -153,7 +157,7 @@ func listReservationsByRoom(salle *int) []map[string]interface{} {
 // ------------------------------------------------------------------------------------------------ //
 //
 
-func listReservationsByDate(date *string) []map[string]interface{} {
+func ListReservationsByDate(date *string) []models.Reservation {
 
 	if date != nil {
 		_, err := time.Parse("2006-01-02 15:00:00", *date)
@@ -175,15 +179,15 @@ func listReservationsByDate(date *string) []map[string]interface{} {
 		return nil
 	}
 
-	printReservations(result)
-	return result
+	resultRes := printReservations(result)
+	return resultRes
 }
 
 //
 // ------------------------------------------------------------------------------------------------ //
 //
 
-func createReservation(salle *int64, departure *string, end *string) bool {
+func CreateReservation(salle *int64, departure *string, end *string) bool {
 	var bdd Db
 	// Select all the room
 
@@ -266,18 +270,18 @@ func createReservation(salle *int64, departure *string, end *string) bool {
 
 	// Selectionne la dernière entrée avec MAX(id)
 	var tmp = "id_reservation = (SELECT MAX(id_reservation) FROM " + RESERVATIONS + ")"
-	result = listReservations(&tmp, true)
+	resultRes := ListReservations(&tmp, true)
 
-	if result == nil {
+	if resultRes == nil {
 		Log.Error("Impossible de sélectionner la dernière réservation rentrée")
 		return false
 	}
 
-	horaire := fmt.Sprintf("%d", result[0]["id_reservation"].(int64))
+	horaire := fmt.Sprintf("%d", resultRes[0].IdReservation)
 	tmp2 = fmt.Sprintf("%d", *salle)
 	bdd.InsertDB(RESERVER, []string{"id_salle", "id_reservation"}, []string{tmp2, horaire})
 
-	listReservations(&tmp)
+	ListReservations(&tmp)
 
 	return true
 }
@@ -286,13 +290,13 @@ func createReservation(salle *int64, departure *string, end *string) bool {
 // ------------------------------------------------------------------------------------------------ //
 //
 
-func cancelReservation(choix ...int) {
-	reservation := listReservations(nil)
+func CancelReservation(choix ...int) {
+	reservation := ListReservations(nil)
 
 	var option int
 	var maxIdReservation, minIdReservation int64
-	minIdReservation = reservation[0]["id_reservation"].(int64)
-	maxIdReservation = reservation[len(reservation)-1]["id_reservation"].(int64)
+	minIdReservation = reservation[0].IdReservation
+	maxIdReservation = reservation[len(reservation)-1].IdReservation
 
 	if choix != nil && len(choix) > 0 {
 		option = choix[0]
@@ -316,7 +320,7 @@ func cancelReservation(choix ...int) {
 
 			f := false
 			for _, m := range reservation {
-				if (m["id_reservation"]) == int64(option) {
+				if (m.IdReservation) == int64(option) {
 					f = true
 					break
 				}
@@ -342,7 +346,7 @@ func cancelReservation(choix ...int) {
 // ------------------------------------------------------------------------------------------------ //
 //
 
-func updateReservation(state *int, idReservation *int) {
+func UpdateReservation(state *int, idReservation *int) {
 	var bdd Db
 
 	result, err := bdd.SelectDB(ETAT, []string{"*"}, nil, nil)
@@ -399,11 +403,11 @@ func updateReservation(state *int, idReservation *int) {
 	// Ask the user for the id_reservation
 	var idReserv int
 	if idReservation == nil {
-		result = listReservations(nil)
+		resultRes := ListReservations(nil)
 
 		var maxIdReservation, minIdReservation int64
-		minIdReservation = result[0]["id_reservation"].(int64)
-		maxIdReservation = result[len(result)-1]["id_reservation"].(int64)
+		minIdReservation = resultRes[0].IdReservation
+		maxIdReservation = resultRes[len(resultRes)-1].IdReservation
 
 		for {
 			fmt.Printf("Pour quelle réservation voulez-vous changer l'état ? : ")
@@ -423,8 +427,8 @@ func updateReservation(state *int, idReservation *int) {
 			}
 
 			f := false
-			for _, m := range result {
-				if (m["id_reservation"]) == int64(idReserv) {
+			for _, m := range resultRes {
+				if (m.IdReservation) == int64(idReserv) {
 					f = true
 					break
 				}
@@ -443,11 +447,11 @@ func updateReservation(state *int, idReservation *int) {
 	// Need to check if reservation with another state than "Annulé" exists at the same time (room & date/hour) to block the user
 	// Get the reservation with id to retrieve date/hour
 	var tmp = fmt.Sprintf("id_reservation=%d", idReserv)
-	ListResult := listReservations(&tmp, true)
+	ListResult := ListReservations(&tmp, true)
 	// Get the time of the reservation
 	if len(ListResult) > 0 {
-		horaireStart := fmt.Sprintf("%s", ListResult[0]["horaire_start"])
-		horaireEnd := fmt.Sprintf("%s", ListResult[0]["horaire_end"])
+		horaireStart := fmt.Sprintf("%s", ListResult[0].HoraireStart)
+		horaireEnd := fmt.Sprintf("%s", ListResult[0].HoraireEnd)
 
 		var tmp = fmt.Sprintf("id_reservation=%d", idReserv)
 		idSalle, err := bdd.SelectDB(RESERVER, []string{"id_salle"}, nil, &tmp)
@@ -464,10 +468,10 @@ func updateReservation(state *int, idReservation *int) {
 		var idEtat int
 
 		var tmp2 = fmt.Sprintf("id_reservation=%d", idReserv)
-		IdResult := listReservations(&tmp2, true)
+		IdResult := ListReservations(&tmp2, true)
 
 		if len(IdResult) > 0 {
-			idEtat = int(IdResult[0]["id_etat"].(int64))
+			idEtat = int(IdResult[0].IdEtat)
 		} else {
 			Log.Error("Impossible de récupérer le statut de la réservation actuelle")
 			return
@@ -545,7 +549,7 @@ func isRoomAvailable(departureDateTime *string, endDateTime *string, salle *int,
 			if err != nil || result != nil {
 				Println("\nIl existe (déjà) une reservation à cette date et heure dans cette salle : ")
 				var idreservation = fmt.Sprintf("id_reservation=%d", r["id_reservation"])
-				listReservations(&idreservation)
+				ListReservations(&idreservation)
 				return false, len(result)
 			}
 		}
@@ -559,9 +563,15 @@ func isRoomAvailable(departureDateTime *string, endDateTime *string, salle *int,
 // ------------------------------------------------------------------------------------------------ //
 //
 
-func printReservations(result []map[string]interface{}) {
-	Println("------------------------------")
-	Println("------- RESERVATION(S) -------")
+func printReservations(result []map[string]interface{}, noPrint ...bool) []models.Reservation {
+
+	if len(noPrint) == 0 || !noPrint[0] {
+		Println("------------------------------")
+		Println("------- RESERVATION(S) -------")
+	}
+
+	reservations := make([]models.Reservation, 0, len(result))
+
 	for _, sResult := range result {
 
 		horaireDebut := sResult["horaire_start"]
@@ -582,7 +592,10 @@ func printReservations(result []map[string]interface{}) {
 			sallesResult, err = bdd.SelectDB(SALLES, []string{"nom", "place"}, nil, &tmp)
 		}
 
-		Println("------------------------------")
+		if len(noPrint) == 0 || !noPrint[0] {
+			Println("------------------------------")
+		}
+
 		var salleName string
 		var sallePlace int64
 		if len(sallesResult) > 0 {
@@ -594,23 +607,40 @@ func printReservations(result []map[string]interface{}) {
 			sallePlace = -1
 		}
 
-		// Print
-		fmt.Println("ID Réservation:", idReservation)
-		fmt.Println("Horaire Début:", horaireDebut)
-		fmt.Println("Horaire Fin:", horaireFin)
+		reservation := models.Reservation{
+			HoraireStart:  horaireDebut.(string),
+			HoraireEnd:    horaireFin.(string),
+			IdEtat:        idEtat.(int64),
+			IdReservation: idReservation.(int64),
+			NomSalle:      salleName,
+			PlaceSalle:    sallePlace,
+		}
+		reservations = append(reservations, reservation)
 
-		if err != nil {
-			Log.Error("Impossible de récupérer l'état de la réservation")
-			fmt.Println("ID Etat:", idEtat)
-		} else {
-			fmt.Println("Etat : ", etatResult[0]["nom_etat"])
+		// Print
+		if len(noPrint) == 0 || !noPrint[0] {
+			fmt.Println("ID Réservation:", idReservation)
+			fmt.Println("Horaire Début:", horaireDebut)
+			fmt.Println("Horaire Fin:", horaireFin)
+
+			if err != nil {
+				Log.Error("Impossible de récupérer l'état de la réservation")
+				fmt.Println("ID Etat:", idEtat)
+			} else {
+				fmt.Println("Etat : ", etatResult[0]["nom_etat"])
+			}
+
+			fmt.Println("Nom Salle :", salleName)
+			fmt.Println("Place Salle :", sallePlace)
 		}
 
-		fmt.Println("Nom Salle :", salleName)
-		fmt.Println("Place Salle :", sallePlace)
-
 	}
-	Println("------------------------------")
+
+	if len(noPrint) == 0 || !noPrint[0] {
+		Println("------------------------------")
+	}
+
+	return reservations
 }
 
 //

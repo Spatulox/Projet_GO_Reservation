@@ -3,11 +3,12 @@ package json
 import (
 	. "Projet_GO_Reservation/pkg/const"
 	. "Projet_GO_Reservation/pkg/log"
+	. "Projet_GO_Reservation/pkg/models"
 	"encoding/json"
 	"os"
 )
 
-func DataToJson(data []map[string]interface{}) bool {
+func DataToJson(data []Reservation) bool {
 
 	jsonData, err := json.MarshalIndent(data, "", "  ")
 	if err != nil {
