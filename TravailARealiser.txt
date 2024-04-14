@@ -28,6 +28,10 @@ Fini : ✅ ; En cours : 🔁 ; Autre : ☠️ ;
 - JSON						✅
 - ou CSV					☠️
 
+# Import
+- JSON						🔁
+- ou CSV					☠️
+
 
 # Interface WEB					-
 - Serveur WEB					-
