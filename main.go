@@ -84,7 +84,7 @@ func example() {
 
 	// Select ----------------------------------------------------------
 	var tmpa = "id_reservation = 1"
-	result, err := bdd.SelectDB(RESERVATIONS, []string{"id_reservation", "horaire", "id_etat"}, &tmpa, true)
+	result, err := bdd.SelectDB(RESERVATIONS, []string{"id_reservation", "horaire", "id_etat"}, &tmpa, nil, true)
 	if err != nil {
 		Log.Error("Impossible de sélectionner dans la BDD : ", err)
 		return
