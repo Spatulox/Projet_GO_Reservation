@@ -48,7 +48,7 @@ func ReservationsMenu() {
 // ------------------------------------------------------------------------------------------------ //
 //
 
-func listReservations(condition *string, noPrint ...bool) []map[string]interface{} {
+func listReservations(condition *string, noPrintRoom ...bool) []map[string]interface{} {
 
 	var bdd Db
 	// Condition can be nil
@@ -59,7 +59,7 @@ func listReservations(condition *string, noPrint ...bool) []map[string]interface
 		return nil
 	}
 
-	if len(noPrint) == 0 || !noPrint[0] {
+	if len(noPrintRoom) == 0 || !noPrintRoom[0] {
 		printReservations(result)
 	}
 
