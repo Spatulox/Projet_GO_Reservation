@@ -24,7 +24,7 @@ func connectDB() (db *sql.DB) {
 // ------------------------------------------------------------------------------------------------ //
 //
 
-func (d *Db) SelectDB(table string, column []string, condition *string, debug ...bool) ([]map[string]interface{}, error) {
+func (d *Db) SelectDB(table string, column []string, liason *string, condition *string, debug ...bool) ([]map[string]interface{}, error) {
 
 	if checkData(table, column, nil, condition) == false {
 		Log.Error("Plz check your parameters")
@@ -50,7 +50,7 @@ func (d *Db) SelectDB(table string, column []string, condition *string, debug ..
 	var queryString string
 	var err error
 
-	if condition == nil {
+	if condition == nil && liason == nil {
 		query, err = db.Query("SELECT " + columns + " FROM " + table)
 		queryString = "SELECT " + columns + " FROM " + table
 		if err != nil {
@@ -58,9 +58,17 @@ func (d *Db) SelectDB(table string, column []string, condition *string, debug ..
 			Log.Debug(queryString)
 			return nil, nil
 		}
-	} else {
+	} else if condition != nil && liason == nil {
 		query, err = db.Query("SELECT " + columns + " FROM " + table + " WHERE " + *condition)
 		queryString = "SELECT " + columns + " FROM " + table + " WHERE " + *condition
+		if err != nil {
+			ILog("ERROR : ", err)
+			Log.Debug(queryString)
+			return nil, err
+		}
+	} else {
+		query, err = db.Query("SELECT " + columns + " FROM " + table + *liason + " WHERE " + *condition)
+		queryString = "SELECT " + columns + " FROM " + table + *liason + " WHERE " + *condition
 		if err != nil {
 			ILog("ERROR : ", err)
 			Log.Debug(queryString)
