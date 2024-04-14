@@ -176,7 +176,7 @@ func listReservationsByDate(date *string) []map[string]interface{} {
 // ------------------------------------------------------------------------------------------------ //
 //
 
-func createReservation(salle *int64, departure *string) bool {
+func createReservation(salle *int64, departure *string, end *string) bool {
 	var bdd Db
 	// Select all the room
 
@@ -207,7 +207,10 @@ func createReservation(salle *int64, departure *string) bool {
 
 		salle = &newSalle
 	}
+
 	var departureDateTime string
+	var endDateTime string
+
 	if departure == nil {
 
 		departureDate, departureTime := getDateAndHour()
@@ -223,18 +226,38 @@ func createReservation(salle *int64, departure *string) bool {
 		}
 	}
 
-	fmt.Println("Date et heure de départ : ", *departure)
+	if end == nil {
 
-	if isRoomAvailable(departure, salle) == false {
+		endDate, endTime := getDateAndHour()
+
+		endDateTime = endDate.Format("2006-01-02") + " " + endTime.Format("15:04:00")
+
+		end = &endDateTime
+	} else {
+		_, err := time.Parse("2006-01-02 15:04:05", *end)
+		if err != nil {
+			Log.Error("Erreur mauvais format de date", err)
+			return false
+		}
+	}
+
+	fmt.Println("Date et heure de départ : ", *departure)
+	fmt.Println("Date et heure de fin : ", *end)
+
+	var tmp2 = "id_etat != 3"
+	var tmpSalle = int(*salle)
+	leBool, _ := isRoomAvailable(departure, end, &tmpSalle, &tmp2)
+	if leBool == false {
+		Println("Annulation de l'enregistrement d'une nouvelle réservation")
 		return false
 	}
 
 	Println("Toutes les vérifications ont été effectuée, ajout d'une nouvelle réservation")
 
 	// Insertion des données
-	bdd.InsertDB(RESERVATIONS, []string{"horaire", "id_etat"}, []string{*departure, "4"})
+	bdd.InsertDB(RESERVATIONS, []string{"horaire_start", "horaire_end", "id_etat"}, []string{*departure, *end, "4"})
 
-	// Select the line with the MAX(id)
+	// Selectionne la dernière entrée avec MAX(id)
 	var tmp = "id_reservation = (SELECT MAX(id_reservation) FROM " + RESERVATIONS + ")"
 	result = listReservations(&tmp, true)
 
@@ -244,7 +267,7 @@ func createReservation(salle *int64, departure *string) bool {
 	}
 
 	horaire := fmt.Sprintf("%d", result[0]["id_reservation"].(int64))
-	tmp2 := fmt.Sprintf("%d", *salle)
+	tmp2 = fmt.Sprintf("%d", *salle)
 	bdd.InsertDB(RESERVER, []string{"id_salle", "id_reservation"}, []string{tmp2, horaire})
 
 	listReservations(&tmp)
