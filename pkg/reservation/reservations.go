@@ -159,12 +159,14 @@ func ListReservationsByRoom(salle *int) []models.Reservation {
 
 func ListReservationsByDate(date *string) []models.Reservation {
 
+	fmt.Println(*date)
 	if date != nil {
-		_, err := time.Parse("2006-01-02 15:00:00", *date)
+		dateTime, err := time.Parse("2006-01-02 15:04:05", *date)
 		if err != nil {
 			Log.Error("Erreur mauvais format de date", err)
 			return nil
 		}
+		*date = dateTime.Format("2006-01-02 15:04:05")
 	} else {
 		departureDate, departureTime := getDateAndHour()
 		departureDateTime := departureDate.Format("2006-01-02") + " " + departureTime.Format("15:04:00")
@@ -172,7 +174,9 @@ func ListReservationsByDate(date *string) []models.Reservation {
 		*date = departureDateTime
 	}
 
-	result, err := bdd.SelectDB(RESERVATIONS, []string{"*"}, nil, date)
+	tmp := "'" + *date + "' BETWEEN horaire_start AND horaire_end"
+
+	result, err := bdd.SelectDB(RESERVATIONS, []string{"*"}, nil, &tmp)
 
 	if err != nil {
 		Log.Error("Impossible de récupérer les réservations par date")
