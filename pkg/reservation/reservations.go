@@ -491,7 +491,7 @@ func isRoomAvailable(departureDateTime *string, endDateTime *string, salle *int,
 
 func printReservations(result []map[string]interface{}) {
 	Println("------------------------------")
-	Println("-------- RESERVATIONS --------")
+	Println("------- RESERVATION(S) -------")
 	for _, sResult := range result {
 
 		horaireDebut := sResult["horaire_start"]
