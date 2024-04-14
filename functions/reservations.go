@@ -50,7 +50,7 @@ func listReservations(condition *string, noPrint ...bool) []map[string]interface
 
 	var bdd Db
 	// Condition can be nil
-	result, err := bdd.SelectDB(RESERVATIONS, []string{"*"}, condition)
+	result, err := bdd.SelectDB(RESERVATIONS, []string{"*"}, nil, condition)
 
 	if err != nil || result == nil {
 		Log.Error("Erreur lors de la lecture de la Base de donnée", err)
@@ -115,7 +115,7 @@ func listReservationsByRoom(salle *int) []map[string]interface{} {
 		tmp = fmt.Sprintf("id_salle=%d", choix)
 	}
 
-	result, err = bdd.SelectDB(RESERVER, []string{"*"}, &tmp)
+	result, err = bdd.SelectDB(RESERVER, []string{"*"}, nil, &tmp)
 
 	if err != nil || result == nil {
 		Log.Error("Erreur lors de la lecture de la Base de donnée", err)
@@ -133,7 +133,7 @@ func listReservationsByRoom(salle *int) []map[string]interface{} {
 
 	}
 
-	result, err = bdd.SelectDB(RESERVATIONS, []string{"*"}, &concatCondition)
+	result, err = bdd.SelectDB(RESERVATIONS, []string{"*"}, nil, &concatCondition)
 
 	printReservations(result)
 	return result
@@ -159,7 +159,7 @@ func listReservationsByDate(date *string) []map[string]interface{} {
 		*date = departureDateTime
 	}
 
-	result, err := bdd.SelectDB(RESERVATIONS, []string{"*"}, date)
+	result, err := bdd.SelectDB(RESERVATIONS, []string{"*"}, nil, date)
 
 	if err != nil {
 		Log.Error("Impossible de récupérer les réservations par date")
@@ -178,7 +178,7 @@ func createReservation(salle *int64, departure *string) bool {
 	var bdd Db
 	// Select all the room
 
-	result, err := bdd.SelectDB(SALLES, []string{"*"}, nil)
+	result, err := bdd.SelectDB(SALLES, []string{"*"}, nil, nil)
 
 	if err != nil || result == nil {
 		Log.Error("Impossible de lister les salles :/")
@@ -313,7 +313,7 @@ func cancelReservation(choix ...int) {
 func updateReservation(state *int, idReservation *int) {
 	var bdd Db
 
-	result, err := bdd.SelectDB(ETAT, []string{"*"}, nil)
+	result, err := bdd.SelectDB(ETAT, []string{"*"}, nil, nil)
 
 	if err != nil || result == nil {
 		Log.Error("Impossible de récupérer les états possible dans la Base de donnée")
@@ -424,7 +424,7 @@ func isRoomAvailable(departureDateTime *string, salle *int64) bool {
 
 	// Selectionne dans la BDD pour savoir si y'a quelque chose enrgistré a cette date/heure et dans la salle
 	var tmp = "horaire = '" + *departureDateTime + "'"
-	result, err := bdd.SelectDB(RESERVATIONS, []string{"id_reservation"}, &tmp)
+	result, err := bdd.SelectDB(RESERVATIONS, []string{"id_reservation"}, nil, &tmp)
 
 	if err != nil {
 		Log.Error("Impossible de vérifier si il existe déjà une reservation a cette date")
@@ -435,7 +435,7 @@ func isRoomAvailable(departureDateTime *string, salle *int64) bool {
 	if len(result) > 0 {
 		tmp = fmt.Sprintf("id_reservation = %d", result[0]["id_reservation"].(int64))
 
-		result, err = bdd.SelectDB(RESERVER, []string{"id_salle"}, &tmp)
+		result, err = bdd.SelectDB(RESERVER, []string{"id_salle"}, nil, &tmp)
 
 		// Il y'a déjà une reservation ce jour et dans cette salle
 		if err != nil || result != nil {
@@ -462,16 +462,16 @@ func printReservations(result []map[string]interface{}) {
 		idReservation := sResult["id_reservation"]
 
 		tmp := fmt.Sprintf("id_etat=%v", idEtat)
-		etatResult, err := bdd.SelectDB(ETAT, []string{"nom_etat"}, &tmp)
+		etatResult, err := bdd.SelectDB(ETAT, []string{"nom_etat"}, nil, &tmp)
 
 		tmp = fmt.Sprintf("id_reservation=%v", idReservation)
-		idSalleResult, err := bdd.SelectDB(RESERVER, []string{"id_salle"}, &tmp)
+		idSalleResult, err := bdd.SelectDB(RESERVER, []string{"id_salle"}, nil, &tmp)
 
 		var sallesResult = make([]map[string]interface{}, 0)
 		//var err error
 		if err == nil && len(idSalleResult) > 0 {
 			tmp = fmt.Sprintf("id_salle=%v", idSalleResult[0]["id_salle"])
-			sallesResult, err = bdd.SelectDB(SALLES, []string{"nom", "place"}, &tmp)
+			sallesResult, err = bdd.SelectDB(SALLES, []string{"nom", "place"}, nil, &tmp)
 		}
 
 		Println("------------------------------")
