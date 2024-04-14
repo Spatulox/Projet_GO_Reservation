@@ -32,14 +32,7 @@ func main() {
 			Println("Au revoir!")
 			return
 		}
-		//retourMenu()
 	}
-
-	// Exemple de comment utiliser la fonction
-
-	/*
-	 */
-
 }
 
 func menu() {
