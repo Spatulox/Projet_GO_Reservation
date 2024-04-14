@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Reservations</title>
+</head>
+<body>
+<header></header>
+
+<main>
+    <h1>Menu des Réservations</h1>
+
+    <form action="/reservation/list/idRoom" method="GET">
+        <input type="text" name="idRoom" placeholder="Rechercher par ID de salles">
+        <button type="submit">Rechercher</button>
+    </form>
+    <form action="/reservation/list/date" method="GET">
+        <input type="text" name="idDate" placeholder="Rechercher par Date">
+        <button type="submit">Rechercher</button>
+    </form>
+
+    <form action="/reservation/create" method="GET">
+        <input type="button" name="creer" value="Créer une réservation">
+    </form>
+
+    {{ if . }}
+    <table>
+        <thead>
+        <tr>
+            <th>ID Réservation</th>
+            <th>Horaire de début</th>
+            <th>Horaire de fin</th>
+            <th>ID État</th>
+        </tr>
+        </thead>
+        <tbody>
+        {{ range . }}
+        <tr>
+            <td>{{ .id_reservation }}</td>
+            <td>{{ .horaire_start }}</td>
+            <td>{{ .horaire_end }}</td>
+            <td>{{ .id_etat }}</td>
+            <td>{{ .id_etat }}</td>
+            <td>{{ .id_etat }}</td>
+        </tr>
+        {{ end }}
+        </tbody>
+    </table>
+    {{ else }}
+    <p>An error occured, or no data</p>
+    {{ end }}
+</main>
+
+<footer></footer>
+</body>
+</html>
