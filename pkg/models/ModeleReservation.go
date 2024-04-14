@@ -1,4 +1,4 @@
-package lechauve
+package models
 
 type Reservation struct {
 	HoraireStart  string
