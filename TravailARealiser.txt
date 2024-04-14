@@ -1,0 +1,41 @@
+Fini : ✅ ; En cours : 🔁 ; Autre : ☠️ ;
+# Structures :					
+- Salles					-
+- Reservations					✅
+
+
+# Salles					
+- Lister salle dispo				
+- Lister toutes les salles			
+- Ajouter une salle				
+
+
+# Reservations					🔁
+- Créer réservations				✅
+- Annuler réservation				✅
+- Lister réservations				✅
+	- Tout					✅
+	- Par Salles				✅
+	- Par Date				✅
+- Vérifier la disponibilité			🔁
+
+
+# BDD
+- Init.sql					✅
+- Identifiant dans un fichier .env		-
+
+# Export
+- JSON						-
+- ou CSV					-
+
+
+# Interface WEB					-
+- Serveur WEB					-
+- Création des Handlers				-
+- Template HTML					-
+
+
+
+
+# BONUS
+- On va remplir cette section à la fin
