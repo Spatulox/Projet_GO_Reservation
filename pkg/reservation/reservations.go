@@ -26,7 +26,7 @@ func ReservationsMenu() {
 			listReservationsByDate(nil)
 		case 4:
 
-			createReservation(nil, nil)
+			createReservation(nil, nil, nil)
 		case 5:
 
 			cancelReservation()
@@ -34,6 +34,9 @@ func ReservationsMenu() {
 
 			updateReservation(nil, nil)
 		case 7:
+
+			Json(listReservations(nil))
+		case 8:
 
 			Println("Retour menu principal")
 			return
