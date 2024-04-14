@@ -19,6 +19,9 @@
         <input type="text" name="idDate" placeholder="Rechercher par Date">
         <button type="submit">Rechercher</button>
     </form>
+    <form action="/reservation" method="GET">
+        <button type="submit">Clear Filter</button>
+    </form>
 
     <form action="/reservation/create" method="GET">
         <input type="button" name="creer" value="Créer une réservation">
@@ -31,18 +34,22 @@
             <th>ID Réservation</th>
             <th>Horaire de début</th>
             <th>Horaire de fin</th>
-            <th>ID État</th>
+            <th>État</th>
+            <th>Nom Salle</th>
+            <th>ID Salle</th>
+            <th>Place Salle</th>
         </tr>
         </thead>
         <tbody>
         {{ range . }}
         <tr>
-            <td>{{ .id_reservation }}</td>
-            <td>{{ .horaire_start }}</td>
-            <td>{{ .horaire_end }}</td>
-            <td>{{ .id_etat }}</td>
-            <td>{{ .id_etat }}</td>
-            <td>{{ .id_etat }}</td>
+            <td>{{ .IdReservation }}</td>
+            <td>{{ .HoraireStart }}</td>
+            <td>{{ .HoraireEnd }}</td>
+            <td>{{ .NomEtat }}</td>
+            <td>{{ .NomSalle }}</td>
+            <td>{{ .IdSalle }}</td>
+            <td>{{ .PlaceSalle }}</td>
         </tr>
         {{ end }}
         </tbody>
