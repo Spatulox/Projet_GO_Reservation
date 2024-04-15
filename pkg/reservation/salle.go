@@ -45,7 +45,7 @@ func MenuSalle() {
 //
 
 func GetAllSalle() []Salle {
-	result, err := bdd.SelectDB(SALLES, []string{"id_salle", "nom", "place"}, nil, nil, true)
+	result, err := bdd.SelectDB(SALLES, []string{"id_salle", "nom", "place"}, nil, nil)
 	if err != nil {
 		Log.Error("Impossible de sélectionner dans la BDD : ", err)
 		return nil
@@ -127,7 +127,7 @@ func GetSalleById(salle *int) []Salle {
 	}
 
 	salles := printSalle(result)
-	
+
 	return salles
 
 }
@@ -147,7 +147,7 @@ func CreateRoom() bool {
 	columns := []string{"nom", "place"}
 	values := []string{name, strconv.Itoa(capacity)}
 
-	bdd.InsertDB("SALLES", columns, values, true)
+	bdd.InsertDB("SALLES", columns, values)
 
 	Log.Infos("Salle créée avec succès")
 
@@ -184,7 +184,7 @@ func DeleteRoomByID(salle *int) bool {
 	}
 
 	condition := fmt.Sprintf("id_salle = %d", id)
-	bdd.DeleteDB("SALLES", &condition, true)
+	bdd.DeleteDB("SALLES", &condition)
 	Log.Infos("Salle supprimée avec succès")
 	return true
 }
@@ -253,7 +253,7 @@ func GetAllSalleDispo() []Salle {
 		"WHERE (horaire_start BETWEEN '" + debut + "' AND '" + fin + "'" +
 		" OR horaire_end BETWEEN '" + debut + "' AND '" + fin + "'))"
 
-	result, err := bdd.SelectDB(SALLES, []string{"id_salle", "nom", "place"}, nil, &condition, true)
+	result, err := bdd.SelectDB(SALLES, []string{"id_salle", "nom", "place"}, nil, &condition)
 	if err != nil {
 		Log.Error("Impossible de sélectionner dans la BDD : ", err)
 		return nil
