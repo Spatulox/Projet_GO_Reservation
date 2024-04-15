@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+	<head>
+	    <meta charset="utf-8">
+	    <meta name="viewport" content="width=device-width, initial-scale=1">
+	    <link rel="stylesheet" type="text/css" href="/static/style.css">
+	    <script type="text/javascript" src="/static/functions.js" defer></script>
+	    <title>Reservations</title>
+	</head>
+	<body>
+		<header class="flex flexBetween nowrap alignCenter">
+				<button class="block" type="button" onclick="redirectToMainMenu()">Retour</button>
+
+	            <div id="errorPopup" class="popup">
+	                <div class="popup-content">
+	                    <p id="errorMessage"></p>
+	                </div>
+	            </div>
+
+				<h1>Projet Go Reservation</h1>
+	        </header>
+
+		<main>
+
+		    {{ if not .message }}
+		    <table>
+		        <thead>
+		        <tr>
+		            <th>ID Réservation</th>
+		            <th>Horaire de début</th>
+		            <th>Horaire de fin</th>
+		            <th>État</th>
+		            <th>Nom Salle</th>
+		            <th>ID Salle</th>
+		            <th>Place Salle</th>
+		        </tr>
+		        </thead>
+		        <tbody>
+		        {{ range . }}
+		        <tr>
+		            <td>{{ .IdReservation }}</td>
+		            <td>{{ .HoraireStart }}</td>
+		            <td>{{ .HoraireEnd }}</td>
+					<td>{{ .NomEtat }}</td>
+		            <td>{{ .NomSalle }}</td>
+		            <td>{{ .IdSalle }}</td>
+		            <td>{{ .PlaceSalle }}</td>
+		        </tr>
+		        {{ end }}
+		        </tbody>
+		    </table>
+		    {{ else }}
+		    <p>An error occured, or no data</p>
+		    {{ end }}
+
+			<button class="marginAuto marginBottom40 marginTop40 block" type="button" onclick="redirectToMainList()">Retour</button>
+		</main>
+
+		<footer></footer>
+	</body>
+
+	<script>
+		function redirectToMainMenu(){
+			window.location.href = `/`;
+		}
+		function redirectToMainList() {
+			window.location.href = `/reservation`;
+		}
+	</script>
+
+	{{ if .message }}
+	<script>
+		setTimeout(()=>{
+			showPopup("{{ .message }}")
+		}, 500)
+
+		setTimeout(()=>{
+			closePopup()
+		}, 5000)
+
+	</script>
+	{{ end }}
+
+</html>
