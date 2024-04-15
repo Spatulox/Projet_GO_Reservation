@@ -176,6 +176,23 @@ func CreateReservationHandler(w http.ResponseWriter, r *http.Request) {
 		salle := r.FormValue("id_salle")
 
 		salleInt64, err := strconv.ParseInt(salle, 10, 64)
+
+		resultSalle := GetAllSalle()
+		leBool := false
+		for _, m := range resultSalle {
+			if m.IdSalle == salleInt64 {
+				leBool = true
+				break
+			}
+		}
+
+		if leBool == false {
+			var msg = "Cette ID de salle n'existe pas :/"
+			Log.Error(msg)
+			http.Redirect(w, r, "/reservation/create?message="+msg, http.StatusSeeOther)
+			return
+		}
+
 		if err != nil {
 			var msg = "Erreur dans le format de la date/heure de début"
 			Log.Error(msg)
