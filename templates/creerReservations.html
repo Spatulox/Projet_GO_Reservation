@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" type="text/css" href="/static/style.css">
+        <script type="text/javascript" src="/static/functions.js" defer></script>
+        <title>Reservations</title>
+    </head>
+    <body>
+
+        <header class="flex flexBetween nowrap alignCenter">
+            <button class="block" type="button" onclick="redirectToMainMenu()">Retour</button>
+            <div id="errorPopup" class="popup">
+                <div class="popup-content">
+                    <p id="errorMessage"></p>
+                </div>
+            </div>
+
+            <h1>Projet Go Reservation</h1>
+        </header>
+
+        <main>
+            
+            <div class="width40 marginAuto" style="border: 1px solid #ddd;">
+                <div class="title_form">
+                    <h1>Ajouter une réservation</h1>
+                </div>
+
+                <form action="/reservation/create" method="POST" class="marginAuto form width90">
+
+                    
+                    <div class="form-group">
+                        <label>Horaire de début :</label>
+                        <input type="date" id="horaire_start_date" name="horaire_start_date" required>
+                        <input type="time" id="horaire_start_time" name="horaire_start_time" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Horaire de début :</label>
+                        <input type="date" id="horaire_end_date" name="horaire_end_date" required>
+                        <input type="time" id="horaire_end_time" name="horaire_end_time" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="id_salle">ID de la salle :</label>
+                        <input type="number" id="id_salle" name="id_salle" required>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="flex"><button class="marginAuto marginTop10 marginBottom10" type="submit">Créer la réservation</button></div>
+                    </div>
+
+                </form>
+
+            </div>
+            
+            <div class="flex"><a href="/reservation" class="btn marginTop10 marginAuto">Menu Réservation</a></div>
+
+        </main>
+
+        <footer></footer>
+
+    </body>
+</html>
+
+<script>
+    function redirectToMainMenu(){
+    window.location.href = `/`;
+    }
+</script>
+
+{{ if .message }}
+<script>
+    setTimeout(()=>{
+        showPopup("{{ .message }}")
+    }, 500)
+
+    setTimeout(()=>{
+        closePopup()
+    }, 5000)
+
+</script>
+{{ end }}
