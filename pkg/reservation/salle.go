@@ -162,7 +162,7 @@ func GetSalleById(salle *int) []Salle {
 // ------------------------------------------------------------------------------------------------ //
 //
 
-func CreateRoom() {
+func CreateRoom() bool {
 	name := ""
 	capacity := 0
 	fmt.Println("Taper le nom de la nouvelle salle")
@@ -176,6 +176,8 @@ func CreateRoom() {
 	bdd.InsertDB("SALLES", columns, values, true)
 
 	Log.Infos("Salle créée avec succès")
+
+	return true
 }
 
 //
