@@ -20,7 +20,7 @@
             <h1>Projet Go Reservation</h1>
         </header>
 
-        <main>
+        <main class="flex flexAround nowrap">
             
             <div class="width40 marginAuto" style="border: 1px solid #ddd;">
                 <div class="title_form">
@@ -32,14 +32,14 @@
                     
                     <div class="form-group">
                         <label>Horaire de début :</label>
-                        <input type="date" id="horaire_start_date" name="horaire_start_date" required>
-                        <input type="time" id="horaire_start_time" name="horaire_start_time" required>
+                        <input type="date" id="horaire_start_date" name="horaire_start_date" oninput="getAllRoomAvailable()" required>
+                        <input type="time" id="horaire_start_time" name="horaire_start_time" oninput="getAllRoomAvailable()" required>
                     </div>
 
                     <div class="form-group">
                         <label>Horaire de début :</label>
-                        <input type="date" id="horaire_end_date" name="horaire_end_date" required>
-                        <input type="time" id="horaire_end_time" name="horaire_end_time" required>
+                        <input type="date" id="horaire_end_date" name="horaire_end_date" oninput="getAllRoomAvailable()" required>
+                        <input type="time" id="horaire_end_time" name="horaire_end_time" oninput="getAllRoomAvailable()" required>
                     </div>
 
                     <div class="form-group">
@@ -54,21 +54,24 @@
                 </form>
 
             </div>
+
+            <div class="marginAuto width20" style="border: 1px solid #ddd;">
+                <h1 class="textCenter title_form noMarginTop" style="color: white;">Salles disponibles</h1>
+                <ul id="ulCreateReservation">
+                    <li class="noDecoration">Veuillez choisir une date et heure de départ et de fin pour voir les salles disponibles</li>
+                </ul>
+            </div>
             
-            <div class="flex"><a href="/reservation" class="btn marginTop10 marginAuto">Menu Réservation</a></div>
+
 
         </main>
+
+        <div class="flex"><a href="/reservation" class="btn marginTop10 marginAuto">Menu Réservation</a></div>
 
         <footer></footer>
 
     </body>
 </html>
-
-<script>
-    function redirectToMainMenu(){
-    window.location.href = `/`;
-    }
-</script>
 
 {{ if .message }}
 <script>
