@@ -32,6 +32,7 @@
 					<th>Nom Salle</th>
 					<th>ID Salle</th>
 					<th>Place Salle</th>
+					<th>Supprimer</th>
 				</tr>
 				</thead>
 				<tbody>
@@ -44,6 +45,7 @@
 					<td>{{ .NomSalle }}</td>
 					<td>{{ .IdSalle }}</td>
 					<td>{{ .PlaceSalle }}</td>
+					<td><button class="marginAuto block" type="button" onclick="redirectDelete('{{ .IdReservation }}')">Supprimer</button></td>
 				</tr>
 				{{ end }}
 				</tbody>
@@ -57,14 +59,5 @@
 
 		<footer></footer>
 	</body>
-
-	<script>
-		function redirectToMainMenu(){
-			window.location.href = `/`;
-		}
-		function redirectToMainList() {
-			window.location.href = `/reservation`;
-		}
-	</script>
 
 </html>
