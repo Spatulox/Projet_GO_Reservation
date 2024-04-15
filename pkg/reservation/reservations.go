@@ -1,3 +1,5 @@
+// -*- coding: utf-8 -*-
+
 package lechauve
 
 import (
@@ -234,9 +236,11 @@ func CreateReservation(salle *int64, departure *string, end *string) bool {
 
 		departure = &departureDateTime
 	} else {
-		_, err := time.Parse("2006-01-02 15:04:05", *departure)
+		fmt.Println(*departure)
+		yeet, err := time.Parse("2006-01-02 15:04:05", *departure)
 		if err != nil {
-			Log.Error("Erreur mauvais format de date", err)
+			fmt.Println(yeet)
+			Log.Error("Erreur mauvais format de date de début", err)
 			return false
 		}
 	}
@@ -251,7 +255,7 @@ func CreateReservation(salle *int64, departure *string, end *string) bool {
 	} else {
 		_, err := time.Parse("2006-01-02 15:04:05", *end)
 		if err != nil {
-			Log.Error("Erreur mauvais format de date", err)
+			Log.Error("Erreur mauvais format de date de fin", err)
 			return false
 		}
 	}
@@ -592,9 +596,15 @@ func printReservations(result []map[string]interface{}, noPrint ...bool) []model
 
 		var sallesResult = make([]map[string]interface{}, 0)
 		//var err error
+		var idSalleTmp int64
 		if err == nil && len(idSalleResult) > 0 {
 			tmp = fmt.Sprintf("id_salle=%v", idSalleResult[0]["id_salle"])
 			sallesResult, err = bdd.SelectDB(SALLES, []string{"nom", "place"}, nil, &tmp)
+
+			idSalleTmp = idSalleResult[0]["id_salle"].(int64)
+
+		} else {
+			idSalleTmp = -1
 		}
 
 		if len(noPrint) == 0 || !noPrint[0] {
@@ -611,8 +621,6 @@ func printReservations(result []map[string]interface{}, noPrint ...bool) []model
 			salleName = "N/A"
 			sallePlace = -1
 		}
-
-		idSalleTmp := idSalleResult[0]["id_salle"].(int64)
 
 		reservation := models.Reservation{
 			HoraireStart:  horaireDebut.(string),
