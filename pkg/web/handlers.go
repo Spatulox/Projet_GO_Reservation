@@ -41,9 +41,17 @@ func EnableHandlers() {
 //
 
 func IndexHandler(w http.ResponseWriter, r *http.Request) {
+
 	if r.Method == http.MethodGet {
-		templates.ExecuteTemplate(w, "menu.html", nil)
+		currentTime := time.Now().Format("2006-01-02 15:04")
+		templates.ExecuteTemplate(w, "menu.html", map[string]interface{}{
+			"now": currentTime,
+		})
 	}
+
+	/*	if r.Method == http.MethodGet {
+		templates.ExecuteTemplate(w, "menu.html", nil)
+	}*/
 }
 
 //
@@ -62,10 +70,14 @@ func ReservationHandler(w http.ResponseWriter, r *http.Request) {
 			// Exécuter le template avec l'URL et le message
 			templates.ExecuteTemplate(w, "reservations.html", map[string]interface{}{
 				"message": msg,
+				"result":  nil,
 			})
 			return
 		}
-		templates.ExecuteTemplate(w, "reservations.html", result)
+		templates.ExecuteTemplate(w, "reservations.html", map[string]interface{}{
+			"result":  result,
+			"message": nil,
+		})
 
 	}
 }
@@ -113,7 +125,12 @@ func ListByRoomDateIdReservationHandler(w http.ResponseWriter, r *http.Request) 
 			var tmp = "id_reservation=" + idStr
 			result = ListReservations(&tmp)
 			// It have a special pages yes
-			templates.ExecuteTemplate(w, "soloReservation.html", result)
+			if result != nil {
+				templates.ExecuteTemplate(w, "soloReservation.html", result)
+			} else {
+				var msg = "Impossible de trouver cette réservation"
+				http.Redirect(w, r, "/reservation?message="+msg, http.StatusSeeOther)
+			}
 			return
 		}
 
@@ -124,7 +141,11 @@ func ListByRoomDateIdReservationHandler(w http.ResponseWriter, r *http.Request) 
 			return
 		}
 
-		templates.ExecuteTemplate(w, "reservations.html", result)
+		//templates.ExecuteTemplate(w, "reservations.html", result)
+		templates.ExecuteTemplate(w, "reservations.html", map[string]interface{}{
+			"message": nil,
+			"result":  result,
+		})
 
 	}
 }
@@ -137,7 +158,11 @@ func CreateReservationHandler(w http.ResponseWriter, r *http.Request) {
 	//w.Header().Set("Content-Type", "text/html; charset=utf-8")
 
 	if r.Method == http.MethodGet {
-		templates.ExecuteTemplate(w, "creerReservations.html", nil)
+		templates.ExecuteTemplate(w, "creerReservations.html", map[string]interface{}{
+			"message": nil,
+			"result":  nil,
+		})
+		//templates.ExecuteTemplate(w, "creerReservations.html", nil)
 	} else if r.Method == http.MethodPost {
 		horaireStartDate := r.FormValue("horaire_start_date")
 		horaireStartTime := r.FormValue("horaire_start_time") + ":00"
