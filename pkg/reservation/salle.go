@@ -5,11 +5,8 @@ import (
 	. "Projet_GO_Reservation/pkg/const"
 	. "Projet_GO_Reservation/pkg/log"
 	. "Projet_GO_Reservation/pkg/models"
-	"bufio"
 	"fmt"
-	"os"
 	"strconv"
-	"strings"
 	"time"
 )
 
@@ -208,50 +205,21 @@ func CheckId(id int) error {
 //
 
 func GetAllSalleDispo() []Salle {
-	reader := bufio.NewReader(os.Stdin)
-	dateFormat := "2006-01-02 15:04:05"
 
-	var debut, fin string
+	var debutDate, debutTime, finDate, finTime time.Time
 
-	for {
-		fmt.Println("Entrez l'heure de début souhaitée (format 'YYYY-MM-DD HH:mm:ss') :")
-		debutInput, err := reader.ReadString('\n')
-		if err != nil {
-			Log.Error("Erreur de saisie pour l'heure de début : ", err)
-			return nil
-		}
-		debut = strings.TrimSpace(debutInput)
+	debutDate, debutTime = getDateAndHour()
 
-		_, err = time.Parse(dateFormat, debut)
-		if err != nil {
-			fmt.Println("Format de date incorrect. Veuillez saisir une date au format 'YYYY-MM-DD HH:mm:ss'.")
-			continue
-		}
-		break
-	}
+	finDate, finTime = getDateAndHour()
 
-	for {
-		fmt.Println("Entrez l'heure de fin souhaitée (format 'YYYY-MM-DD HH:mm:ss') :")
-		finInput, err := reader.ReadString('\n')
-		if err != nil {
-			Log.Error("Erreur de saisie pour l'heure de fin : ", err)
-			return nil
-		}
-		fin = strings.TrimSpace(finInput)
-
-		_, err = time.Parse(dateFormat, fin)
-		if err != nil {
-			fmt.Println("Format de date incorrect. Veuillez saisir une date au format 'YYYY-MM-DD HH:mm:ss'.")
-			continue
-		}
-		break
-	}
+	debutDateTime := debutDate.Format("2006-01-02") + " " + debutTime.Format("15:04:00")
+	endDateTime := finDate.Format("2006-01-02") + " " + finTime.Format("15:04:00")
 
 	condition := "SALLES.id_salle NOT IN" +
 		"(SELECT DISTINCT RESERVER.id_salle FROM RESERVER " +
 		"INNER JOIN RESERVATIONS ON RESERVER.id_reservation = RESERVATIONS.id_reservation " +
-		"WHERE (horaire_start BETWEEN '" + debut + "' AND '" + fin + "'" +
-		" OR horaire_end BETWEEN '" + debut + "' AND '" + fin + "'))"
+		"WHERE (horaire_start BETWEEN '" + debutDateTime + "' AND '" + endDateTime + "'" +
+		" OR horaire_end BETWEEN '" + debutDateTime + "' AND '" + endDateTime + "'))"
 
 	result, err := bdd.SelectDB(SALLES, []string{"id_salle", "nom", "place"}, nil, &condition)
 	if err != nil {
