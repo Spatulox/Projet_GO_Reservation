@@ -343,3 +343,45 @@ func retourMenuSalle() int {
 	}
 	return 1
 }
+
+//
+// ------------------------------------------------------------------------------------------------ //
+//
+
+func printSalle(result []map[string]interface{}, noPrint ...bool) []Salle {
+
+	if len(noPrint) == 0 || !noPrint[0] {
+		Println("------------------------------")
+		Println("----- SALLES DISPONIBLES -----")
+	}
+
+	var salles []Salle
+
+	for _, salle := range result {
+		if len(noPrint) == 0 || !noPrint[0] {
+			println("------------------------------")
+		}
+		id_salle := salle["id_salle"].(int64)
+		nom := salle["nom"].(string)
+		place := salle["place"].(int64)
+
+		if len(noPrint) == 0 || !noPrint[0] {
+			fmt.Println("ID salle:", id_salle)
+		}
+		fmt.Println("Nom:", nom)
+		fmt.Println("Place:", place)
+
+		s := Salle{
+			IdSalle:    id_salle,
+			NomSalle:   nom,
+			PlaceSalle: place,
+		}
+		salles = append(salles, s)
+	}
+
+	if len(noPrint) == 0 || !noPrint[0] {
+		println("------------------------------")
+	}
+
+	return salles
+}
