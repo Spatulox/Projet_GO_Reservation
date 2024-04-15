@@ -44,7 +44,7 @@ func MenuSalle() {
 // ------------------------------------------------------------------------------------------------ //
 //
 
-func GetAllSalle() []map[string]interface{} {
+func GetAllSalle() []Salle {
 	result, err := bdd.SelectDB(SALLES, []string{"id_salle", "nom", "place"}, nil, nil, true)
 	if err != nil {
 		Log.Error("Impossible de sélectionner dans la BDD : ", err)
@@ -56,21 +56,23 @@ func GetAllSalle() []map[string]interface{} {
 		return nil
 	}
 
-	Println("------------------------------")
-	Println("----------- SALLES -----------")
-	for _, salle := range result {
-		Println("------------------------------")
-		id_salle := salle["id_salle"]
-		nom := salle["nom"]
-		place := salle["place"]
+	salleStruct := printSalle(result)
 
-		fmt.Println("ID salle:", id_salle)
-		fmt.Println("Nom:", nom)
-		fmt.Println("Place:", place)
-	}
-	Println("------------------------------")
+	/*	Println("------------------------------")
+		Println("----------- SALLES -----------")
+		for _, salle := range result {
+			Println("------------------------------")
+			id_salle := salle["id_salle"]
+			nom := salle["nom"]
+			place := salle["place"]
 
-	return result
+			fmt.Println("ID salle:", id_salle)
+			fmt.Println("Nom:", nom)
+			fmt.Println("Place:", place)
+		}
+		Println("------------------------------")*/
+
+	return salleStruct
 }
 
 //
@@ -85,8 +87,8 @@ func GetSalleById(salle *int) []Salle {
 
 		result := GetAllSalle()
 
-		var minIdSalle = result[0]["id_salle"].(int64)
-		var maxIdSalle = result[len(result)-1]["id_salle"].(int64)
+		var minIdSalle = result[0].IdSalle
+		var maxIdSalle = result[len(result)-1].IdSalle
 
 		var idSalle int
 		fmt.Printf("Taper id de la salle que vous voulez entre %d et %d : ", minIdSalle, maxIdSalle)
@@ -106,7 +108,7 @@ func GetSalleById(salle *int) []Salle {
 
 			f := false
 			for _, m := range result {
-				if (m["id_salle"]) == int64(idSalle) {
+				if m.IdSalle == int64(idSalle) {
 					f = true
 					break
 				}
@@ -184,7 +186,7 @@ func CreateRoom() bool {
 // ------------------------------------------------------------------------------------------------ //
 //
 
-func DeleteRoomByID(salle *int) {
+func DeleteRoomByID(salle *int) bool {
 
 	var id int
 
@@ -206,13 +208,13 @@ func DeleteRoomByID(salle *int) {
 
 	if err := CheckId(id); err != nil {
 		Log.Error("Erreur lors de la vérification de l'existence de la salle : ", err)
-		return
+		return false
 	}
 
 	condition := fmt.Sprintf("id_salle = %d", id)
 	bdd.DeleteDB("SALLES", &condition, true)
 	Log.Infos("Salle supprimée avec succès")
-	return
+	return true
 }
 
 func CheckId(id int) error {
