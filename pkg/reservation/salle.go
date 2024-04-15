@@ -233,7 +233,7 @@ func CheckId(id int) error {
 // ------------------------------------------------------------------------------------------------ //
 //
 
-func GetAllSalleDispo() []map[string]interface{} {
+func GetAllSalleDispo() []Salle {
 	reader := bufio.NewReader(os.Stdin)
 	dateFormat := "2006-01-02 15:04:05"
 
@@ -290,22 +290,9 @@ func GetAllSalleDispo() []map[string]interface{} {
 		return nil
 	}
 
-	Println("------------------------------")
-	Println("----- SALLES DISPONIBLES -----")
-	for _, salle := range result {
-		Println("------------------------------")
-		id_salle := salle["id_salle"]
-		nom := salle["nom"]
-		place := salle["place"]
+	salleStruct := printSalle(result)
 
-		fmt.Println("ID salle:", id_salle)
-		fmt.Println("Nom:", nom)
-		fmt.Println("Place:", place)
-	}
-	Println("-----------------------2" +
-		"-------")
-
-	return result
+	return salleStruct
 }
 
 //
