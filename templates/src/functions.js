@@ -47,7 +47,8 @@ function redirectDelete(id){
     .then(response => {
         if (response.ok) {
             response.text().then(message => {
-                showPopup(message);
+                window.location.href = `/reservation?message=${message}`;
+                //showPopup(message);
             });
         } else {
             response.text().then(errorMessage => {
@@ -60,6 +61,34 @@ function redirectDelete(id){
     });
 }
 
+redirectUpdate
+
+function redirectUpdate(id){
+
+    // Récupérer l'élément select
+    var selectElement = document.querySelector('select[name="etat"]');
+
+    // Récupérer la valeur sélectionnée
+    var etat = selectElement.value;
+
+    fetch(`/reservation/update?idReserv=${id}?etat=${etat}`, {
+        method: 'GET'
+    })
+    .then(response => {
+        if (response.ok) {
+            response.text().then(message => {
+                window.location.href = `/reservation/list?idReserv=${id}`;
+            });
+        } else {
+            response.text().then(errorMessage => {
+                showPopup(errorMessage);
+            });
+        }
+    })
+    .catch(error => {
+        showPopup('Erreur lors de la requête :', error);
+    });
+}
 
 
 
