@@ -23,6 +23,8 @@ func EnableHandlers() {
 	http.HandleFunc(RouteIndexReservation, ReservationHandler)
 	http.HandleFunc(RouteListReservation, ListByRoomDateIdReservationHandler)
 	http.HandleFunc(RouteCreateReservation, CreateReservationHandler)
+	http.HandleFunc(RouteCancelReservation, CancelReservationHandler)
+	http.HandleFunc(RouteUpdateReservation, UpdateReservationHanlder)
 
 	Log.Infos("Handlers Enabled")
 
@@ -232,6 +234,88 @@ func CreateReservationHandler(w http.ResponseWriter, r *http.Request) {
 
 		http.Redirect(w, r, RouteIndexReservation, http.StatusSeeOther)
 	}
+}
+
+//
+// ------------------------------------------------------------------------------------------------ //
+//
+
+func CancelReservationHandler(w http.ResponseWriter, r *http.Request) {
+
+	idReserv := r.URL.Query().Get("idReserv")
+	var tmp = "id_reservation=" + idReserv
+
+	result := ListReservations(&tmp)
+	if len(result) == 0 {
+		Log.Error("Aucune reservation contient cet ID")
+		http.Error(w, "Aucune réservation trouvée pour l'ID de salle "+idReserv, http.StatusBadRequest)
+		return
+	}
+
+	newChoix, err := strconv.Atoi(idReserv)
+
+	if err != nil {
+		Log.Error("Impossible to convert the id from string to int")
+		http.Error(w, "Impossible to convert the id from string to int : "+idReserv, http.StatusBadRequest)
+		return
+	}
+
+	CancelReservation(newChoix)
+
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte("Réservation annulée avec succès"))
+	Log.Infos("Reservation annulée avec succès !")
+	return
+}
+
+//
+// ------------------------------------------------------------------------------------------------ //
+//
+
+func UpdateReservationHanlder(w http.ResponseWriter, r *http.Request) {
+	leString := r.URL.Query().Get("idReserv")
+
+	Log.Debug(leString)
+
+	idReserv := strings.Split(leString, "?")[0]
+	newEtat := strings.Split(leString, "?etat=")[1]
+
+	Log.Debug(idReserv)
+	Log.Debug(newEtat)
+	//return
+
+	if idReserv == "nil" || newEtat == "nil" {
+		var msg = "Vous ne pouvez pas mettre à jour une réservation avec le même statut :/"
+		Log.Error(msg)
+		http.Error(w, msg, http.StatusBadRequest)
+		return
+	}
+
+	var err error
+	var newReserv, newState int
+
+	newReserv, err = strconv.Atoi(idReserv)
+	if err != nil {
+		var msg = "Impossible de transformer l'ID reserv string en int : " + idReserv
+		Log.Error(msg, err)
+		http.Error(w, msg, http.StatusBadRequest)
+		return
+	}
+	newState, err = strconv.Atoi(newEtat)
+	if err != nil {
+		var msg = "Impossible de transformer l'ID etat string en int : " + newEtat
+		Log.Error(msg, err)
+		http.Error(w, msg, http.StatusBadRequest)
+		return
+	}
+
+	UpdateReservation(&newState, &newReserv)
+	//return
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte("Réservation annulée avec succès"))
+	Log.Infos("Reservation annulée avec succès !")
+	//http.Redirect(w, r, "", http.StatusSeeOther)
+	return
 }
 
 //

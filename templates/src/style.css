@@ -70,11 +70,11 @@ th, td {
 
 #errorPopup{
 	width: 30%;
-	position: absolute;
+	position: fixed;
 	z-index: 0;
 	max-height: 200px;
 	left: 50%;
-	top: -50px;
+	top: -200px;
 	transform: translateX(-50%);
 	background-color: gray;
 	border-radius: 20px;
@@ -128,7 +128,7 @@ th, td {
 	list-style-type: none;
 	padding: 0;
 	width: 100%;
-	max-width: 300px;
+	max-width: 350px;
 }
 
 .menu-list li {

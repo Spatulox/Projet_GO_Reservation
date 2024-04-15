@@ -57,7 +57,8 @@
 		            <th>Nom Salle</th>
 		            <th>ID Salle</th>
 		            <th>Place Salle</th>
-		            <th>Voir la salle</th>
+					<th>Voir la salle</th>
+					<th>Supprimer la salle</th>
 		        </tr>
 		        </thead>
 		        <tbody>
@@ -70,7 +71,8 @@
 		            <td>{{ .NomSalle }}</td>
 		            <td>{{ .IdSalle }}</td>
 		            <td>{{ .PlaceSalle }}</td>
-					<td><button onclick="redirectToIdList('{{ .IdReservation }}')">Voir</button></td>
+					<td><button class="marginAuto block" type="button" onclick="redirectToIdList('{{ .IdReservation }}')">Voir</button></td>
+					<td><button class="marginAuto block" type="button" onclick="redirectDelete('{{ .IdReservation }}')">Supprimer</button></td>
 		        </tr>
 		        {{ end }}
 		        </tbody>
@@ -83,34 +85,6 @@
 		<footer></footer>
 	</body>
 
-	<script>
-
-		function redirectToMainMenu(){
-			window.location.href = `/`;
-		}
-
-		function redirectToMainList() {
-			window.location.href = `/reservation`;
-		}
-
-		function redirectToCreateReserv() {
-			window.location.href = `/reservation/create`;
-		}
-
-		function redirectToRoomList() {
-			const idRoom = document.querySelector('input[name="idRoom"]').value;
-			window.location.href = `/reservation/list?idRoom=${idRoom}`;
-		}
-
-		function redirectToDateList() {
-			const idRoom = document.querySelector('input[name="idDate"]').value;
-			window.location.href = `/reservation/list?idDate=${idRoom}`;
-		}
-
-		function redirectToIdList(id) {
-			window.location.href = `/reservation/list?idReserv=${id}`;
-		}
-	</script>
 
 	{{ if .message }}
 	<script>
