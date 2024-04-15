@@ -226,22 +226,27 @@ func CheckId(id int) error {
 // ------------------------------------------------------------------------------------------------ //
 //
 
-func GetAllSalleDispo() []Salle {
+func GetAllSalleDispo(debutDateTime *string, endDateTime *string) []Salle {
 
-	var debutDate, debutTime, finDate, finTime time.Time
+	if debutDateTime == nil || endDateTime == nil {
+		var debutDate, debutTime, finDate, finTime time.Time
 
-	debutDate, debutTime = getDateAndHour()
+		debutDate, debutTime = getDateAndHour()
 
-	finDate, finTime = getDateAndHour()
+		finDate, finTime = getDateAndHour()
 
-	debutDateTime := debutDate.Format("2006-01-02") + " " + debutTime.Format("15:04:00")
-	endDateTime := finDate.Format("2006-01-02") + " " + finTime.Format("15:04:00")
+		*debutDateTime = debutDate.Format("2006-01-02") + " " + debutTime.Format("15:04:00")
+		*endDateTime = finDate.Format("2006-01-02") + " " + finTime.Format("15:04:00")
+	} else {
+		*debutDateTime += ":00"
+		*endDateTime += ":00"
+	}
 
 	condition := "SALLES.id_salle NOT IN" +
 		"(SELECT DISTINCT RESERVER.id_salle FROM RESERVER " +
 		"INNER JOIN RESERVATIONS ON RESERVER.id_reservation = RESERVATIONS.id_reservation " +
-		"WHERE (horaire_start BETWEEN '" + debutDateTime + "' AND '" + endDateTime + "'" +
-		" OR horaire_end BETWEEN '" + debutDateTime + "' AND '" + endDateTime + "'))"
+		"WHERE (horaire_start BETWEEN '" + *debutDateTime + "' AND '" + *endDateTime + "'" +
+		" OR horaire_end BETWEEN '" + *debutDateTime + "' AND '" + *endDateTime + "'))"
 
 	result, err := bdd.SelectDB(SALLES, []string{"id_salle", "nom", "place"}, nil, &condition)
 	if err != nil {
