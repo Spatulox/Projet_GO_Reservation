@@ -1,64 +1,128 @@
 <!DOCTYPE html>
 <html>
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Reservations</title>
-</head>
-<body>
-<header></header>
+	<head>
+	    <meta charset="utf-8">
+	    <meta name="viewport" content="width=device-width, initial-scale=1">
+	    <link rel="stylesheet" type="text/css" href="/static/style.css">
+	    <script type="text/javascript" src="/static/functions.js" defer></script>
+	    <title>Reservations</title>
+	</head>
+	<body>
+		<header class="flex flexBetween nowrap alignCenter">
+				<button class="block" type="button" onclick="redirectToMainMenu()">Retour</button>
+	            <div id="errorPopup" class="popup">
+	                <div class="popup-content">
+	                    <p id="errorMessage">
 
-<main>
-    <h1>Menu des Réservations</h1>
+						</p>
+	                </div>
+	            </div>
 
-    <form action="/reservation/list/idRoom" method="GET">
-        <input type="text" name="idRoom" placeholder="Rechercher par ID de salles">
-        <button type="submit">Rechercher</button>
-    </form>
-    <form action="/reservation/list/date" method="GET">
-        <input type="text" name="idDate" placeholder="Rechercher par Date">
-        <button type="submit">Rechercher</button>
-    </form>
-    <form action="/reservation" method="GET">
-        <button type="submit">Clear Filter</button>
-    </form>
+				<h1>Projet Go Reservation</h1>
+		</header>
 
-    <form action="/reservation/create" method="GET">
-        <input type="button" name="creer" value="Créer une réservation">
-    </form>
+		<main>
 
-    {{ if . }}
-    <table>
-        <thead>
-        <tr>
-            <th>ID Réservation</th>
-            <th>Horaire de début</th>
-            <th>Horaire de fin</th>
-            <th>État</th>
-            <th>Nom Salle</th>
-            <th>ID Salle</th>
-            <th>Place Salle</th>
-        </tr>
-        </thead>
-        <tbody>
-        {{ range . }}
-        <tr>
-            <td>{{ .IdReservation }}</td>
-            <td>{{ .HoraireStart }}</td>
-            <td>{{ .HoraireEnd }}</td>
-            <td>{{ .NomEtat }}</td>
-            <td>{{ .NomSalle }}</td>
-            <td>{{ .IdSalle }}</td>
-            <td>{{ .PlaceSalle }}</td>
-        </tr>
-        {{ end }}
-        </tbody>
-    </table>
-    {{ else }}
-    <p>An error occured, or no data</p>
-    {{ end }}
-</main>
+			<div id="reservation" class="flex flexCenter wrap width50 marginAuto">
+			    <h1 class="underline marginAuto">Menu des Réservations</h1>
 
-<footer></footer>
-</body>
+				<div class="alignCenter width100">
+				        <label class="marginAuto width80 block" for="idRoom">Rechercher par ID de salles</label>
+				        <input class="marginAuto width80 block" type="text" id="idRoom" name="idRoom" placeholder="Rechercher par ID de salles" oninput="redirectToRoomList()">
+				</div>
+
+				<div class="alignCenter width100">
+				        <label class="marginAuto width80 block" for="idDate">Rechercher par Date</label>
+				        <input class="marginAuto width80 block" type="datetime-local" id="idDate" name="idDate" placeholder="Rechercher par Date" oninput="redirectToDateList()">
+				</div>
+
+				<div class="width100 block">
+				    <button alignCenter="marginAuto block" type="button" onclick="redirectToMainList()">Clear Filter</button>
+				</div>
+
+				<div class="width100 marginAuto block">
+			        <button class=" block" type="button" onclick="redirectToCreateReserv()">Créer une réservation</button>
+			    </div>
+
+		    </div>
+
+			{{ if not .message }}
+		    <table>
+		        <thead>
+		        <tr>
+		            <th>ID Réservation</th>
+		            <th>Horaire de début</th>
+		            <th>Horaire de fin</th>
+		            <th>État</th>
+		            <th>Nom Salle</th>
+		            <th>ID Salle</th>
+		            <th>Place Salle</th>
+		            <th>Voir la salle</th>
+		        </tr>
+		        </thead>
+		        <tbody>
+		        {{ range . }}
+		        <tr>
+		            <td>{{ .IdReservation }}</td>
+		            <td>{{ .HoraireStart }}</td>
+		            <td>{{ .HoraireEnd }}</td>
+		            <td>{{ .NomEtat }}</td>
+		            <td>{{ .NomSalle }}</td>
+		            <td>{{ .IdSalle }}</td>
+		            <td>{{ .PlaceSalle }}</td>
+					<td><button onclick="redirectToIdList('{{ .IdReservation }}')">Voir</button></td>
+		        </tr>
+		        {{ end }}
+		        </tbody>
+		    </table>
+		    {{ else }}
+		    <p>An error occured, or no data</p>
+		    {{ end }}
+		</main>
+
+		<footer></footer>
+	</body>
+
+	<script>
+
+		function redirectToMainMenu(){
+			window.location.href = `/`;
+		}
+
+		function redirectToMainList() {
+			window.location.href = `/reservation`;
+		}
+
+		function redirectToCreateReserv() {
+			window.location.href = `/reservation/create`;
+		}
+
+		function redirectToRoomList() {
+			const idRoom = document.querySelector('input[name="idRoom"]').value;
+			window.location.href = `/reservation/list?idRoom=${idRoom}`;
+		}
+
+		function redirectToDateList() {
+			const idRoom = document.querySelector('input[name="idDate"]').value;
+			window.location.href = `/reservation/list?idDate=${idRoom}`;
+		}
+
+		function redirectToIdList(id) {
+			window.location.href = `/reservation/list?idReserv=${id}`;
+		}
+	</script>
+
+	{{ if .message }}
+	<script>
+		setTimeout(()=>{
+			showPopup("{{ .message }}")
+		}, 500)
+
+		setTimeout(()=>{
+			closePopup()
+		}, 5000)
+
+	</script>
+	{{ end }}
+
 </html>
