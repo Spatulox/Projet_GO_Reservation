@@ -24,7 +24,7 @@ func MenuSalle() {
 		case 3:
 			GetSalleById(nil)
 		case 4:
-			CreateRoom()
+			CreateRoom(nil, nil)
 		case 5:
 			DeleteRoomByID(nil)
 		case 6:
@@ -133,16 +133,38 @@ func GetSalleById(salle *int) []Salle {
 // ------------------------------------------------------------------------------------------------ //
 //
 
-func CreateRoom() bool {
-	name := ""
-	capacity := 0
-	fmt.Println("Taper le nom de la nouvelle salle")
-	fmt.Scanln(&name)
-	fmt.Println("Taper la capaciter de la nouvelle salle")
-	fmt.Scanln(&capacity)
+func CreateRoom(name *string, capacity *int) bool {
+
+	if name == nil {
+		Println("Taper le nom de la nouvelle salle")
+		for {
+
+			_, err := fmt.Scanln(name)
+
+			if err != nil || *name == NullString {
+				Println("Erreur de saisie. Veuillez saisir une nom valide : ")
+				continue
+			}
+
+			break
+		}
+	}
+
+	if capacity == nil {
+		Println("Taper la capaciter de la nouvelle salle")
+		for {
+			_, err := fmt.Scanln(capacity)
+
+			if err != nil || *capacity < 1 {
+				Println("Erreur de saisie. Veuillez saisir une capacité valide et supérieur à 0 : ")
+				continue
+			}
+			break
+		}
+	}
 
 	columns := []string{"nom", "place"}
-	values := []string{name, strconv.Itoa(capacity)}
+	values := []string{*name, strconv.Itoa(*capacity)}
 
 	bdd.InsertDB("SALLES", columns, values)
 
