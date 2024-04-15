@@ -4,6 +4,7 @@ import (
 	. "Projet_GO_Reservation/pkg/bdd"
 	. "Projet_GO_Reservation/pkg/const"
 	. "Projet_GO_Reservation/pkg/log"
+	. "Projet_GO_Reservation/pkg/models"
 	"bufio"
 	"fmt"
 	"os"
@@ -20,15 +21,15 @@ func MenuSalle() {
 		menuSalle()
 		switch optionSalle {
 		case 1:
-			GetAllSalleDispo()
+			GetAllSalle()
 		case 2:
 			GetAllSalleDispo()
 		case 3:
-			GetSalleById()
+			GetSalleById(nil)
 		case 4:
 			CreateRoom()
 		case 5:
-			DeleteRoomByID()
+			DeleteRoomByID(nil)
 		case 6:
 			Println("Retour menu principal")
 			return
@@ -76,22 +77,65 @@ func GetAllSalle() []map[string]interface{} {
 // ------------------------------------------------------------------------------------------------ //
 //
 
-func GetSalleById() {
+func GetSalleById(salle *int) []Salle {
 
-	fmt.Println("Taper id de la salle que vous voulez")
-	id := 0
-	fmt.Scanln(&id)
+	var id int
+
+	if salle == nil {
+
+		result := GetAllSalle()
+
+		var minIdSalle = result[0]["id_salle"].(int64)
+		var maxIdSalle = result[len(result)-1]["id_salle"].(int64)
+
+		var idSalle int
+		fmt.Printf("Taper id de la salle que vous voulez entre %d et %d : ", minIdSalle, maxIdSalle)
+		for {
+
+			_, err := fmt.Scanln(&idSalle)
+
+			if err != nil {
+				Println("Erreur de saisie. Veuillez saisir un numéro entier valide : .")
+				continue
+			}
+
+			if int64(idSalle) < minIdSalle || int64(idSalle) > maxIdSalle {
+				fmt.Printf("Option invalide. Veuillez choisir une option entre %d et %d\n : ", minIdSalle, maxIdSalle)
+				continue
+			}
+
+			f := false
+			for _, m := range result {
+				if (m["id_salle"]) == int64(idSalle) {
+					f = true
+					break
+				}
+			}
+			if f == false {
+				Println("Cette salle n'existe pas")
+				fmt.Printf("Taper id de la salle que vous voulez entre %d et %d : ", minIdSalle, maxIdSalle)
+				continue
+			}
+
+			break
+		}
+
+		id = idSalle
+	} else {
+		id = *salle
+	}
+
 	condition := fmt.Sprintf("id_salle = %d", id)
 
-	result, err := bdd.SelectDB(SALLES, []string{"nom", "place"}, nil, &condition, true)
+	result, err := bdd.SelectDB(SALLES, []string{"id_salle", "nom", "place"}, nil, &condition)
 	if err != nil {
 		Log.Error("Impossible de sélectionner dans la BDD : ", err)
-		return
+		return nil
 	}
 
 	if result == nil || len(result) == 0 {
 		Log.Error("Impossible de sélectionner les données")
-		return
+		return nil
 	}
 
 	firstMap := result[0]
@@ -102,6 +146,15 @@ func GetSalleById() {
 	fmt.Println("ID salle:", id_salle)
 	fmt.Println("Nom:", nom)
 	fmt.Println("Place:", place)
+
+	var salles []Salle
+	salleStruct := Salle{
+		IdSalle:    id_salle.(int64),
+		NomSalle:   nom.(string),
+		PlaceSalle: place.(int64),
+	}
+	salles = append(salles, salleStruct)
+	return salles
 
 }
 
@@ -129,10 +182,25 @@ func CreateRoom() {
 // ------------------------------------------------------------------------------------------------ //
 //
 
-func DeleteRoomByID() {
-	fmt.Println("Taper id de la salle que vous voulez")
-	id := 0
-	fmt.Scanln(&id)
+func DeleteRoomByID(salle *int) {
+
+	var id int
+
+	if salle == nil {
+		var err error
+
+		for {
+			Println("Taper id de la salle que vous voulez")
+			id, err = fmt.Scanln(&id)
+			if err != nil {
+				break
+			}
+			fmt.Println("Erreur : Veuillez entrer un nombre entier.")
+			_, _ = fmt.Scanln()
+		}
+	} else {
+		id = *salle
+	}
 
 	if err := CheckId(id); err != nil {
 		Log.Error("Erreur lors de la vérification de l'existence de la salle : ", err)
