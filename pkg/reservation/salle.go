@@ -20,7 +20,7 @@ func MenuSalle() {
 		case 1:
 			GetAllSalle()
 		case 2:
-			GetAllSalleDispo()
+			GetAllSalleDispo(nil, nil)
 		case 3:
 			GetSalleById(nil)
 		case 4:
