@@ -6,6 +6,7 @@ import (
 	. "Projet_GO_Reservation/pkg/const"
 	. "Projet_GO_Reservation/pkg/models"
 	. "Projet_GO_Reservation/pkg/reservation"
+	"encoding/json"
 	"net/http"
 	"strconv"
 	"strings"
@@ -25,6 +26,8 @@ func EnableHandlers() {
 	http.HandleFunc(RouteCreateReservation, CreateReservationHandler)
 	http.HandleFunc(RouteCancelReservation, CancelReservationHandler)
 	http.HandleFunc(RouteUpdateReservation, UpdateReservationHanlder)
+
+	http.HandleFunc(RouteGetAllRoolAvailable, GetAllRoomAvailHandler)
 
 	Log.Infos("Handlers Enabled")
 
@@ -321,6 +324,54 @@ func UpdateReservationHanlder(w http.ResponseWriter, r *http.Request) {
 //
 // ------------------------------------------------------------------------------------------------ //
 //
+
+func GetAllRoomAvailHandler(w http.ResponseWriter, r *http.Request) {
+
+	if r.Method == http.MethodGet {
+		//templates.ExecuteTemplate(w, "sallesDispo.html", nil)
+		// Affichage de toutes les salles disponible selon un horaire, etc... (OU PAS, on peut le faire aussi dans la page des salles de bases)
+	} else if r.Method == http.MethodPost {
+
+		var params struct {
+			StartDateTime string `json:"startDateTime"`
+			EndDateTime   string `json:"endDateTime"`
+		}
+		err := json.NewDecoder(r.Body).Decode(&params)
+		if err != nil {
+			var msg = "Erreur lors de la lecture des paramètres"
+			Log.Error(msg)
+			http.Error(w, msg, http.StatusBadRequest)
+			return
+		}
+		/*
+			fmt.Println(params.StartDateTime)
+			fmt.Println(params.EndDateTime)
+			return*/
+
+		sallesAvail := GetAllSalleDispo(&params.StartDateTime, &params.EndDateTime)
+		if sallesAvail == nil {
+			var msg = "Impossible de récupérer les salles disponibles"
+			Log.Error(msg)
+			http.Error(w, msg, http.StatusBadRequest)
+			return
+		}
+
+		jsonData, err := json.Marshal(sallesAvail)
+		if err != nil {
+			var msg = "Erreur lors de la conversion en JSON, impossible d'avoir les salles disponibles"
+			http.Error(w, msg, http.StatusInternalServerError)
+			Log.Error(msg, err)
+			return
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+		w.Write(jsonData)
+
+		Log.Infos("Envoie des salles disponibles avec succès !")
+	}
+
+}
 
 /*
 func SallesHandler(w http.ResponseWriter, r *http.Request) {
