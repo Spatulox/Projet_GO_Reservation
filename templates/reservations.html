@@ -46,7 +46,7 @@
 
 		    </div>
 
-			{{ if not .message }}
+			{{ if .result }}
 		    <table>
 		        <thead>
 		        <tr>
@@ -61,7 +61,7 @@
 		        </tr>
 		        </thead>
 		        <tbody>
-		        {{ range . }}
+		        {{ range .result }}
 		        <tr>
 		            <td>{{ .IdReservation }}</td>
 		            <td>{{ .HoraireStart }}</td>
@@ -76,7 +76,7 @@
 		        </tbody>
 		    </table>
 		    {{ else }}
-		    <p>An error occured, or no data</p>
+		    <p class="flex flexCenter">{{ .message }}</p>
 		    {{ end }}
 		</main>
 
