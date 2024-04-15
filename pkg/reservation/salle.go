@@ -316,6 +316,10 @@ func menuSalle() {
 	}
 }
 
+//
+// ------------------------------------------------------------------------------------------------ //
+//
+
 func retourMenuSalle() int {
 	var choix int
 	Println("1. Retourner au menu Salle\n2. Retourner au menu Principal\nChoisissez une option :")
