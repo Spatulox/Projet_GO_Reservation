@@ -32,6 +32,7 @@
 					<th>Nom Salle</th>
 					<th>ID Salle</th>
 					<th>Place Salle</th>
+					<th>Mettre à jour</th>
 					<th>Supprimer</th>
 				</tr>
 				</thead>
@@ -41,15 +42,27 @@
 					<td>{{ .IdReservation }}</td>
 					<td>{{ .HoraireStart }}</td>
 					<td>{{ .HoraireEnd }}</td>
-					<td>{{ .NomEtat }}</td>
+					<td>
+						<select name="etat">
+						 	<option value="nil">{{ .NomEtat }}</option>
+						 	<hr>
+					        <option value="1">En Cours</option>
+					        <option value="2">Terminée</option>
+					        <option value="3">Annulée</option>
+					        <option value="4">A Venir</option>
+					    </select>
+
+					</td>
 					<td>{{ .NomSalle }}</td>
 					<td>{{ .IdSalle }}</td>
 					<td>{{ .PlaceSalle }}</td>
+					<td><button class="marginAuto block" type="button" onclick="redirectUpdate('{{ .IdReservation }}')">Mettre à jour</button></td>
 					<td><button class="marginAuto block" type="button" onclick="redirectDelete('{{ .IdReservation }}')">Supprimer</button></td>
 				</tr>
 				{{ end }}
 				</tbody>
 			</table>
+			<h5 class="flex flexCenter underline bold">Vous ne pouvez mettre à jour que l'État</h5>
 			{{ else }}
 			<p>Hmmmm, an error occured :/</p>
 			{{ end }}
