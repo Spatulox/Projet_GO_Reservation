@@ -48,6 +48,8 @@ func (d *Db) SelectDB(table string, column []string, join *string, condition *st
 		return nil, err
 	}
 
+	defer db.Close()
+
 	if db == nil {
 		Log.Error("What da heck bro, l'instance db est nulle ??")
 		return nil, err
@@ -120,6 +122,8 @@ func (d *Db) InsertDB(table string, column []string, value []string, debug ...bo
 		return
 	}
 
+	defer db.Close()
+
 	if db == nil {
 		Log.Error("What da heck bro, l'instance db est nulle ??")
 		return
@@ -184,6 +188,8 @@ func (d *Db) UpdateDB(table string, column []string, value []string, condition *
 	if errC != nil {
 		return
 	}
+
+	defer db.Close()
 
 	if db == nil {
 		Log.Error("What da heck bro, l'instance db est nulle ??")
@@ -252,6 +258,8 @@ func (d *Db) DeleteDB(table string, condition *string, debug ...bool) {
 	if errC != nil {
 		return
 	}
+
+	defer db.Close()
 
 	if db == nil {
 		Log.Error("What da heck bro, l'instance db est nulle ??")
