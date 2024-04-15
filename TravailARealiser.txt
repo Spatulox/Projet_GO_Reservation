@@ -33,10 +33,12 @@ Fini : ✅ ; En cours : 🔁 ; Autre : ☠️ ;
 - ou CSV					☠️
 
 
-# Interface WEB					-
-- Serveur WEB					-
-- Création des Handlers				-
-- Template HTML					-
+# Interface WEB					🔁
+- Serveur WEB					✅
+- Création des Handlers				🔁
+- Template HTML					🔁
+- Interface Reservation				✅
+- Interface Salles				🔁
 
 
 
