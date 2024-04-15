@@ -97,10 +97,10 @@ func ListReservationsByRoom(salle *int) []Reservation {
 		tmp = fmt.Sprintf("id_salle=%d", *salle)
 	} else {
 		// Ask for the user for the room
-		result = GetAllSalle()
+		resultSalle := GetAllSalle()
 
-		maxIdSalle := result[len(result)-1]["id_salle"].(int64)
-		minIdSalle := result[0]["id_salle"].(int64)
+		maxIdSalle := resultSalle[len(result)-1].IdSalle
+		minIdSalle := resultSalle[0].IdSalle
 		var choix int64
 
 		for {
@@ -673,7 +673,7 @@ func getDateAndHour() (time.Time, time.Time) {
 	for {
 		// Get the date
 		var departureDateStr string
-		fmt.Print("Entrez la date de départ (format yyyy-mm-dd): ")
+		fmt.Print("Entrez la date de dépar/fin (format yyyy-mm-dd): ")
 		fmt.Scanln(&departureDateStr)
 
 		departureDate, err1 = time.Parse("2006-01-02", departureDateStr)
@@ -692,7 +692,7 @@ func getDateAndHour() (time.Time, time.Time) {
 
 		// Comparer les dates
 		if departureDate.Before(todayDate) || departureDate.Equal(todayDate) {
-			Println("La date de départ doit être supérieure à la date du jour.")
+			Println("La date de départ/fin doit être supérieure à la date du jour.")
 			continue
 		}
 
@@ -702,7 +702,7 @@ func getDateAndHour() (time.Time, time.Time) {
 	for {
 		// Get the hour
 		var departureTimeStr string
-		fmt.Print("Entrez l'heure de départ (format 15:04): ")
+		fmt.Print("Entrez l'heure de départ/fin (format 15:04): ")
 		fmt.Scanln(&departureTimeStr)
 
 		departureTime, err2 = time.Parse("15:04", departureTimeStr)
