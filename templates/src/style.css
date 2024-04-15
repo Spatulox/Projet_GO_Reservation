@@ -2,7 +2,7 @@ body{
     margin: 0px;
     min-height: 100vh;
     display: grid;
-    grid-template-rows: 10vh 1fr 10vh;
+    grid-template-rows: 8vh 1fr 10vh;
 }
 
 main{
@@ -132,7 +132,7 @@ th, td {
 }
 
 .menu-list li {
-	background-color: #f2f2f2;
+	background-color: #d5d2d2;
 	border-radius: 5px;
 	margin-bottom: 1rem;
 	box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
