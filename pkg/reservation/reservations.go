@@ -7,7 +7,7 @@ import (
 	. "Projet_GO_Reservation/pkg/const"
 	. "Projet_GO_Reservation/pkg/json"
 	. "Projet_GO_Reservation/pkg/log"
-	"Projet_GO_Reservation/pkg/models"
+	. "Projet_GO_Reservation/pkg/models"
 	"fmt"
 	"strconv"
 	"time"
@@ -58,7 +58,7 @@ func ReservationsMenu() {
 // ------------------------------------------------------------------------------------------------ //
 //
 
-func ListReservations(condition *string, noPrintRoom ...bool) []models.Reservation {
+func ListReservations(condition *string, noPrintRoom ...bool) []Reservation {
 
 	var bdd Db
 	// Condition can be nil
@@ -84,7 +84,7 @@ func ListReservations(condition *string, noPrintRoom ...bool) []models.Reservati
 // ------------------------------------------------------------------------------------------------ //
 //
 
-func ListReservationsByRoom(salle *int) []models.Reservation {
+func ListReservationsByRoom(salle *int) []Reservation {
 
 	var bdd Db
 	// Condition can be nil
@@ -159,7 +159,7 @@ func ListReservationsByRoom(salle *int) []models.Reservation {
 // ------------------------------------------------------------------------------------------------ //
 //
 
-func ListReservationsByDate(date *string) []models.Reservation {
+func ListReservationsByDate(date *string) []Reservation {
 
 	fmt.Println(*date)
 	if date != nil {
@@ -571,14 +571,14 @@ func isRoomAvailable(departureDateTime *string, endDateTime *string, salle *int,
 // ------------------------------------------------------------------------------------------------ //
 //
 
-func printReservations(result []map[string]interface{}, noPrint ...bool) []models.Reservation {
+func printReservations(result []map[string]interface{}, noPrint ...bool) []Reservation {
 
 	if len(noPrint) == 0 || !noPrint[0] {
 		Println("------------------------------")
 		Println("------- RESERVATION(S) -------")
 	}
 
-	reservations := make([]models.Reservation, 0, len(result))
+	reservations := make([]Reservation, 0, len(result))
 
 	for _, sResult := range result {
 
@@ -622,7 +622,7 @@ func printReservations(result []map[string]interface{}, noPrint ...bool) []model
 			sallePlace = -1
 		}
 
-		reservation := models.Reservation{
+		reservation := Reservation{
 			HoraireStart:  horaireDebut.(string),
 			HoraireEnd:    horaireFin.(string),
 			NomEtat:       nomEtat,
