@@ -58,20 +58,6 @@ func GetAllSalle() []Salle {
 
 	salleStruct := printSalle(result)
 
-	/*	Println("------------------------------")
-		Println("----------- SALLES -----------")
-		for _, salle := range result {
-			Println("------------------------------")
-			id_salle := salle["id_salle"]
-			nom := salle["nom"]
-			place := salle["place"]
-
-			fmt.Println("ID salle:", id_salle)
-			fmt.Println("Nom:", nom)
-			fmt.Println("Place:", place)
-		}
-		Println("------------------------------")*/
-
 	return salleStruct
 }
 
@@ -140,22 +126,8 @@ func GetSalleById(salle *int) []Salle {
 		return nil
 	}
 
-	firstMap := result[0]
-	id_salle := firstMap["id_salle"]
-	nom := firstMap["nom"]
-	place := firstMap["place"]
-
-	fmt.Println("ID salle:", id_salle)
-	fmt.Println("Nom:", nom)
-	fmt.Println("Place:", place)
-
-	var salles []Salle
-	salleStruct := Salle{
-		IdSalle:    id_salle.(int64),
-		NomSalle:   nom.(string),
-		PlaceSalle: place.(int64),
-	}
-	salles = append(salles, salleStruct)
+	salles := printSalle(result)
+	
 	return salles
 
 }
