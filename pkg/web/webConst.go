@@ -11,9 +11,10 @@ const (
 	RouteIndexReservation  = "/reservation"
 	RouteListReservation   = "/reservation/list"
 	RouteCreateReservation = "/reservation/create"
-
 	RouteUpdateReservation = "/reservation/update"
 	RouteCancelReservation = "/reservation/cancel"
+
+	RouteGetAllRoolAvailable = "/salle/getAllAvail"
 )
 
 // var templates = template.Must(template.ParseGlob("pkg/web/html/*.html"))

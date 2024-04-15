@@ -401,6 +401,10 @@ th, td {
   text-decoration: underline;
 }
 
+.width10{
+    width: 10%;
+}
+
 .width20{
     width: 20%;
 }
