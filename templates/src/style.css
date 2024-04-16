@@ -6,19 +6,20 @@ body{
 }
 
 main{
-	margin: 20px 0px;
+	padding: 20px 0px;
+    background-color: #FDF0E7;
 }
 
 header {
-  background-color: green; /* Couleur de fond de l'en-tête */
-  position: relative;
   z-index: 1;
   padding: 0px 10px
 }
 
-footer {
-  background-color: green; /* Couleur de fond de l'en-tête */
-  position: relative;
+header, footer {
+    align-items: center;
+    background-color: #d48827;
+    background-color: #ffE28C;
+    position: relative;
 }
 
 button[type="submit"], button[type="button"], .btn{
@@ -26,7 +27,7 @@ button[type="submit"], button[type="button"], .btn{
 }
 
 button[type="submit"], button[type="button"], .btn {
-  background-image: linear-gradient(to right, #ff6b6b, #ffa500);
+  background-image: linear-gradient(to right, #FF9570, #ffAE70);
   border: none;
   color: white;
   padding: 14px 28px;
