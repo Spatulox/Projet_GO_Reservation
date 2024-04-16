@@ -1,13 +1,14 @@
 Fini : ✅ ; En cours : 🔁 ; Autre : ☠️ ;
 # Structures :					
-- Salles					-
+- Salles					✅
 - Reservations					✅
 
 
-# Salles					
-- Lister salle dispo				
-- Lister toutes les salles			
-- Ajouter une salle				
+# Salles					✅
+- Lister salle dispo				✅
+- Lister toutes les salles			✅
+- Ajouter une salle				✅
+- Supprimer salle				✅
 
 
 # Reservations					✅
@@ -24,11 +25,11 @@ Fini : ✅ ; En cours : 🔁 ; Autre : ☠️ ;
 - Init.sql					✅
 - Identifiant dans un fichier .env		-
 
-# Export
+# Export					✅
 - JSON						✅
 - ou CSV					☠️
 
-# Import
+# Import					🔁
 - JSON						🔁
 - ou CSV					☠️
 
@@ -39,6 +40,7 @@ Fini : ✅ ; En cours : 🔁 ; Autre : ☠️ ;
 - Template HTML					🔁
 - Interface Reservation				✅
 - Interface Salles				🔁
+- Interface Importer / Exporter JSON		-
 
 
 
