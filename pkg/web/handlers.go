@@ -244,6 +244,13 @@ func CreateReservationHandler(w http.ResponseWriter, r *http.Request) {
 		horaireStartSeconds := horaireStartDate + " " + horaireStartTime
 		horaireEndSeconds := horaireEndDate + " " + horaireEndTime
 
+		if salleInt64 == 13 {
+			var msg = "Salle déjà réservé our l'éternité par M. Sananes qui a traumatisé des générations d'élèves avec ses pointeurs."
+			Log.Error(msg)
+			http.Redirect(w, r, "/reservation?message="+msg, http.StatusSeeOther)
+			return
+		}
+
 		result := CreateReservation(&salleInt64, &horaireStartSeconds, &horaireEndSeconds)
 		if result == false {
 			var msg = "An error occured"

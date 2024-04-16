@@ -32,6 +32,7 @@ INSERT INTO SALLES (id_salle, nom, place) VALUES
 (1, 'Salle A', 50),
 (2, 'Salle B', 40),
 (3, 'Salle C', 60);
+(13, 'Salle 13', 69);
 
 INSERT INTO ETATS (id_etat, nom_etat) VALUES
 (1, 'En cours'),
