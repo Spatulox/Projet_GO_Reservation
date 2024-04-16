@@ -14,6 +14,9 @@ const (
 	RouteUpdateReservation = "/reservation/update"
 	RouteCancelReservation = "/reservation/cancel"
 
+	RouteDownloadJson = "/download"
+	RouteExportJson   = "/reservation/export"
+
 	RouteGetAllRoolAvailable = "/salle/getAllAvail"
 )
 

@@ -4,6 +4,7 @@ package web
 
 import (
 	. "Projet_GO_Reservation/pkg/const"
+	. "Projet_GO_Reservation/pkg/json"
 	. "Projet_GO_Reservation/pkg/models"
 	. "Projet_GO_Reservation/pkg/reservation"
 	"encoding/json"
@@ -25,7 +26,10 @@ func EnableHandlers() {
 	http.HandleFunc(RouteListReservation, ListByRoomDateIdReservationHandler)
 	http.HandleFunc(RouteCreateReservation, CreateReservationHandler)
 	http.HandleFunc(RouteCancelReservation, CancelReservationHandler)
-	http.HandleFunc(RouteUpdateReservation, UpdateReservationHanlder)
+	http.HandleFunc(RouteUpdateReservation, UpdateReservationHandler)
+
+	http.HandleFunc(RouteDownloadJson, DownloadJsonHandler)
+	http.HandleFunc(RouteExportJson, ExportJsonHandler)
 
 	http.HandleFunc(RouteGetAllRoolAvailable, GetAllRoomAvailHandler)
 
@@ -299,7 +303,7 @@ func CancelReservationHandler(w http.ResponseWriter, r *http.Request) {
 // ------------------------------------------------------------------------------------------------ //
 //
 
-func UpdateReservationHanlder(w http.ResponseWriter, r *http.Request) {
+func UpdateReservationHandler(w http.ResponseWriter, r *http.Request) {
 	leString := r.URL.Query().Get("idReserv")
 
 	Log.Debug(leString)
@@ -343,6 +347,37 @@ func UpdateReservationHanlder(w http.ResponseWriter, r *http.Request) {
 	Log.Infos("Reservation annulée avec succès !")
 	//http.Redirect(w, r, "", http.StatusSeeOther)
 	return
+}
+
+//
+// ------------------------------------------------------------------------------------------------ //
+//
+
+func ExportJsonHandler(w http.ResponseWriter, r *http.Request) {
+
+	leBool := DataToJson(ListReservations(nil))
+
+	if leBool == false {
+		//w.WriteHeader(http.StatusBadRequest)
+		var msg = "L'export en JSON n'a pas réussi :/"
+		Log.Error(msg)
+		http.Error(w, msg, http.StatusBadRequest)
+		return
+	}
+
+	var msg = "L'export en JSON à réussi, vous pouvez désormais le télécharger !"
+	Log.Infos(msg)
+	http.Error(w, msg, http.StatusOK)
+
+}
+
+//
+// ------------------------------------------------------------------------------------------------ //
+//
+
+func DownloadJsonHandler(w http.ResponseWriter, r *http.Request) {
+	Log.Debug("Download begin")
+	http.ServeFile(w, r, "./data.json")
 }
 
 //

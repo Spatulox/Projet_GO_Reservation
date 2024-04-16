@@ -61,8 +61,6 @@ function redirectDelete(id){
     });
 }
 
-redirectUpdate
-
 function redirectUpdate(id){
 
     // Récupérer l'élément select
@@ -171,8 +169,74 @@ async function getAllRoomAvailable() {
 
 
 
+async function exportReservJson(){
+    try {
+        const response = await fetch('/reservation/export', {
+            method: 'GET',
+        });
 
 
+        if (response.ok) {
+            const msg = await response.text();
+            showPopup(msg)
+
+            const buttonAskToDownload = document.getElementById("buttonAskToDownload")
+            buttonAskToDownload.innerHTML = "Télécharger le fichier"
+            //buttonAskToDownload.onclick="dataDownload()"
+            buttonAskToDownload.setAttribute('onclick', 'dataDownload()');
+
+
+        } else {
+            const errorMessage = await response.text();
+            showPopup(errorMessage);
+        }
+    } catch (error) {
+        showPopup('Erreur lors de la requête :', error);
+    }
+}
+
+function dataDownload(){
+    fetch('/download')
+        .then(response => response.blob())
+        .then(blob => {
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.setAttribute('download', 'data.json');
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+
+            // Demander la confirmation à l'utilisateur
+            showYoutubePopup();
+        });
+}
+
+
+function showYoutubePopup() {
+    // Créer la popup
+    const popup = document.createElement('div');
+    popup.classList.add('popup');
+
+    // Ajouter l'iframe YouTube
+    const iframe = document.createElement('iframe');
+    iframe.src = 'https://www.youtube.com/embed/L0TB1IkhVds?autoplay=1';
+    iframe.width = '560';
+    iframe.height = '315';
+    iframe.frameborder = '0';
+    iframe.allow = 'accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture';
+    iframe.allowfullscreen = true;
+
+    popup.appendChild(iframe);
+    document.body.appendChild(popup);
+
+    document.addEventListener('click', (event) => {
+        if (!popup.contains(event.target)) {
+            popup.style.display = 'none';
+        }
+    });
+}
 
 
 //-----------------------------------------------------------
