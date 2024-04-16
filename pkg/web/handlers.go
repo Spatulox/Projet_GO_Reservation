@@ -57,10 +57,6 @@ func IndexHandler(w http.ResponseWriter, r *http.Request) {
 			"now": currentTime,
 		})
 	}
-
-	/*	if r.Method == http.MethodGet {
-		templates.ExecuteTemplate(w, "menu.html", nil)
-	}*/
 }
 
 //

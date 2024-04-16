@@ -9,21 +9,19 @@
 	</head>
 	<body>
 		<header class="flex flexBetween nowrap">
-				<button class="block" type="button" onclick="redirectToMainMenu()">Retour</button>
-	            <div id="errorPopup" class="popup">
-	                <div class="popup-content">
-	                    <p id="errorMessage">
+            <button class="block" type="button" onclick="redirectToMainMenu()">Retour</button>
+            <div id="errorPopup" class="popup">
+                <div class="popup-content">
+                    <p id="errorMessage"></p>
+                </div>
+            </div>
 
-						</p>
-	                </div>
-	            </div>
-
-				<h1>Projet Go Reservation</h1>
-		</header>
+            <h1>Projet Go Reservation</h1>
+        </header>
 
 		<main>
 
-			<div id="reservation" class="flex flexCenter wrap width50 marginAuto">
+			<div id="reservation" class="flex flexCenter wrap width50 marginAuto ">
 			    <h1 class="underline marginAuto">Menu des Réservations</h1>
 
 				<div class="alignCenter width100">
@@ -84,7 +82,15 @@
 		    <button id="buttonAskToDownload" class="block marginAuto marginTop30"	 type="button" onclick="exportReservJson()">Exporter les réservations</button>
 		</main>
 
-		<footer></footer>
+		<footer class="flex flexAround padding5 underline">
+            <div>
+                Créé par deux débiles, un bigleux et un chevelu, pour le futur prof de C
+            </div>
+            <div>
+                Copyright 2024
+            </div>
+        </footer>
+
 	</body>
 
 
