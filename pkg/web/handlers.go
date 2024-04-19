@@ -21,17 +21,22 @@ func EnableHandlers() {
 	staticHandler := http.FileServer(staticDir)
 	http.Handle("/static/", http.StripPrefix("/static/", staticHandler))
 
+	// Create all the handle to "listen" the right path using const in webConst.go
 	http.HandleFunc(RouteIndex, IndexHandler)
+
+	// Reservation Handlers
 	http.HandleFunc(RouteIndexReservation, ReservationHandler)
 	http.HandleFunc(RouteListReservation, ListByRoomDateIdReservationHandler)
 	http.HandleFunc(RouteCreateReservation, CreateReservationHandler)
 	http.HandleFunc(RouteCancelReservation, CancelReservationHandler)
 	http.HandleFunc(RouteUpdateReservation, UpdateReservationHandler)
 
+	// Rooms Handlers
+	http.HandleFunc(RouteGetAllRoolAvailable, GetAllRoomAvailHandler)
+
+	// Json Handlers
 	http.HandleFunc(RouteDownloadJson, DownloadJsonHandler)
 	http.HandleFunc(RouteExportJson, ExportJsonHandler)
-
-	http.HandleFunc(RouteGetAllRoolAvailable, GetAllRoomAvailHandler)
 
 	Log.Infos("Handlers Enabled")
 
@@ -64,15 +69,15 @@ func IndexHandler(w http.ResponseWriter, r *http.Request) {
 //
 
 func ReservationHandler(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	//w.Header().Set("Content-Type", "text/html; charset=utf-8")
 
 	if r.Method == http.MethodGet {
 		result := ListReservations(nil)
 		if result == nil {
 			Log.Error("Data are null for unknown reason :/")
 			var msg = "Impossible to retrieve data"
-			//http.Redirect(w, r, "/reservation?message="+msg, http.StatusSeeOther)
 			// Exécuter le template avec l'URL et le message
+			// Fait un "truc bizarre" car impossible d'utiliser la méthode avec le message dans l'URL car sinon redirections infinie
 			templates.ExecuteTemplate(w, "reservations.html", map[string]interface{}{
 				"message": msg,
 				"result":  nil,
@@ -87,6 +92,10 @@ func ReservationHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+//
+// ------------------------------------------------------------------------------------------------ //
+//
+
 func ListByRoomDateIdReservationHandler(w http.ResponseWriter, r *http.Request) {
 
 	roomStr := r.URL.Query().Get("idRoom")
@@ -97,8 +106,8 @@ func ListByRoomDateIdReservationHandler(w http.ResponseWriter, r *http.Request) 
 
 	if r.Method == http.MethodGet {
 
+		// Si aucun ID n'est fourni, redirigez vers la page de liste des réservations
 		if roomStr == NullString && dateStr == NullString && idStr == NullString {
-			// Si aucun ID n'est fourni, redirigez vers la page de liste des réservations
 			var msg = "Vous ne pouvez pas acceder à cette page sans spécifier un truc :/"
 			http.Redirect(w, r, "/reservation?message="+msg, http.StatusSeeOther)
 			return
@@ -106,10 +115,10 @@ func ListByRoomDateIdReservationHandler(w http.ResponseWriter, r *http.Request) 
 
 		var result []Reservation
 
+		// If it's with room param
 		if roomStr != NullString {
 			idRoom, err := strconv.Atoi(roomStr)
 			if err != nil {
-				// Gestion de l'erreur de conversion en entier
 				http.Error(w, "ID de salle invalide", http.StatusBadRequest)
 				return
 			}
@@ -118,6 +127,7 @@ func ListByRoomDateIdReservationHandler(w http.ResponseWriter, r *http.Request) 
 			result = ListReservationsByRoom(&idRoom)
 		}
 
+		// If it's with date param
 		if dateStr != NullString {
 			Log.Infos("Listing des réservations par Date")
 			dateStr = strings.Replace(dateStr, "T", " ", 1)
@@ -125,6 +135,7 @@ func ListByRoomDateIdReservationHandler(w http.ResponseWriter, r *http.Request) 
 			result = ListReservationsByDate(&dateStr)
 		}
 
+		// If it's with id param
 		if idStr != NullString {
 			Log.Infos("Listing des réservations par ID (reservation)")
 			var tmp = "id_reservation=" + idStr
@@ -141,12 +152,11 @@ func ListByRoomDateIdReservationHandler(w http.ResponseWriter, r *http.Request) 
 
 		if result == nil {
 			Log.Error("No result")
-			var msg = "Impossible te retrieve data"
+			var msg = "Impossible to retrieve data"
 			http.Redirect(w, r, "/reservation?message="+msg, http.StatusSeeOther)
 			return
 		}
 
-		//templates.ExecuteTemplate(w, "reservations.html", result)
 		templates.ExecuteTemplate(w, "reservations.html", map[string]interface{}{
 			"message": nil,
 			"result":  result,
@@ -160,14 +170,12 @@ func ListByRoomDateIdReservationHandler(w http.ResponseWriter, r *http.Request) 
 //
 
 func CreateReservationHandler(w http.ResponseWriter, r *http.Request) {
-	//w.Header().Set("Content-Type", "text/html; charset=utf-8")
 
 	if r.Method == http.MethodGet {
 		templates.ExecuteTemplate(w, "creerReservations.html", map[string]interface{}{
 			"message": nil,
 			"result":  nil,
 		})
-		//templates.ExecuteTemplate(w, "creerReservations.html", nil)
 	} else if r.Method == http.MethodPost {
 		horaireStartDate := r.FormValue("horaire_start_date")
 		horaireStartTime := r.FormValue("horaire_start_time") + ":00"
@@ -245,7 +253,7 @@ func CreateReservationHandler(w http.ResponseWriter, r *http.Request) {
 		horaireEndSeconds := horaireEndDate + " " + horaireEndTime
 
 		if salleInt64 == 13 {
-			var msg = "Salle déjà réservé our l'éternité par M. Sananes qui a traumatisé des générations d'élèves avec ses pointeurs."
+			var msg = "Salle déjà réservé pour l'éternité par M. Sananes qui a traumatisé des générations d'élèves avec ses pointeurs."
 			Log.Error(msg)
 			http.Redirect(w, r, "/reservation?message="+msg, http.StatusSeeOther)
 			return
@@ -354,7 +362,6 @@ func ExportJsonHandler(w http.ResponseWriter, r *http.Request) {
 	leBool := DataToJson(ListReservations(nil))
 
 	if leBool == false {
-		//w.WriteHeader(http.StatusBadRequest)
 		var msg = "L'export en JSON n'a pas réussi :/"
 		Log.Error(msg)
 		http.Error(w, msg, http.StatusBadRequest)
@@ -383,7 +390,6 @@ func DownloadJsonHandler(w http.ResponseWriter, r *http.Request) {
 func GetAllRoomAvailHandler(w http.ResponseWriter, r *http.Request) {
 
 	if r.Method == http.MethodGet {
-		//templates.ExecuteTemplate(w, "sallesDispo.html", nil)
 		// Affichage de toutes les salles disponible selon un horaire, etc... (OU PAS, on peut le faire aussi dans la page des salles de bases)
 	} else if r.Method == http.MethodPost {
 
@@ -398,10 +404,6 @@ func GetAllRoomAvailHandler(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, msg, http.StatusBadRequest)
 			return
 		}
-		/*
-			fmt.Println(params.StartDateTime)
-			fmt.Println(params.EndDateTime)
-			return*/
 
 		sallesAvail := GetAllSalleDispo(&params.StartDateTime, &params.EndDateTime)
 		if sallesAvail == nil {
