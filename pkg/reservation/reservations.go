@@ -159,9 +159,11 @@ func ListReservationsByRoom(salle *int) []Reservation {
 // ------------------------------------------------------------------------------------------------ //
 //
 
+// ListReservationsByDate
+// Take the date in param to list the reservation per dates
 func ListReservationsByDate(date *string) []Reservation {
 
-	fmt.Println(*date)
+	var departureDateTime string
 	if date != nil {
 		dateTime, err := time.Parse("2006-01-02 15:04:05", *date)
 		if err != nil {
@@ -170,10 +172,10 @@ func ListReservationsByDate(date *string) []Reservation {
 		}
 		*date = dateTime.Format("2006-01-02 15:04:05")
 	} else {
-		departureDate, departureTime := getDateAndHour()
-		departureDateTime := departureDate.Format("2006-01-02") + " " + departureTime.Format("15:04:00")
+		departureDate, departureTime := getDateAndHour(true)
+		departureDateTime = departureDate.Format("2006-01-02") + " " + departureTime.Format("15:04:00")
 
-		*date = departureDateTime
+		date = &departureDateTime
 	}
 
 	tmp := "'" + *date + "' BETWEEN horaire_start AND horaire_end"
