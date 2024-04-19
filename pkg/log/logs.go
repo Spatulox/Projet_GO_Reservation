@@ -10,23 +10,14 @@ type LogHelper struct {
 
 // -----------------------------------------------------
 
-func ILog(message string, err ...error) {
-	now := time.Now()
-	dateTimeStr := now.Format("[01/02/2006 - 15:04:05] ")
-	fmt.Print(dateTimeStr)
-	fmt.Println(message)
-
-	if err != nil {
-		fmt.Println(err)
-	}
-}
-
+// Created to avoid code "redondance"
 func log() string {
 	now := time.Now()
 	dateTimeStr := now.Format("[01/02/2006 - 15:04:05] ")
 	return dateTimeStr
 }
 
+// Make the text red
 func (l *LogHelper) Error(message string, err ...error) {
 	var result = log()
 
@@ -37,6 +28,7 @@ func (l *LogHelper) Error(message string, err ...error) {
 	}
 }
 
+// Make the text white (normal)
 func (l *LogHelper) Infos(message string, err ...error) {
 	var result = log()
 
@@ -47,6 +39,7 @@ func (l *LogHelper) Infos(message string, err ...error) {
 	}
 }
 
+// Make the text green
 func (l *LogHelper) Debug(message string, err ...error) {
 	var result = log()
 

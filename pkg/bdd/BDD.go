@@ -230,7 +230,7 @@ func (d *Db) UpdateDB(table string, column []string, value []string, condition *
 	}
 
 	if len(debug) > 0 && debug[0] {
-		ILog("DEBUG : " + queryString)
+		Log.Debug(queryString)
 	}
 
 	return
