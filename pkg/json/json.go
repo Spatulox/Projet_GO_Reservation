@@ -8,6 +8,8 @@ import (
 	"os"
 )
 
+// DataToJson Get the data with a []Reservation Structure (may change to export rooms)
+// Export it into a human-readable json file called data.json into the root folder of the project
 func DataToJson(data []Reservation) bool {
 
 	jsonData, err := json.MarshalIndent(data, "", "  ")
@@ -29,6 +31,8 @@ func DataToJson(data []Reservation) bool {
 	return true
 }
 
+// JsonToData Get the data path
+// Transform the json file into a []map[string]interface{}
 func JsonToData(path *string) []map[string]interface{} {
 
 	var err error
@@ -41,7 +45,7 @@ func JsonToData(path *string) []map[string]interface{} {
 	} else {
 		jsonData, err = os.ReadFile(*path)
 	}
-	// Lire le fichier JSON
+
 	if err != nil {
 		Log.Error("Erreur lors de la lecture du fichier:", err)
 		return nil
@@ -55,6 +59,5 @@ func JsonToData(path *string) []map[string]interface{} {
 		return nil
 	}
 
-	// Afficher les données
 	return data
 }
