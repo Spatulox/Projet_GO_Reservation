@@ -46,4 +46,4 @@ Fini : ✅ ; En cours : 🔁 ; Autre : ☠️ ;
 
 
 # BONUS
-- On va remplir cette section à la fin
+- Identifiants BDD dans fichier .env		-
