@@ -664,7 +664,7 @@ func printReservations(result []map[string]interface{}, noPrint ...bool) []Reser
 // ------------------------------------------------------------------------------------------------ //
 //
 
-func getDateAndHour() (time.Time, time.Time) {
+func getDateAndHour(noTodayCompare ...bool) (time.Time, time.Time) {
 
 	var departureDate time.Time
 	var departureTime time.Time
@@ -690,10 +690,12 @@ func getDateAndHour() (time.Time, time.Time) {
 			continue
 		}
 
-		// Comparer les dates
-		if departureDate.Before(todayDate) || departureDate.Equal(todayDate) {
-			Println("La date de départ/fin doit être supérieure à la date du jour.")
-			continue
+		if len(noTodayCompare) == 0 || !noTodayCompare[0] {
+			// Comparer les dates
+			if departureDate.Before(todayDate) || departureDate.Equal(todayDate) {
+				Println("La date de départ/fin doit être supérieure à la date du jour.")
+				continue
+			}
 		}
 
 		break
