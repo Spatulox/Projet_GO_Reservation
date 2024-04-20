@@ -408,6 +408,7 @@ func UploadJsonHandler(w http.ResponseWriter, r *http.Request) {
 
 		defer file.Close()
 
+		// Le transforme en fichier json
 		jsonData, err := io.ReadAll(file)
 		if err != nil {
 			var msg = "Erreur lors de la lecture du fichier : " + err.Error()
@@ -416,9 +417,11 @@ func UploadJsonHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
+		// Transforme le fichier json en map[string]interface{}
 		var data []map[string]interface{}
 		err = json.Unmarshal(jsonData, &data)
 
+		// Save it inside the BDD
 		if !JsonToData(data) {
 			var msg = "Erreur lors de l'enregistrement des données : " + err.Error()
 			Log.Error(msg)
