@@ -1,7 +1,7 @@
 # Projet_GO_Reservation
  Développer un système de réservation de salles de classe en Go, en commençant avec une interface en ligne de commande pour gérer les réservations, les salles et les utilisateurs.
 
- - Alexandre Helleux    : AlexDjazz
+ - Alexandre Helleux    : AlexandreDjazz
  - Marc Lecomte         : Spatulox
 
 
@@ -25,20 +25,20 @@
  Fichiers avec la définition des structures Salles et Réservation.
  Ces structures ont été placées dans un package séparé appelé "Model" pour éviter les imports récursif si ces structures avaient été placée dans la package reservation
 
- ### Package Réservation - AlexDJazz / Spatulox
+ ### Package Réservation - AlexandreDjazz / Spatulox
  Ce package regroupe toutes les fonctionnalités autour des réservations et des salles.
  C'est le package principal du projet regroupant salle.go et reservation.go
- Salle.go : AlexDJazz
+ Salle.go : AlexandreDjazz
  Reservation.go : Spatulox
 
- ### Interface WEB - AlexDJazz / Spatulox
+ ### Interface WEB - AlexandreDjazz / Spatulox
  La création d'une interface graphique WEB à été très rapide car pensée dès le début lors de la création des fonctions principales.
 
 
 
  ## Séparation du travail
 
- AlexDJazz :
+ AlexandreDjazz :
  - Création de la Base de donnée
  - Menu CLI
  - Gestion des salles
@@ -61,7 +61,7 @@
  ## Choix de conception
 
  ### Base de donnée
- Nous avons choisi de créer des fonctions de Base de données permettant d'éviter de copier-coller du code, et afin de gagner du temps lors de la discussion avec la base de donnée. De plus c'est quelque chose mis en place dans tous les projets commun, impliquant une base de donnée, entre AlexDJazz et Spatulox 👀.
+ Nous avons choisi de créer des fonctions de Base de données permettant d'éviter de copier-coller du code, et afin de gagner du temps lors de la discussion avec la base de donnée. De plus c'est quelque chose mis en place dans tous les projets commun, impliquant une base de donnée, entre AlexandreDjazz et Spatulox 👀.
  
  Ces fonctions prennent un paramètre de "débug" permettant de visualiser la requête réalisée pour un meilleur débuguage.
  De plus ces fonctions, une fois bien construite, évitent les problèmes de synthaxe de code, et donc du débuguage inutile.
