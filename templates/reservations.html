@@ -79,7 +79,12 @@
 		    <p class="flex flexCenter">{{ .message }}</p>
 		    {{ end }}
 
-		    <button id="buttonAskToDownload" class="block marginAuto marginTop30"	 type="button" onclick="exportReservJson()">Exporter les réservations</button>
+			<div>
+				<button id="buttonAskToDownload" class="block marginAuto marginTop30"	 type="button" onclick="exportReservJson()">Exporter les réservations</button>
+				<!--<form id="upload-form" enctype="multipart/form-data">
+					<input type="file" class="block marginAuto marginTop30" id="file-input" name="file" onchange="updloadJson()" required>
+				</form>-->
+			</div>
 		</main>
 
 		<footer class="flex flexAround padding5 underline">

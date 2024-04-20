@@ -35,8 +35,9 @@ func EnableHandlers() {
 	http.HandleFunc(RouteGetAllRoolAvailable, GetAllRoomAvailHandler)
 
 	// Json Handlers
-	http.HandleFunc(RouteDownloadJson, DownloadJsonHandler)
 	http.HandleFunc(RouteExportJson, ExportJsonHandler)
+	http.HandleFunc(RouteDownloadJson, DownloadJsonHandler)
+	//http.HandleFunc(RouteImportJson, UploadJsonHandler)
 
 	Log.Infos("Handlers Enabled")
 
@@ -357,6 +358,7 @@ func UpdateReservationHandler(w http.ResponseWriter, r *http.Request) {
 // ------------------------------------------------------------------------------------------------ //
 //
 
+// ExportJsonHandler Export the BDD to the data.json
 func ExportJsonHandler(w http.ResponseWriter, r *http.Request) {
 
 	leBool := DataToJson(ListReservations(nil))
@@ -378,10 +380,60 @@ func ExportJsonHandler(w http.ResponseWriter, r *http.Request) {
 // ------------------------------------------------------------------------------------------------ //
 //
 
+// DownloadJsonHandler Send the data.json to the client
 func DownloadJsonHandler(w http.ResponseWriter, r *http.Request) {
 	Log.Debug("Download begin")
 	http.ServeFile(w, r, "./data.json")
 }
+
+//
+// ------------------------------------------------------------------------------------------------ //
+//
+
+/*
+// UploadJsonHandler Send the data to the server
+func UploadJsonHandler(w http.ResponseWriter, r *http.Request) {
+	Log.Debug("Upload begin")
+
+	if r.Method == http.MethodPost {
+
+		// Lit le fichier envoyé
+		file, _, err := r.FormFile("reservation")
+		if err != nil {
+			var msg = "Erreur lors de l'upload du fichier : " + err.Error()
+			Log.Error(msg)
+			http.Error(w, msg, http.StatusBadRequest)
+			return
+		}
+
+		defer file.Close()
+
+		jsonData, err := io.ReadAll(file)
+		if err != nil {
+			var msg = "Erreur lors de la lecture du fichier : " + err.Error()
+			Log.Error(msg)
+			http.Error(w, msg, http.StatusBadRequest)
+			return
+		}
+
+		var data []map[string]interface{}
+		err = json.Unmarshal(jsonData, &data)
+
+		if !JsonToData(data) {
+			var msg = "Erreur lors de l'enregistrement des données : " + err.Error()
+			Log.Error(msg)
+			http.Error(w, msg, http.StatusBadRequest)
+			return
+		}
+
+		var msg = "L'import et la sauvegarde dans la base de donnée ont réussi !"
+		Log.Infos(msg)
+		http.Error(w, msg, http.StatusOK)
+
+	}
+
+}
+*/
 
 //
 // ------------------------------------------------------------------------------------------------ //

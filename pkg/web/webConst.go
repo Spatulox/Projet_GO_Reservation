@@ -22,6 +22,7 @@ const (
 	// Route for JSON
 	RouteDownloadJson = "/download"
 	RouteExportJson   = "/reservation/export"
+	//RouteImportJson = "/reservation/import"
 )
 
 // var templates = template.Must(template.ParseGlob("pkg/web/html/*.html"))

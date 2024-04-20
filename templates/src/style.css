@@ -22,11 +22,13 @@ header, footer {
     position: relative;
 }
 
-button[type="submit"], button[type="button"], .btn{
+button[type="submit"], button[type="button"], .btn, input[type="file"]{
   cursor: pointer;
 }
 
-button[type="submit"], button[type="button"], .btn {
+
+
+button[type="submit"], button[type="button"], .btn, input[type="file"] {
   background-image: linear-gradient(to right, #FF9570, #ffAE70);
   border: none;
   color: white;
@@ -39,7 +41,7 @@ button[type="submit"], button[type="button"], .btn {
   transition: all 0.3s ease-in-out;
 }
 
-button[type="submit"]:hover, button[type="button"]:hover, .btn:hover {
+button[type="submit"]:hover, button[type="button"]:hover, .btn:hover, input[type="file"]:hover {
   background-color: #005A7E;
   transform: scale(1.01);
   transition: all 0.3s ease-in-out;
@@ -295,7 +297,6 @@ th, td {
 .noDecoration{
     text-decoration: none;
     list-style: none;
-    color: var(--mainPoliceColor);
 }
 
 .noDecoration > li {

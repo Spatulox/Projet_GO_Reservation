@@ -12,7 +12,9 @@ function closePopup() {
     document.getElementById("errorPopup").classList.remove("active");
 }
 
-
+//
+//-------------------------------------------------------------------------------------
+//
 
 function redirectToMainMenu(){
     window.location.href = `/`;
@@ -88,6 +90,9 @@ function redirectUpdate(id){
     });
 }
 
+//
+//-------------------------------------------------------------------------------------
+//
 
 async function getAllRoomAvailable() {
 
@@ -167,7 +172,9 @@ async function getAllRoomAvailable() {
     }
 }
 
-
+//
+//-------------------------------------------------------------------------------------
+//
 
 async function exportReservJson(){
     try {
@@ -182,7 +189,6 @@ async function exportReservJson(){
 
             const buttonAskToDownload = document.getElementById("buttonAskToDownload")
             buttonAskToDownload.innerHTML = "Télécharger le fichier"
-            //buttonAskToDownload.onclick="dataDownload()"
             buttonAskToDownload.setAttribute('onclick', 'dataDownload()');
 
 
@@ -195,6 +201,12 @@ async function exportReservJson(){
     }
 }
 
+//
+//-------------------------------------------------------------------------------------
+//
+
+// Used in interface after the click to export json
+// Used in export.json, line 185
 function dataDownload(){
     fetch('/download')
         .then(response => response.blob())
@@ -213,6 +225,43 @@ function dataDownload(){
         });
 }
 
+//
+//-------------------------------------------------------------------------------------
+//
+
+/*
+async function updloadJson(){
+    const form = document.getElementById("upload-form")
+    const fileInput = document.getElementById("file-input")
+    const file = fileInput.files[0]
+
+    const formData = new FormData()
+    formData.append("reservation", file)
+
+    try{
+        const data = {
+            method: "POST",
+            body: formData
+        }
+
+        const response = await fetch("/reservation/import", data)
+
+        if(response.ok){
+            showPopup(await response.text())
+        }
+        else{
+            showPopup(await response.text())
+        }
+    }
+    catch (err){
+        showPopup("Error : "+err)
+    }
+}
+*/
+
+//
+//-------------------------------------------------------------------------------------
+//
 
 function showYoutubePopup() {
     // Créer la popup
@@ -238,8 +287,9 @@ function showYoutubePopup() {
     });
 }
 
-
-//-----------------------------------------------------------
+//
+//-------------------------------------------------------------------------------------
+//
 
 const urlParams = new URLSearchParams(window.location.search);
 
