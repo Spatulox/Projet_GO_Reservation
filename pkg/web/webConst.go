@@ -25,5 +25,8 @@ const (
 	//RouteImportJson = "/reservation/import"
 )
 
+//old templates
 // var templates = template.Must(template.ParseGlob("pkg/web/html/*.html"))
+
+// New templates
 var templates = template.Must(template.ParseGlob("templates/*.html"))
