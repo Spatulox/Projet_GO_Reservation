@@ -116,8 +116,11 @@ func ListByRoomDateIdReservationHandler(w http.ResponseWriter, r *http.Request) 
 
 		var result []Reservation
 
+		var resultType string
+
 		// If it's with room param
 		if roomStr != NullString {
+			resultType = "room"
 			idRoom, err := strconv.Atoi(roomStr)
 			if err != nil {
 				http.Error(w, "ID de salle invalide", http.StatusBadRequest)
@@ -130,6 +133,7 @@ func ListByRoomDateIdReservationHandler(w http.ResponseWriter, r *http.Request) 
 
 		// If it's with date param
 		if dateStr != NullString {
+			resultType = "date"
 			Log.Infos("Listing des réservations par Date")
 			dateStr = strings.Replace(dateStr, "T", " ", 1)
 			dateStr = dateStr + ":00"
@@ -138,6 +142,7 @@ func ListByRoomDateIdReservationHandler(w http.ResponseWriter, r *http.Request) 
 
 		// If it's with id param
 		if idStr != NullString {
+			resultType = "ID reservation"
 			Log.Infos("Listing des réservations par ID (reservation)")
 			var tmp = "id_reservation=" + idStr
 			result = ListReservations(&tmp)
@@ -153,7 +158,7 @@ func ListByRoomDateIdReservationHandler(w http.ResponseWriter, r *http.Request) 
 
 		if result == nil {
 			Log.Error("No result")
-			var msg = "Impossible to retrieve data"
+			var msg = "Impossible to retrieve data, this " + resultType + " don't exist"
 			http.Redirect(w, r, "/reservation?message="+msg, http.StatusSeeOther)
 			return
 		}
