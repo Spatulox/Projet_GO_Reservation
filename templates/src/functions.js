@@ -16,32 +16,40 @@ function closePopup() {
 //-------------------------------------------------------------------------------------
 //
 
+// Function to redirect to the menu
 function redirectToMainMenu(){
     window.location.href = `/`;
 }
 
+// Function to redirect to the reservation list
 function redirectToMainList() {
     window.location.href = `/reservation`;
 }
 
+// Function to redirect to create a reservation
 function redirectToCreateReserv() {
     window.location.href = `/reservation/create`;
 }
 
+// Function to redirect to the solo reservation corresponding to the id room entered
 function redirectToRoomList() {
     const idRoom = document.querySelector('input[name="idRoom"]').value;
     window.location.href = `/reservation/list?idRoom=${idRoom}`;
 }
 
+// Function to redirect to the solo reservation corresponding to the date entered
 function redirectToDateList() {
     const idRoom = document.querySelector('input[name="idDate"]').value;
     window.location.href = `/reservation/list?idDate=${idRoom}`;
 }
 
+// Function to redirect to the solo reservation corresponding to the id entered
 function redirectToIdList(id) {
     window.location.href = `/reservation/list?idReserv=${id}`;
 }
 
+// Function to delete a reservation
+// Then redirect to the list
 function redirectDelete(id){
     fetch(`/reservation/cancel?idReserv=${id}`, {
         method: 'GET'
@@ -63,6 +71,8 @@ function redirectDelete(id){
     });
 }
 
+// Function to update the state of the reservation
+// Then redirect to the list
 function redirectUpdate(id){
 
     // Récupérer l'élément select
@@ -94,6 +104,8 @@ function redirectUpdate(id){
 //-------------------------------------------------------------------------------------
 //
 
+// Used in the creerReservation.html file
+// Get all the rooms available when creating a reservation
 async function getAllRoomAvailable() {
 
     const horaire_start_date = document.getElementById("horaire_start_date").value
@@ -176,6 +188,7 @@ async function getAllRoomAvailable() {
 //-------------------------------------------------------------------------------------
 //
 
+// akt the /reservation/export to export the BDD in a json file
 async function exportReservJson(){
     try {
         const response = await fetch('/reservation/export', {
@@ -207,6 +220,7 @@ async function exportReservJson(){
 
 // Used in interface after the click to export json
 // Used in export.json, line 185
+// The server send the file to the client
 function dataDownload(){
     fetch('/download')
         .then(response => response.blob())
@@ -263,6 +277,7 @@ async function updloadJson(){
 //-------------------------------------------------------------------------------------
 //
 
+// Show the video of M. Sananes singing Rap in suit
 function showYoutubePopup() {
     // Créer la popup
     const popup = document.createElement('div');
@@ -291,10 +306,10 @@ function showYoutubePopup() {
 //-------------------------------------------------------------------------------------
 //
 
+// Called in every page when they finisehd to load, to detect a message in the url
 const urlParams = new URLSearchParams(window.location.search);
 
 if (urlParams.has('message')) {
-    // Le paramètre "message" est présent
     const messageValue = urlParams.get('message');
     showPopup(messageValue)
 }
