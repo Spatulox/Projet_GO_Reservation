@@ -58,6 +58,9 @@ func ReservationsMenu() {
 // ------------------------------------------------------------------------------------------------ //
 //
 
+// ListReservations List all the reservations
+// Can take a condition (String)
+// Can take a boolean to print (or not) the retrieved rooms
 func ListReservations(condition *string, noPrintRoom ...bool) []Reservation {
 
 	var bdd Db
@@ -84,6 +87,7 @@ func ListReservations(condition *string, noPrintRoom ...bool) []Reservation {
 // ------------------------------------------------------------------------------------------------ //
 //
 
+// ListReservationsByRoom List les réservation en utilisant les ID des salles
 func ListReservationsByRoom(salle *int) []Reservation {
 
 	var bdd Db
@@ -159,9 +163,11 @@ func ListReservationsByRoom(salle *int) []Reservation {
 // ------------------------------------------------------------------------------------------------ //
 //
 
+// ListReservationsByDate
+// Take the date in param to list the reservation per dates
 func ListReservationsByDate(date *string) []Reservation {
 
-	fmt.Println(*date)
+	var departureDateTime string
 	if date != nil {
 		dateTime, err := time.Parse("2006-01-02 15:04:05", *date)
 		if err != nil {
@@ -170,10 +176,10 @@ func ListReservationsByDate(date *string) []Reservation {
 		}
 		*date = dateTime.Format("2006-01-02 15:04:05")
 	} else {
-		departureDate, departureTime := getDateAndHour()
-		departureDateTime := departureDate.Format("2006-01-02") + " " + departureTime.Format("15:04:00")
+		departureDate, departureTime := getDateAndHour(true)
+		departureDateTime = departureDate.Format("2006-01-02") + " " + departureTime.Format("15:04:00")
 
-		*date = departureDateTime
+		date = &departureDateTime
 	}
 
 	tmp := "'" + *date + "' BETWEEN horaire_start AND horaire_end"
@@ -193,6 +199,7 @@ func ListReservationsByDate(date *string) []Reservation {
 // ------------------------------------------------------------------------------------------------ //
 //
 
+// CreateReservation Just create a reservation
 func CreateReservation(salle *int64, departure *string, end *string) bool {
 	var bdd Db
 	// Select all the room
@@ -298,6 +305,8 @@ func CreateReservation(salle *int64, departure *string, end *string) bool {
 // ------------------------------------------------------------------------------------------------ //
 //
 
+// CancelReservation
+// Take a ID reservation (int) in param
 func CancelReservation(choix ...int) {
 	reservation := ListReservations(nil)
 
@@ -354,6 +363,9 @@ func CancelReservation(choix ...int) {
 // ------------------------------------------------------------------------------------------------ //
 //
 
+// UpdateReservation
+// You can only update the state of the reservation
+// You need to specifie the two param : NewState & idReservation
 func UpdateReservation(state *int, idReservation *int) {
 	var bdd Db
 
@@ -527,6 +539,7 @@ func UpdateReservation(state *int, idReservation *int) {
 // ------------------------------------------------------------------------------------------------ //
 //
 
+// isRoomAvailable Retrieve from BDD to detect if thus future new Reservation on the room can be.
 func isRoomAvailable(departureDateTime *string, endDateTime *string, salle *int, condition *string) (bool, int) {
 
 	// Selectionne dans la BDD pour savoir si y'a quelque chose enregistré a cette date/heure et dans la salle
@@ -535,6 +548,7 @@ func isRoomAvailable(departureDateTime *string, endDateTime *string, salle *int,
 		fin = " AND " + *condition
 	}
 
+	// Tema la condition bro
 	var tmp = "(('" + *departureDateTime + "' BETWEEN horaire_start AND horaire_end) OR ('" + *endDateTime + "' BETWEEN horaire_start AND horaire_end) OR (horaire_start BETWEEN '" + *departureDateTime + "' AND '" + *endDateTime + "') OR (horaire_end BETWEEN '" + *departureDateTime + "' AND '" + *endDateTime + "'))" + fin
 	result, err := bdd.SelectDB(RESERVATIONS, []string{"*"}, nil, &tmp, true)
 
@@ -545,7 +559,7 @@ func isRoomAvailable(departureDateTime *string, endDateTime *string, salle *int,
 
 	// If y'a déjà une réservation ce jour
 	if len(result) > 1 {
-		// It's not normal to have two result
+		// It's not normal to have two results
 		return false, len(result)
 	} else if len(result) > 0 {
 
@@ -571,6 +585,9 @@ func isRoomAvailable(departureDateTime *string, endDateTime *string, salle *int,
 // ------------------------------------------------------------------------------------------------ //
 //
 
+// printReservations Just print reservations in param and return a []Reservation structure
+// Print it into CLI
+// Can take a boolean to not print reservation
 func printReservations(result []map[string]interface{}, noPrint ...bool) []Reservation {
 
 	if len(noPrint) == 0 || !noPrint[0] {
@@ -664,7 +681,9 @@ func printReservations(result []map[string]interface{}, noPrint ...bool) []Reser
 // ------------------------------------------------------------------------------------------------ //
 //
 
-func getDateAndHour() (time.Time, time.Time) {
+// getDateAndHour Return the date and the hour entrered during the execution
+// Can take a boolean to avoid entering today date
+func getDateAndHour(noTodayCompare ...bool) (time.Time, time.Time) {
 
 	var departureDate time.Time
 	var departureTime time.Time
@@ -690,10 +709,12 @@ func getDateAndHour() (time.Time, time.Time) {
 			continue
 		}
 
-		// Comparer les dates
-		if departureDate.Before(todayDate) || departureDate.Equal(todayDate) {
-			Println("La date de départ/fin doit être supérieure à la date du jour.")
-			continue
+		if len(noTodayCompare) == 0 || !noTodayCompare[0] {
+			// Comparer les dates
+			if departureDate.Before(todayDate) || departureDate.Equal(todayDate) {
+				Println("La date de départ/fin doit être supérieure à la date du jour.")
+				continue
+			}
 		}
 
 		break

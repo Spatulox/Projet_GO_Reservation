@@ -2,31 +2,34 @@ body{
     margin: 0px;
     min-height: 100vh;
     display: grid;
-    grid-template-rows: 10vh 1fr 10vh;
+    grid-template-rows: 8vh 1fr 10vh;
 }
 
 main{
-	margin: 20px 0px;
+	padding: 20px 0px;
+    background-color: #FDF0E7;
 }
 
 header {
-  background-color: green; /* Couleur de fond de l'en-tête */
-  position: relative;
   z-index: 1;
   padding: 0px 10px
 }
 
-footer {
-  background-color: green; /* Couleur de fond de l'en-tête */
-  position: relative;
+header, footer {
+    align-items: center;
+    background-color: #d48827;
+    background-color: #ffE28C;
+    position: relative;
 }
 
-button[type="submit"], button[type="button"], .btn{
+button[type="submit"], button[type="button"], .btn, input[type="file"]{
   cursor: pointer;
 }
 
-button[type="submit"], button[type="button"], .btn {
-  background-image: linear-gradient(to right, #ff6b6b, #ffa500);
+
+
+button[type="submit"], button[type="button"], .btn, input[type="file"] {
+  background-image: linear-gradient(to right, #FF9570, #ffAE70);
   border: none;
   color: white;
   padding: 14px 28px;
@@ -38,7 +41,7 @@ button[type="submit"], button[type="button"], .btn {
   transition: all 0.3s ease-in-out;
 }
 
-button[type="submit"]:hover, button[type="button"]:hover, .btn:hover {
+button[type="submit"]:hover, button[type="button"]:hover, .btn:hover, input[type="file"]:hover {
   background-color: #005A7E;
   transform: scale(1.01);
   transition: all 0.3s ease-in-out;
@@ -70,11 +73,11 @@ th, td {
 
 #errorPopup{
 	width: 30%;
-	position: absolute;
+	position: fixed;
 	z-index: 0;
 	max-height: 200px;
 	left: 50%;
-	top: -50px;
+	top: -200px;
 	transform: translateX(-50%);
 	background-color: gray;
 	border-radius: 20px;
@@ -117,6 +120,15 @@ th, td {
 
 /* CLASSES */
 
+.popup iframe {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 560px;
+  height: 315px;
+}
+
 .menu-container {
 	display: flex;
 	flex-direction: column;
@@ -128,11 +140,11 @@ th, td {
 	list-style-type: none;
 	padding: 0;
 	width: 100%;
-	max-width: 300px;
+	max-width: 350px;
 }
 
 .menu-list li {
-	background-color: #f2f2f2;
+	background-color: #d5d2d2;
 	border-radius: 5px;
 	margin-bottom: 1rem;
 	box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
@@ -285,7 +297,6 @@ th, td {
 .noDecoration{
     text-decoration: none;
     list-style: none;
-    color: var(--mainPoliceColor);
 }
 
 .noDecoration > li {
@@ -399,6 +410,10 @@ th, td {
 
 .underline{
   text-decoration: underline;
+}
+
+.width10{
+    width: 10%;
 }
 
 .width20{

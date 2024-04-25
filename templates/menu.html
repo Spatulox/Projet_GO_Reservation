@@ -7,7 +7,7 @@
 		<title>Menu</title>
 	</head>
 	<body>
-		<header class="flex flexCenter nowrap alignCenter">
+		<header class="flex flexCenter nowrap">
 			<div id="errorPopup" class="popup">
 				<div class="popup-content">
 					<p id="errorMessage"></p>
@@ -21,16 +21,23 @@
 			<div class="menu-container">
 				<ul class="menu-list">
 					<li><a href="/reservation">Menu Réservations</a></li>
-					<li><a href="/salles">Menu Salles</a></li>
+					<li><a href="/salle/getRoomAll">Menu Salles</a></li>
 					<li><a href="/reservation/create">Créer une réservation</a></li>
 					<li><a href="/reservation/list?idDate={{ .now }}">Voir les reservations en cours</a></li>
-					<li><a href="/trucs4">Créer une salle</a></li>
-					<li><a href="/trucs3">Voir les salles</a></li>
+					<li><a href="/salle/create">Créer une salle</a></li>
+					<li><a href="/trucs3">Voir les salles disponibles actuellement</a></li>
 				</ul>
 			</div>
 		</main>
 
-		<footer></footer>
+		<footer class="flex flexAround padding5 underline">
+            <div>
+                Créé par deux débiles, un bigleux et un chevelu, pour le futur prof de C
+            </div>
+            <div>
+                Copyright© 2024
+            </div>
+        </footer>
 
 	</body>
 </html>

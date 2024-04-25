@@ -228,18 +228,61 @@ func CheckId(id int) error {
 
 func GetAllSalleDispo(debutDateTime *string, endDateTime *string) []Salle {
 
+	var tmpDebut string
+	var tmpFin string
 	if debutDateTime == nil || endDateTime == nil {
 		var debutDate, debutTime, finDate, finTime time.Time
 
-		debutDate, debutTime = getDateAndHour()
+		debutDate, debutTime = getDateAndHour(true)
 
-		finDate, finTime = getDateAndHour()
+		finDate, finTime = getDateAndHour(true)
 
-		*debutDateTime = debutDate.Format("2006-01-02") + " " + debutTime.Format("15:04:00")
-		*endDateTime = finDate.Format("2006-01-02") + " " + finTime.Format("15:04:00")
+		tmpDebut = debutDate.Format("2006-01-02") + " " + debutTime.Format("15:04:00")
+		tmpFin = finDate.Format("2006-01-02") + " " + finTime.Format("15:04:00")
+
+		debutDateTime = &tmpDebut
+		endDateTime = &tmpFin
+		Log.Debug(*debutDateTime)
+		Log.Debug(*endDateTime)
 	} else {
 		*debutDateTime += ":00"
 		*endDateTime += ":00"
+	}
+
+	horaireStartDateTime, err := time.Parse("2006-01-02 15:04:05", *debutDateTime)
+	if err != nil {
+		var msg = "Erreur dans le format de la date/heure de début"
+		Log.Error(msg)
+		return nil
+	}
+
+	horaireEndDateTime, err := time.Parse("2006-01-02 15:04:05", *endDateTime)
+	if err != nil {
+		var msg = "Erreur dans le format de la date/heure de fin"
+		Log.Error(msg)
+		return nil
+	}
+
+	// Comment this part because we may want to know wich rooms are available right now
+	//today := time.Now()
+	/*if horaireStartDateTime.Before(today) || horaireStartDateTime.Equal(today) {
+		var msg = "Impossible, les horaires doivent être distinct d'aujourd'hui"
+		Log.Error(msg)
+		return nil
+	}*/
+
+	if horaireStartDateTime.After(horaireEndDateTime) {
+		var msg = "L'Heure de fin doit être après le début de celle-ci"
+		Log.Error(msg)
+		return nil
+		//La fin est avant le début ??
+	}
+
+	if horaireStartDateTime.Equal(horaireEndDateTime) {
+		var msg = "Vous ne pouvez pas mettre l'heure de début étant égale à l'heure de fin"
+		Log.Error(msg)
+		return nil
+		// La fin doit être différente du début
 	}
 
 	condition := "SALLES.id_salle NOT IN" +

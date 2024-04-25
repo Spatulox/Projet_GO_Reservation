@@ -9,7 +9,7 @@
     </head>
     <body>
 
-        <header class="flex flexBetween nowrap alignCenter">
+        <header class="flex flexBetween nowrap">
             <button class="block" type="button" onclick="redirectToMainMenu()">Retour</button>
             <div id="errorPopup" class="popup">
                 <div class="popup-content">
@@ -21,64 +21,74 @@
         </header>
 
         <main>
-            
-            <div class="width40 marginAuto" style="border: 1px solid #ddd;">
-                <div class="title_form">
-                    <h1>Ajouter une réservation</h1>
+
+            <div class="flex flexAround nowrap alignCenter marginBottom40 marginTop40">
+
+                <div class="width40 marginAuto" style="border: 1px solid #ddd;background-color: #f4f4f4;">
+                    <div class="title_form">
+                        <h1>Ajouter une réservation</h1>
+                    </div>
+
+                    <form action="/reservation/create" method="POST" class="marginAuto form width90">
+
+
+                        <div class="form-group">
+                            <label>Date et Horaire de début :</label>
+                            <input type="date" id="horaire_start_date" name="horaire_start_date" oninput="getAllRoomAvailable()" required>
+                            <input type="time" id="horaire_start_time" name="horaire_start_time" oninput="getAllRoomAvailable()" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Date et Horaire de début :</label>
+                            <input type="date" id="horaire_end_date" name="horaire_end_date" oninput="getAllRoomAvailable()" required>
+                            <input type="time" id="horaire_end_time" name="horaire_end_time" oninput="getAllRoomAvailable()" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="id_salle">ID de la salle :</label>
+                            <input type="number" id="id_salle" name="id_salle" required>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="flex"><button class="marginAuto marginTop10 marginBottom10" type="submit">Créer la réservation</button></div>
+                        </div>
+
+                    </form>
+
                 </div>
 
-                <form action="/reservation/create" method="POST" class="marginAuto form width90">
-
-                    
-                    <div class="form-group">
-                        <label>Horaire de début :</label>
-                        <input type="date" id="horaire_start_date" name="horaire_start_date" required>
-                        <input type="time" id="horaire_start_time" name="horaire_start_time" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Horaire de début :</label>
-                        <input type="date" id="horaire_end_date" name="horaire_end_date" required>
-                        <input type="time" id="horaire_end_time" name="horaire_end_time" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="id_salle">ID de la salle :</label>
-                        <input type="number" id="id_salle" name="id_salle" required>
-                    </div>
-
-                    <div class="form-group">
-                        <div class="flex"><button class="marginAuto marginTop10 marginBottom10" type="submit">Créer la réservation</button></div>
-                    </div>
-
-                </form>
+                <div class="marginAuto width20" style="border: 1px solid #ddd;;background-color: #f4f4f4;">
+                    <h1 class="textCenter title_form noMarginTop" style="color: white;">Salles disponibles</h1>
+                    <ul id="ulCreateReservation">
+                        <li class="noDecoration">Veuillez choisir une date et heure de départ et de fin pour voir les salles disponibles</li>
+                    </ul>
+                </div>
 
             </div>
-            
+
             <div class="flex"><a href="/reservation" class="btn marginTop10 marginAuto">Menu Réservation</a></div>
 
         </main>
 
-        <footer></footer>
+
+
+        <footer class="flex flexAround padding5 underline">
+            <div>
+                Créé par deux débiles, un bigleux et un chevelu, pour le futur prof de C
+            </div>
+            <div>
+                Copyright© 2024
+            </div>
+        </footer>
 
     </body>
 </html>
-
-<script>
-    function redirectToMainMenu(){
-    window.location.href = `/`;
-    }
-</script>
 
 {{ if .message }}
 <script>
     setTimeout(()=>{
         showPopup("{{ .message }}")
     }, 500)
-
-    setTimeout(()=>{
-        closePopup()
-    }, 5000)
 
 </script>
 {{ end }}

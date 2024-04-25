@@ -8,17 +8,16 @@
 	    <title>Reservations</title>
 	</head>
 	<body>
-		<header class="flex flexBetween nowrap alignCenter">
-				<button class="block" type="button" onclick="redirectToMainMenu()">Retour</button>
+		<header class="flex flexBetween nowrap">
+            <button class="block" type="button" onclick="redirectToMainMenu()">Retour</button>
+            <div id="errorPopup" class="popup">
+                <div class="popup-content">
+                    <p id="errorMessage"></p>
+                </div>
+            </div>
 
-	            <div id="errorPopup" class="popup">
-	                <div class="popup-content">
-	                    <p id="errorMessage"></p>
-	                </div>
-	            </div>
-
-				<h1>Projet Go Reservation</h1>
-	        </header>
+            <h1>Projet Go Reservation</h1>
+        </header>
 
 		<main>
 			{{ if . }}
@@ -32,6 +31,8 @@
 					<th>Nom Salle</th>
 					<th>ID Salle</th>
 					<th>Place Salle</th>
+					<th>Mettre à jour</th>
+					<th>Supprimer</th>
 				</tr>
 				</thead>
 				<tbody>
@@ -40,14 +41,27 @@
 					<td>{{ .IdReservation }}</td>
 					<td>{{ .HoraireStart }}</td>
 					<td>{{ .HoraireEnd }}</td>
-					<td>{{ .NomEtat }}</td>
+					<td>
+						<select name="etat">
+						 	<option value="nil">{{ .NomEtat }}</option>
+						 	<hr>
+					        <option value="1">En Cours</option>
+					        <option value="2">Terminée</option>
+					        <option value="3">Annulée</option>
+					        <option value="4">A Venir</option>
+					    </select>
+
+					</td>
 					<td>{{ .NomSalle }}</td>
 					<td>{{ .IdSalle }}</td>
 					<td>{{ .PlaceSalle }}</td>
+					<td><button class="marginAuto block" type="button" onclick="redirectUpdate('{{ .IdReservation }}')">Mettre à jour</button></td>
+					<td><button class="marginAuto block" type="button" onclick="redirectDelete('{{ .IdReservation }}')">Supprimer</button></td>
 				</tr>
 				{{ end }}
 				</tbody>
 			</table>
+			<h5 class="flex flexCenter underline bold">Vous ne pouvez mettre à jour que l'État</h5>
 			{{ else }}
 			<p>Hmmmm, an error occured :/</p>
 			{{ end }}
@@ -55,16 +69,15 @@
 			<button class="marginAuto marginBottom40 marginTop40 block" type="button" onclick="redirectToMainList()">Retour</button>
 		</main>
 
-		<footer></footer>
-	</body>
+		<footer class="flex flexAround padding5 underline">
+            <div>
+                Créé par deux débiles, un bigleux et un chevelu, pour le futur prof de C
+            </div>
+            <div>
+                Copyright© 2024
+            </div>
+        </footer>
 
-	<script>
-		function redirectToMainMenu(){
-			window.location.href = `/`;
-		}
-		function redirectToMainList() {
-			window.location.href = `/reservation`;
-		}
-	</script>
+	</body>
 
 </html>

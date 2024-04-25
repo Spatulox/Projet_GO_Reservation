@@ -2,7 +2,6 @@ package bdd
 
 import (
 	. "Projet_GO_Reservation/pkg/const"
-	. "Projet_GO_Reservation/pkg/log"
 	"database/sql"
 	"errors"
 	_ "github.com/go-sql-driver/mysql"
@@ -14,6 +13,8 @@ import (
 type Db struct {
 }
 
+// Fonction qui créer la connexion avec la BDD Mysql
+// Renvoie une structure database
 func connectDB() (db *sql.DB, errG error) {
 
 	db, err := sql.Open("mysql", "root:password@tcp(localhost:3306)/go_reserv")
@@ -28,6 +29,13 @@ func connectDB() (db *sql.DB, errG error) {
 // ------------------------------------------------------------------------------------------------ //
 //
 
+// SelectDB Fonction pour sélectionner des données dans une table SQL
+// Paramètres :
+// - Table SQL - String |
+// - Colonnes où rentrer les données - Tableau de string |
+// - Possiblité de rajouter une chaine de caractère pour les selects avec des INNER JOIN / RIGHT JOIN / ETC... - String |
+// - Condition si besoin - String |
+// - Voir la requête - Boolean |
 func (d *Db) SelectDB(table string, column []string, join *string, condition *string, debug ...bool) ([]map[string]interface{}, error) {
 
 	var err error = errors.New("Some error occurred")
@@ -48,6 +56,8 @@ func (d *Db) SelectDB(table string, column []string, join *string, condition *st
 		return nil, err
 	}
 
+	defer db.Close()
+
 	if db == nil {
 		Log.Error("What da heck bro, l'instance db est nulle ??")
 		return nil, err
@@ -64,6 +74,7 @@ func (d *Db) SelectDB(table string, column []string, join *string, condition *st
 	var query *sql.Rows
 	var queryString string
 
+	// Créer la chaîne de caractère pour la requête, en fonction des paramètres passés
 	if condition == nil && join == nil {
 		query, err = db.Query("SELECT " + columns + " FROM " + table)
 		queryString = "SELECT " + columns + " FROM " + table
@@ -90,10 +101,12 @@ func (d *Db) SelectDB(table string, column []string, join *string, condition *st
 		}
 	}
 
+	// si le paramètre debug existe
 	if len(debug) > 0 && debug[0] {
 		Log.Debug(queryString)
 	}
 
+	// Appelle un fonction qui execute la query et la transforme en "objet json"
 	var result = transformQueryToMap(query)
 
 	if err := query.Err(); err != nil {
@@ -108,6 +121,12 @@ func (d *Db) SelectDB(table string, column []string, join *string, condition *st
 // ------------------------------------------------------------------------------------------------ //
 //
 
+// InsertDB Fonction pour insérer des données dans une table SQL
+// Paramètres :
+// - Table SQL - String |
+// - Colonnes où rentrer les données - Tableau de string |
+// - Valeur des données - Tableau de string |
+// - Voir la requête - Boolean |
 func (d *Db) InsertDB(table string, column []string, value []string, debug ...bool) {
 
 	if checkData(table, column, value, nil) == false {
@@ -120,13 +139,18 @@ func (d *Db) InsertDB(table string, column []string, value []string, debug ...bo
 		return
 	}
 
+	defer db.Close()
+
 	if db == nil {
 		Log.Error("What da heck bro, l'instance db est nulle ??")
 		return
 	}
 
+	// Appelle d'une fonction pour transformer les colonnes en chaine de caractère unique
 	var columns = ArrayToString(column, true)
 
+	// Appelle d'une fonction pour transformer les valeurs en chaine de caractère unique
+	// Rajoute des quotes si besoin pour les chaines de caractères, rien si c'est un nombre
 	var values = ArrayToString(value)
 
 	if columns == NullString {
@@ -143,6 +167,7 @@ func (d *Db) InsertDB(table string, column []string, value []string, debug ...bo
 	var queryString string
 	var err error
 
+	// Execute la requête
 	query, err = db.Query("INSERT INTO " + table + " (" + columns + ") VALUES (" + values + ")")
 	queryString = "INSERT INTO " + table + " (" + columns + ") VALUES (" + values + ")"
 	if err != nil {
@@ -168,6 +193,13 @@ func (d *Db) InsertDB(table string, column []string, value []string, debug ...bo
 // ------------------------------------------------------------------------------------------------ //
 //
 
+// UpdateDB Fonction pour mettre à jour une table SQL
+// Paramètres :
+// - Table SQL - String |
+// - Colonnes où rentrer les données - Tableau de string |
+// - Valeur des données à rentrer - Tableau de string |
+// - Condition si besoin - String |
+// - Voir la requête - Boolean |
 func (d *Db) UpdateDB(table string, column []string, value []string, condition *string, debug ...bool) {
 
 	if checkData(table, column, value, condition) == false {
@@ -184,6 +216,8 @@ func (d *Db) UpdateDB(table string, column []string, value []string, condition *
 	if errC != nil {
 		return
 	}
+
+	defer db.Close()
 
 	if db == nil {
 		Log.Error("What da heck bro, l'instance db est nulle ??")
@@ -224,7 +258,7 @@ func (d *Db) UpdateDB(table string, column []string, value []string, condition *
 	}
 
 	if len(debug) > 0 && debug[0] {
-		ILog("DEBUG : " + queryString)
+		Log.Debug(queryString)
 	}
 
 	return
@@ -235,6 +269,10 @@ func (d *Db) UpdateDB(table string, column []string, value []string, condition *
 // ------------------------------------------------------------------------------------------------ //
 //
 
+// DeleteDB Fonction pour supprimer les données d'une table SQL
+// Paramètres :
+// - Condition si besoin - String |
+// - Voir la requête - Boolean |
 func (d *Db) DeleteDB(table string, condition *string, debug ...bool) {
 	// DELETE FROM table WHERE condition
 
@@ -253,6 +291,8 @@ func (d *Db) DeleteDB(table string, condition *string, debug ...bool) {
 		return
 	}
 
+	defer db.Close()
+
 	if db == nil {
 		Log.Error("What da heck bro, l'instance db est nulle ??")
 		return
@@ -262,6 +302,7 @@ func (d *Db) DeleteDB(table string, condition *string, debug ...bool) {
 	var queryString string
 	var err error
 
+	// Créer la requête
 	if condition != nil {
 		query, err = db.Query("DELETE FROM " + table + " WHERE " + *condition)
 		queryString = "DELETE FROM " + table + " WHERE " + *condition
@@ -296,12 +337,15 @@ func (d *Db) DeleteDB(table string, condition *string, debug ...bool) {
 // ------------------------------------------------------------------------------------------------ //
 //
 
+// transformQueryToMap Tranforme un tableau venant tout droit de la base de donnée avec les résultats
+// Créer et renvoie un "objet json" construit dynamiquement avec les noms des colonnes et leur valeurs
 func transformQueryToMap(query *sql.Rows) []map[string]interface{} {
 	var result []map[string]interface{}
 
+	// Pour tout les résultats
 	for query.Next() {
 
-		//Get all the columns
+		//Prend les colonnes
 		columns, err := query.Columns()
 
 		if err != nil {
@@ -309,10 +353,10 @@ func transformQueryToMap(query *sql.Rows) []map[string]interface{} {
 			return nil
 		}
 
-		// Create a slice to stock vlaues
+		// Créer un slice pour stocker les vlaures
 		values := make([]interface{}, len(columns))
 
-		// Create a pointer slice to values
+		// Créer un pointeur de valeurs
 		pointers := make([]interface{}, len(columns))
 		for i := range values {
 			pointers[i] = &values[i]
@@ -323,7 +367,7 @@ func transformQueryToMap(query *sql.Rows) []map[string]interface{} {
 			return nil
 		}
 
-		// Create like a json object
+		// Créer une sorte d'objet Json
 		row := make(map[string]interface{})
 		for i, name := range columns {
 			switch v := values[i].(type) {
@@ -343,6 +387,8 @@ func transformQueryToMap(query *sql.Rows) []map[string]interface{} {
 // ------------------------------------------------------------------------------------------------ //
 //
 
+// checkData Regarde le bon format des données rentrées en paramètre et renvoie un booléen
+// Utile pour les fonctions de base de donnée
 func checkData(table string, column []string, values []string, condition *string) bool {
 
 	if reflect.TypeOf(table) != reflect.TypeOf("") || table == NullString {
@@ -372,6 +418,9 @@ func checkData(table string, column []string, values []string, condition *string
 // ------------------------------------------------------------------------------------------------ //
 //
 
+// ArrayToString Transforme un tableau en chaine de caractères
+// Peut prendre un paramètre "noQuotes" qui évite de mettre des quotes lorsque que la fonction est utilisée pour transformer un tableau de nom de colonne en string
+// Les quotes sont utiles pour les valeurs de ces colonnes pour un Insert pour les chaine de charactères
 func ArrayToString(arr []string, noQuotes ...bool) string {
 	if len(arr) == 0 {
 		return ""
@@ -379,14 +428,12 @@ func ArrayToString(arr []string, noQuotes ...bool) string {
 
 	var sb strings.Builder
 	for i, s := range arr {
-		//sb.WriteString(s)
 
+		// Vérifie si c'est un nombre avant pour mettre ou non des '
 		_, err := strconv.Atoi(s)
 		if err != nil && noQuotes == nil {
-			// Cast to int failed
 			sb.WriteString(`'` + s + `'`)
 		} else {
-			// Cast to int ok
 			sb.WriteString(s)
 		}
 
@@ -401,6 +448,8 @@ func ArrayToString(arr []string, noQuotes ...bool) string {
 // ------------------------------------------------------------------------------------------------ //
 //
 
+// ConcatColumnWithValues Utile pour les Update de BDD
+// Plus particulièrement pour les "SET column=value, column=value, ..."
 func ConcatColumnWithValues(columns []string, values []string) string {
 
 	if len(columns) == 0 || len(values) == 0 {
@@ -415,14 +464,12 @@ func ConcatColumnWithValues(columns []string, values []string) string {
 
 	var sb strings.Builder
 	for i, s := range values {
-		//sb.WriteString(s)
 
+		// Vérifie si c'est un nombre avant pour mettre ou non des '
 		_, err := strconv.Atoi(s)
 		if err != nil {
-			// Cast to int failed
 			sb.WriteString(columns[i] + `='` + s + `'`)
 		} else {
-			// Cast to int ok
 			sb.WriteString(columns[i] + "=" + s)
 		}
 

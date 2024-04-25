@@ -1,15 +1,18 @@
-Fini : ✅ ; En cours : 🔁 ; Autre : ☠️ ;
+Finished : ✅ ; Still : 🔁 ; Aborded / lazy : ☠️ ;
 # Structures :					
-- Salles					-
+- Salles					✅
 - Reservations					✅
 
 
-# Salles					
-- Lister salle dispo				
-- Lister toutes les salles			
-- Ajouter une salle				
+##################################################
+# Salles					✅
+- Lister salle dispo				✅
+- Lister toutes les salles			✅
+- Ajouter une salle				✅
+- Supprimer salle				✅
 
 
+##################################################
 # Reservations					✅
 - Créer réservations				✅
 - Annuler réservation				✅
@@ -20,26 +23,36 @@ Fini : ✅ ; En cours : 🔁 ; Autre : ☠️ ;
 - Vérifier la disponibilité			✅
 
 
-# BDD
+##################################################
+# BDD						🔁
 - Init.sql					✅
-- Identifiant dans un fichier .env		-
+- Identifiant dans un fichier .env		☠️
 
-# Export
+# Export					✅
 - JSON						✅
 - ou CSV					☠️
 
-# Import
-- JSON						🔁
+# Import					☠️
+- JSON						☠️
 - ou CSV					☠️
 
 
-# Interface WEB					-
-- Serveur WEB					-
-- Création des Handlers				-
-- Template HTML					-
+##################################################
+# Interface WEB					🔁
+- Serveur WEB					✅
+- Création des Handlers				🔁
+- Templates HTML				🔁
 
+- Interface Reservation				✅
+	- Menu					✅
+	- Listing (Idsalles, Date, idreserv)	✅
+	- Création				✅
 
-
-
-# BONUS
-- On va remplir cette section à la fin
+- Interface Salles				🔁
+	- Menu					🔁
+	- Listing (Id salle, Date)		🔁
+	- Création				🔁
+	
+- Interface JSON				✅
+	- Importer				☠️
+	- Exporter JSON				✅

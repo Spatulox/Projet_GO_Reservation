@@ -5,9 +5,12 @@ import (
 	. "Projet_GO_Reservation/pkg/log"
 	. "Projet_GO_Reservation/pkg/models"
 	"encoding/json"
+	"fmt"
 	"os"
 )
 
+// DataToJson Get the data with a []Reservation Structure (may change to export rooms)
+// Export it into a human-readable json file called data.json into the root folder of the project
 func DataToJson(data []Reservation) bool {
 
 	jsonData, err := json.MarshalIndent(data, "", "  ")
@@ -29,32 +32,26 @@ func DataToJson(data []Reservation) bool {
 	return true
 }
 
-func JsonToData(path *string) []map[string]interface{} {
+// JsonToData Get the data path
+// Transform the json file into a []map[string]interface{}
+func JsonToData(data []map[string]interface{}) bool {
 
-	var err error
-	var jsonData []byte
-
-	if path == nil {
-		Log.Error("Vous devez spécifier un chemin pour le fichier à importer")
-		Log.Debug("En cours de création")
-		return nil
-	} else {
-		jsonData, err = os.ReadFile(*path)
-	}
-	// Lire le fichier JSON
-	if err != nil {
-		Log.Error("Erreur lors de la lecture du fichier:", err)
-		return nil
+	for _, d := range data {
+		fmt.Println(d)
 	}
 
-	// Transformer le JSON en slice de maps
-	var data []map[string]interface{}
-	err = json.Unmarshal(jsonData, &data)
-	if err != nil {
-		Log.Error("Erreur lors de la conversion en Go:", err)
-		return nil
-	}
+	// For all reservation inside the file
 
-	// Afficher les données
-	return data
+	// Need to check if the room still exist
+	// If still exist, is it the same ? (Number of Place for the most part)
+	// Then : Need to check if the room is available at the date/hour of the reservation
+
+	// Need to check if the reservation already exist (ID)
+	// Yes => Check if it's the same for all the point (No upload so)
+	//		The same =>		No upload
+	//		Not the same =>	Create a new reservation (ID useless)
+	// No => Upload of the reservation
+
+	// End of For
+	return true
 }
