@@ -31,6 +31,10 @@ function redirectToCreateReserv() {
     window.location.href = `/reservation/create`;
 }
 
+function redirectToCreateRoom(){
+    window.location.href = `/salle/create`;
+}
+
 // Function to redirect to the solo reservation corresponding to the id room entered
 function redirectToRoomList() {
     const idRoom = document.querySelector('input[name="idRoom"]').value;
@@ -69,6 +73,10 @@ function redirectDelete(id){
     .catch(error => {
         showPopup('Erreur lors de la requête :', error);
     });
+}
+
+function redirectDeleteSalles(idSalle){
+
 }
 
 // Function to update the state of the reservation

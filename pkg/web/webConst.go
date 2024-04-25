@@ -18,6 +18,8 @@ const (
 
 	// Route for Rooms
 	RouteGetAllRoolAvailable = "/salle/getAllAvail"
+	RouteGetAllRooms         = "/salle/getRoomAll"
+	RouteCreateRoom          = "/salle/create"
 
 	// Route for JSON
 	RouteDownloadJson = "/download"

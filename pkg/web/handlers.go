@@ -33,6 +33,8 @@ func EnableHandlers() {
 
 	// Rooms Handlers
 	http.HandleFunc(RouteGetAllRoolAvailable, GetAllRoomAvailHandler)
+	http.HandleFunc(RouteGetAllRooms, GetAllRoomsHandler)
+	http.HandleFunc(RouteCreateRoom, CreateRoomHandler)
 
 	// Json Handlers
 	http.HandleFunc(RouteExportJson, ExportJsonHandler)
@@ -509,3 +511,56 @@ func SallesHandler(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, routeIndex, http.StatusSeeOther)
 	}
 }*/
+
+func GetAllRoomsHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		var msg = "Erreur lors de la lecture des paramètres"
+		Log.Error(msg)
+		http.Error(w, msg, http.StatusBadRequest)
+		return
+	}
+
+	result := GetAllSalle()
+
+	templates.ExecuteTemplate(w, "salles.html", map[string]interface{}{
+		"result":  result,
+		"message": nil,
+	})
+}
+
+func CreateRoomHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method == http.MethodGet {
+		templates.ExecuteTemplate(w, "creerSalles.html", map[string]interface{}{
+			"message": nil,
+			"result":  nil,
+		})
+	} else if r.Method == http.MethodPost {
+		nomSalle := r.FormValue("nom")
+		placeSalle := r.FormValue("place")
+
+		if placeSalle == NullString || nomSalle == NullString {
+			var msg = "Erreur mauvais saisie de données"
+			Log.Error(msg)
+			http.Error(w, msg, http.StatusBadRequest)
+			return
+		}
+
+		placeSalleInt, err := strconv.Atoi(placeSalle)
+		if err != nil {
+			http.Error(w, "ID de salle invalide", http.StatusBadRequest)
+			return
+		}
+
+		leBool := CreateRoom(&nomSalle, &placeSalleInt)
+		if leBool == false {
+			var msg = "Erreur lors de la création"
+			Log.Error(msg)
+			http.Error(w, msg, http.StatusBadRequest)
+			return
+		}
+
+		http.Redirect(w, r, RouteGetAllRooms, http.StatusSeeOther)
+		return
+
+	}
+}
