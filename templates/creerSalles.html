@@ -21,26 +21,32 @@
         </header>
 
         <main>
-            <form action="/salle/create" method="POST" class="marginAuto form width90">
+            <div class="flex flexAround nowrap alignCenter marginBottom40 marginTop40">
+                <div class="width40 marginAuto" style="border: 1px solid #ddd;background-color: #f4f4f4;">
+                        <div class="title_form">
+                            <h1>Ajouter une salle</h1>
+                        </div>
+                    <form action="/salle/create" method="POST" class="marginAuto form width90">
 
 
-                <div class="form-group">
-                    <label>nom de la salle :</label>
-                    <input type="text" id="nom" name="nom" required>
+                        <div class="form-group">
+                            <label>nom de la salle :</label>
+                            <input type="text" id="nom" name="nom" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>place :</label>
+                            <input type="number" id="place" name="place"  required>
+                        </div>
+
+
+                        <div class="form-group">
+                            <div class="flex"><button class="marginAuto marginTop10 marginBottom10" type="submit">Créer la salle</button></div>
+                        </div>
+
+                    </form>
                 </div>
-
-                <div class="form-group">
-                    <label>place :</label>
-                    <input type="number" id="place" name="place"  required>
-                </div>
-
-
-                <div class="form-group">
-                    <div class="flex"><button class="marginAuto marginTop10 marginBottom10" type="submit">Créer la salle</button></div>
-                </div>
-
-            </form>
-
+            </div>
         </main>
 
         <footer class="flex flexAround padding5 underline">
