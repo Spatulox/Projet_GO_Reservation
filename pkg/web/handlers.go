@@ -492,35 +492,23 @@ func GetAllRoomAvailHandler(w http.ResponseWriter, r *http.Request) {
 
 }
 
-/*
-func SallesHandler(w http.ResponseWriter, r *http.Request) {
-	//w.Header().Set("Content-Type", "text/html; charset=utf-8")
-
-	if r.Method == http.MethodGet {
-		templates.ExecuteTemplate(w, "salles.html", nil)
-	} else if r.Method == http.MethodPost {
-		idReservation := r.FormValue("id_reservation")
-
-		err := CancelReservation(idReservation)
-		if err != nil {
-			templates.ExecuteTemplate(w, "salles.html", struct{ Error string }{err.Error()})
-			return
-		}
-
-		// Rediriger vers la page d'accueil
-		http.Redirect(w, r, routeIndex, http.StatusSeeOther)
-	}
-}*/
-
 func GetAllRoomsHandler(w http.ResponseWriter, r *http.Request) {
+
 	if r.Method != http.MethodGet {
-		var msg = "Erreur lors de la lecture des paramètres"
+		var msg = "Vous ne pouvez pas faire de requête autre que GET pour ça :/"
 		Log.Error(msg)
-		http.Error(w, msg, http.StatusBadRequest)
+		http.Redirect(w, r, RouteGetAllRooms+"?message="+msg, http.StatusSeeOther)
 		return
 	}
 
 	result := GetAllSalle()
+
+	if len(result) == 0 {
+		var msg = "Pas de salles à lister, veuillez en créer une."
+		Log.Error(msg)
+		http.Redirect(w, r, RouteCreateRoom+"?message="+msg, http.StatusSeeOther)
+		return
+	}
 
 	templates.ExecuteTemplate(w, "salles.html", map[string]interface{}{
 		"result":  result,
@@ -539,15 +527,18 @@ func CreateRoomHandler(w http.ResponseWriter, r *http.Request) {
 		placeSalle := r.FormValue("place")
 
 		if placeSalle == NullString || nomSalle == NullString {
+
 			var msg = "Erreur mauvais saisie de données"
 			Log.Error(msg)
-			http.Error(w, msg, http.StatusBadRequest)
+			http.Redirect(w, r, RouteCreateRoom+"?message="+msg, http.StatusSeeOther)
 			return
 		}
 
 		placeSalleInt, err := strconv.Atoi(placeSalle)
 		if err != nil {
-			http.Error(w, "ID de salle invalide", http.StatusBadRequest)
+			var msg = "ID de salle invalide"
+			Log.Error(msg)
+			http.Redirect(w, r, RouteCreateRoom+"?message="+msg, http.StatusSeeOther)
 			return
 		}
 
@@ -555,7 +546,7 @@ func CreateRoomHandler(w http.ResponseWriter, r *http.Request) {
 		if leBool == false {
 			var msg = "Erreur lors de la création"
 			Log.Error(msg)
-			http.Error(w, msg, http.StatusBadRequest)
+			http.Redirect(w, r, RouteCreateRoom+"?message="+msg, http.StatusSeeOther)
 			return
 		}
 
