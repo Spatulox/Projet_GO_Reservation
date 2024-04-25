@@ -20,6 +20,7 @@ const (
 	RouteGetAllRoolAvailable = "/salle/getAllAvail"
 	RouteGetAllRooms         = "/salle/getRoomAll"
 	RouteCreateRoom          = "/salle/create"
+	RouteCancelSalle         = "/salle/cancel"
 
 	// Route for JSON
 	RouteDownloadJson = "/download"
