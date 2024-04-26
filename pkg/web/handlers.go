@@ -35,6 +35,7 @@ func EnableHandlers() {
 	http.HandleFunc(RouteGetAllRoolAvailable, GetAllRoomAvailHandler)
 	http.HandleFunc(RouteGetAllRooms, GetAllRoomsHandler)
 	http.HandleFunc(RouteCreateRoom, CreateRoomHandler)
+	http.HandleFunc(RouteCancelSalle, CancelSalleHandler)
 
 	// Json Handlers
 	http.HandleFunc(RouteExportJson, ExportJsonHandler)
@@ -554,4 +555,31 @@ func CreateRoomHandler(w http.ResponseWriter, r *http.Request) {
 		return
 
 	}
+}
+
+func CancelSalleHandler(w http.ResponseWriter, r *http.Request) {
+
+	idSalle := r.URL.Query().Get("idSalle")
+
+	newChoix, err := strconv.Atoi(idSalle)
+
+	if err != nil {
+		Log.Error("Impossible to convert the id from string to int")
+		http.Error(w, "Impossible to convert the id from string to int : "+idSalle, http.StatusBadRequest)
+		return
+	}
+
+	result := GetSalleById(&newChoix)
+	if len(result) == 0 {
+		Log.Error("Aucune salle contient cet ID")
+		http.Error(w, "Aucune salle trouvée pour l'ID "+idSalle, http.StatusBadRequest)
+		return
+	}
+
+	DeleteRoomByID(&newChoix)
+
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte("Salle supprimer avec succès"))
+	Log.Infos("Salle supprimer avec succès !")
+	return
 }

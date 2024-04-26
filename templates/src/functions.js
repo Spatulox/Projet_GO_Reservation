@@ -76,7 +76,24 @@ function redirectDelete(id){
 }
 
 function redirectDeleteSalles(idSalle){
-
+    fetch(`/salle/cancel?idSalle=${idSalle}`, {
+        method: 'GET'
+    })
+        .then(response => {
+            if (response.ok) {
+                response.text().then(message => {
+                    window.location.href = `/salle/getRoomAll?message=${message}`;
+                    //showPopup(message);
+                });
+            } else {
+                response.text().then(errorMessage => {
+                    showPopup(errorMessage);
+                });
+            }
+        })
+        .catch(error => {
+            showPopup('Erreur lors de la requête :', error);
+        });
 }
 
 // Function to update the state of the reservation
