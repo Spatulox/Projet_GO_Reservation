@@ -31,7 +31,16 @@ CREATE TABLE RESERVER(
 INSERT INTO SALLES (id_salle, nom, place) VALUES
 (1, 'Salle A', 50),
 (2, 'Salle B', 40),
-(3, 'Salle C', 60);
+(3, 'Salle C', 60),
+(4, 'Salle D', 50),
+(5, 'Salle E', 40),
+(6, 'Salle F', 60),
+(7, 'Salle G', 50),
+(8, 'Salle H', 40),
+(9, 'Salle I', 60),
+(10, 'Salle J', 60),
+(11, 'Salle K', 50),
+(12, 'Salle L', 40),
 (13, 'Salle 13', 69);
 
 INSERT INTO ETATS (id_etat, nom_etat) VALUES
