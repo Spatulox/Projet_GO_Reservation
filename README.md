@@ -42,7 +42,7 @@
  - Création de la Base de donnée
  - Menu CLI
  - Gestion des salles
- - Import / Export JSON (Interface Web)
+ - Modélisation Base de donnée
  - Interface web gestion des salles
 
  - Easter Egg
@@ -52,7 +52,7 @@
  - Discussion avec la base de donnée
  - Création des Constantes
  - Gestion des réservations
- - Import / Export JSON (Fonctions)
+ - Import / Export JSON (Fonctions & Interfaces WEB)
  - Mise en place du serveur Web
  - Interface web gestion des reservations
  
